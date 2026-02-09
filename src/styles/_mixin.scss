@@ -1,0 +1,8 @@
+@use "variable" as *;
+@use "svg" as *;
+@mixin flex-center($direction: row) {
+    display: flex;
+    flex-direction: $direction;
+    align-items: center;
+    justify-content: center;
+}

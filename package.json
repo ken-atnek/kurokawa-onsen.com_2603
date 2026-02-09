@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "cross-env NODE_OPTIONS=\"--no-warnings --no-deprecation\" next dev",
+    "build:demo": "cross-env NEXT_PUBLIC_IS_REAL_PROD=false NEXT_PUBLIC_METADATA_BASE=https://rita5258.xbiz.jp/ next build && rimraf out/404.html out/404 out/db out/backend",
+    "build:prod": "cross-env NEXT_PUBLIC_IS_REAL_PROD=true NEXT_PUBLIC_METADATA_BASE=https://kurokawa-onsen.com/ next build && rimraf out/404.html out/404 out/db out/backend",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "lint:style": "stylelint \"src/**/*.scss\" --fix"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
