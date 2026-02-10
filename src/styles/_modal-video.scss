@@ -1,0 +1,79 @@
+/* =======================================
+ * modal-video (global)
+ * ======================================= */
+
+.modal-video {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.modal-video-body {
+    width: min(960px, 92vw);
+}
+
+.modal-video-inner {
+    position: relative;
+}
+
+.modal-video-movie-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.modal-video-movie-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-video-close-btn {
+    position: fixed;
+    top: 4vw;
+    right: 4vw;
+    width: 4.4rem;
+    height: 4.4rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+.modal-video-close-btn::before,
+.modal-video-close-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2.2rem;
+    height: 2px;
+    background: #fff;
+    transform-origin: center;
+}
+
+.modal-video-close-btn::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modal-video-close-btn::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+    .modal-video {
+        padding: 1.6rem;
+    }
+    .modal-video-close-btn {
+        top: 1.6rem;
+        width: 2.6rem;
+        height: 2.6rem;
+    }
+}

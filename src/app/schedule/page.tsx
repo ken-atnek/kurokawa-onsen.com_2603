@@ -1,16 +1,15 @@
 /* =======================================
- * 黒川温泉観光協会 TOPページ
- * URL: src/app/page.tsx
- * Created: 2026-02-09
- * Last updated: 2026-02-09
+ * 黒川温泉観光協会 年間スケジュール
+ * URL:src/app/schedule/page.tsx
+ * Created: 2026-02-10
+ * Last updated: 2026-02-10
  * ======================================= */
 
 import type { Metadata } from 'next';
 import { isRealProduction } from '@/lib/env';
-import ContainerTopAssociationOverview from '@/components/Top/ContainerTopAssociationOverview';
-import ContainerTopHero from '@/components/Top/ContainerTopHero';
-import ContainerTopNews from '@/components/Top/ContainerTopNews';
-import ContainerTopAbout from '@/components/Top/ContainerTopAbout';
+
+import PageTitle from '@/components/PageTitle';
+import ContainerSchedule from '@/components/Schedule/ContainerSchedule';
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -20,13 +19,15 @@ export const generateMetadata = (): Metadata => {
       : undefined,
   };
 };
-export default function Home() {
+export default function PageSchedule() {
   return (
     <>
-      <ContainerTopHero />
-      <ContainerTopAbout />
-      <ContainerTopNews />
-      <ContainerTopAssociationOverview />
+      <PageTitle
+        titleEn="SCHEDULE"
+        titleJp="年間スケジュール"
+        bgKey="schedule"
+      />
+      <ContainerSchedule />
     </>
   );
 }

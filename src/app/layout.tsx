@@ -1,13 +1,13 @@
 /* =======================================
  * 黒川温泉観光協会 Layout
  * URL:src/app/layout.tsx
- * Created: 2025-08-26
- * Last updated: 2025-08-26
+ * Created: 2026-02-09
+ * Last updated: 2026-02-09
  * ======================================= */
 
 import type { Metadata } from 'next';
 import '@/styles/globals.scss';
-import { Noto_Sans_JP, Roboto } from 'next/font/google';
+import { Noto_Sans_JP, Roboto, Marcellus } from 'next/font/google';
 import SvgDefs from '@/components/SvgDefs';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
@@ -24,7 +24,12 @@ const roboto = Roboto({
   display: 'swap',
   variable: '--font-roboto',
 });
-
+const marcellus = Marcellus({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-marcellus',
+  display: 'swap',
+});
 // 本番のみ metadataBase を設定
 const metadataBase = isRealProduction
   ? new URL(
@@ -73,7 +78,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`${notoSans.className} ${roboto.variable} `}>
+    <html
+      className={`${notoSans.className} ${roboto.variable} ${marcellus.variable}`}
+    >
       <head>
         <meta
           name="format-detection"

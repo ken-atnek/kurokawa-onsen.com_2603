@@ -6,3 +6,47 @@
     align-items: center;
     justify-content: center;
 }
+
+@mixin itemTitle {
+    position: relative;
+    font-size: FZ(24);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.5em 2em;
+    min-width: 28rem;
+    // --c: #fff;
+    text-align: center;
+    --w: 1px;
+    --gap: 4px;
+    --inset: 6px;
+    --over: 6px;
+    background:
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over)) top /
+            calc(100% + (var(--over) * 2)) var(--w) no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over))
+            calc(var(--gap)) / calc(100% + (var(--over) * 2)) var(--w) no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over)) bottom /
+            calc(100% + (var(--over) * 2)) var(--w) no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over))
+            calc(100% - var(--gap)) / calc(100% + (var(--over) * 2)) var(--w)
+            no-repeat;
+    &::before {
+        content: "";
+        position: absolute;
+        top: calc(-1 * var(--over));
+        left: 0;
+        width: 100%;
+        height: calc(100% + (var(--over) * 2));
+        pointer-events: none;
+        background:
+            linear-gradient(var(--c), var(--c)) var(--inset) 0 / var(--w) 100%
+                no-repeat,
+            linear-gradient(var(--c), var(--c)) calc(var(--inset) + var(--gap))
+                0 / var(--w) 100% no-repeat,
+            linear-gradient(var(--c), var(--c)) calc(100% - var(--inset)) 0 /
+                var(--w) 100% no-repeat,
+            linear-gradient(var(--c), var(--c))
+                calc(100% - (var(--inset) + var(--gap))) 0 / var(--w) 100%
+                no-repeat;
+    }
+}

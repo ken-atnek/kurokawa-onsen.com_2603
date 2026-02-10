@@ -24,7 +24,7 @@ $base-vw: calc($tilt * 100);
     }
 }
 
-$articleMaxWidth: 1158px;
+$articleMaxWidth: 1086px;
 
 /* =================================
  * フォント設定
@@ -46,8 +46,8 @@ $articleMaxWidth: 1158px;
     font-weight: 400;
     font-style: normal;
 }
-@mixin Archivo-Black {
-    font-family: "Archivo Black", sans-serif;
+@mixin Marcellus {
+    font-family: var(--font-marcellus), serif;
     font-weight: 400;
     font-style: normal;
 }

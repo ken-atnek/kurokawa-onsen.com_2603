@@ -8,811 +8,388 @@
 /* stylelint-disable keyframes-name-pattern */
 /* stylelint-disable custom-property-pattern */
 // このファイル全体のルールを無効にする
-.btnLink {
+@mixin itemH3 {
+    margin-block: 3em;
     position: relative;
-    background-color: $main-orange;
-    color: $base-white;
-    align-self: center;
-    width: 17.5em;
-    height: 3em;
-    font-size: inherit;
-    @include flex-center;
-    border-radius: $radius14;
-    border-top-left-radius: unset;
-    @include box-shadow;
+    font-size: FZ(20);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    writing-mode: vertical-rl; //縦書き
+    text-orientation: upright; //縦書き英数回転
+    font-feature-settings: initial; //左詰め解除
+    padding-top: 1em;
+    padding-right: 0.2em;
     &::before {
         content: "";
         position: absolute;
+        left: 50%;
+        translate: -50%;
         top: 0;
-        right: 100%;
-        width: 5px;
-        @include svg-object-radius("f29400");
-    }
-    span {
-        font-size: FZ(16);
-        font-weight: 700;
-    }
-}
-.boxH2 {
-    position: relative;
-    display: flex;
-    font-size: inherit;
-    gap: 0 2em;
-    color: $font-black;
-    align-items: flex-end;
-    h2 {
-        position: relative;
-        font-size: FZ(24);
-        padding-left: 1.8em;
-        width: max-content;
-        &::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            translate: 0 -50%;
-            left: 0;
-        }
-    }
-    p {
-        flex: 1;
-        font-size: FZ(16);
-        font-weight: 300;
-        line-height: 1.6em;
+        width: 14px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background-color: $main-black;
     }
 }
 
 /* =================================
  * HERO
  * ------------------------------ */
-.containerHero {
-    aspect-ratio: 1900/1113;
-    max-height: 798px;
-    background-color: $bg-white;
+.containerTopHero {
+    border-bottom: 2px solid $main-black;
     .boxImage {
-        position: absolute;
-        left: 0;
-        top: 0;
-        font-size: inherit;
+        position: relative;
         width: 100%;
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            @include bottom-radius($radius80);
-            background: url("/images/bg.webp") repeat center center/contain;
-            mix-blend-mode: color-dodge;
-            z-index: 1;
-        }
-        &::after {
-            content: "";
-            position: absolute;
-            border-bottom: 1px solid rgba(#fff, 0.7);
-            border-left: 1px solid rgba(#fff, 0.7);
-            border-right: 1px solid rgba(#fff, 0.7);
-            inset: 0 1rem 1rem;
-
-            // border-bottom-left-radius: calc($radius80 - 1rem);
-            // border-bottom-right-radius: calc($radius80 - 1rem);
-            @include bottom-radius($radius80);
-        }
         img {
-            font-size: inherit;
-            position: relative;
             width: 100%;
-            height: 100%;
-            @include bottom-radius($radius80);
-            max-height: 798px;
+            aspect-ratio: 1.78;
             object-fit: cover;
         }
     }
-    .boxLogo {
+    h1 {
+        display: inline-block;
         position: absolute;
-        top: 22%;
-        left: 70%;
-        translate: -50%;
-        font-size: inherit;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        inset: 0;
+        margin: auto;
+        z-index: 2;
+        width: 18rem;
+        aspect-ratio: 18/22;
         svg {
-            font-size: inherit;
-            width: 18.56em;
-            fill: #fff;
-            aspect-ratio: 297/72;
+            width: 100%;
+            fill: $main-white;
+            aspect-ratio: 18/22;
         }
+    }
+    .boxWeather {
+        position: absolute;
+        left: 50%;
+        translate: -50%;
+        bottom: 0;
+        z-index: 3;
+        color: $main-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: inherit;
+        min-width: 287px;
+        height: 42px;
+        background-color: rgba($main-black, 0.9);
+        clip-path: polygon(
+            calc(100% - 17.446px) calc(50% - -3.475px),
+            calc(100% - 17.446px) 11.0247px,
+            calc(100% - 17.446px) 11.0247px,
+            calc(100% - 17.589572px) 9.23576418px,
+            calc(100% - 18.005256px) 7.53897984px,
+            calc(100% - 18.670504px) 5.95699566px,
+            calc(100% - 19.562768px) 4.51246032px,
+            calc(100% - 20.6595px) 3.2280225px,
+            calc(100% - 21.938152px) 2.12633088px,
+            calc(100% - 23.376176px) 1.23003414px,
+            calc(100% - 24.951024px) 0.56178096px,
+            calc(100% - 26.640148px) 0.14422002px,
+            calc(100% - 28.421px) 1.824176748375e-31px,
+            28.4205px 0px,
+            28.4205px 0px,
+            26.6396779px 0.14422002px,
+            24.9505832px 0.56178096px,
+            23.3757633px 1.23003414px,
+            21.9377656px 2.12633088px,
+            20.6591375px 3.2280225px,
+            19.5624264px 4.51246032px,
+            18.6701797px 5.95699566px,
+            18.0049448px 7.53897984px,
+            17.5892691px 9.23576418px,
+            17.4457px 11.0247px,
+            17.4457px calc(50% - -3.475px),
+            17.4457px calc(50% - -3.475px),
+            17.21727846px calc(50% - -6.3168465px),
+            16.55599808px calc(50% - -9.012992px),
+            15.49783522px calc(50% - -11.5272955px),
+            14.07876624px calc(50% - -13.823616px),
+            12.3347675px calc(50% - -15.8658125px),
+            10.30181536px calc(50% - -17.617744px),
+            8.01588618px calc(50% - -19.0432695px),
+            5.51295632px calc(50% - -20.106248px),
+            2.82900214px calc(50% - -20.7705385px),
+            3.2080271772372e-15px calc(50% - -21px),
+            17.4457px calc(100% - 0px),
+            calc(100% - 0px) calc(100% - 0px),
+            calc(100% - 0px) calc(100% - 0px),
+            calc(100% - 2.829064px) calc(100% - 0.22946149999999px),
+            calc(100% - 5.513072px) calc(100% - 0.893752px),
+            calc(100% - 8.016048px) calc(100% - 1.9567305px),
+            calc(100% - 10.302016px) calc(100% - 3.382256px),
+            calc(100% - 12.335px) calc(100% - 5.1341875px),
+            calc(100% - 14.079024px) calc(100% - 7.176384px),
+            calc(100% - 15.498112px) calc(100% - 9.4727045px),
+            calc(100% - 16.556288px) calc(100% - 11.987008px),
+            calc(100% - 17.217576px) calc(100% - 14.6831535px),
+            calc(100% - 17.446px) calc(100% - 17.525px)
+        );
         p {
-            font-size: FZ(14);
-            color: #fff;
-            letter-spacing: 0.06em;
-            text-align: center;
-            margin-top: 0.8em;
+            font-size: FZ(16);
+            border-right: 1px solid;
+            padding-right: 1em;
+            margin-right: 1em;
+        }
+        span {
+            &::after {
+                content: "℃";
+            }
         }
     }
 }
-
 /* =================================
- * 求人を検索
+ * 黒川温泉観光協会について
  * ------------------------------ */
-.containerSearch {
-    @include flex-center;
+.containerTopAbout {
+    position: relative;
+    @include flex-center(column);
     padding-inline: 4vw;
-    background-color: $bg-white;
-    z-index: 3;
-    .searchInner {
-        display: flex;
-        width: 100%;
-        font-size: inherit;
-        flex-direction: column;
-        max-width: $articleMaxWidth;
-        --padding-inline: 2em;
-        margin-bottom: -7.5em;
-        translate: 0 -7.5em;
-        &::before {
-            content: "";
+    padding-top: 10rem;
+    padding-bottom: 8rem;
+    gap: 9rem 0;
+    .bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+        div {
             position: absolute;
-            right: 6rem;
-            bottom: calc(100% - 6rem);
-            width: 9.8rem;
-            background: url("/images/mascot01.webp") no-repeat center center /
-                contain;
-            aspect-ratio: 589/1000;
-        }
-        .boxTop {
-            background-color: $bg-white;
-            position: relative;
-            font-size: inherit;
+            top: 10vh;
+            left: 0;
             width: 100%;
-            display: flex;
-            justify-content: space-between;
-            gap: 0 3.2rem;
-            padding: 0.8em var(--padding-inline);
-            @include top-radius($radius24);
-            .wrapTitle {
-                position: relative;
-                font-size: inherit;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-end;
-                padding-top: 1em;
-                gap: 0.5em 0;
-                h2 {
-                    font-size: FZ(20);
-                    color: $font-black;
-                    position: relative;
-                    padding-left: 1.8em;
-                    font-weight: 500;
-                    &::before {
-                        content: "";
-                        position: absolute;
-                        top: 50%;
-                        translate: 0 -50%;
-                        left: 0;
-                        width: 1.4em;
-                        @include svg-icon-loupe($color-orange);
-                    }
-                }
-                .itemCount {
-                    color: $font-black;
-                    font-size: FZ(20);
-                    display: flex;
-                    align-items: flex-end;
-                    &::before,
-                    &::after {
-                        font-size: 0.6em;
-                        line-height: 1.82em;
-                    }
-                    &::before {
-                        content: "掲載：";
-                    }
-                    &::after {
-                        content: "件";
-                        margin-left: 0.3em;
-                    }
-                }
-            }
-            .blockFilters {
-                font-size: inherit;
-                flex: 1;
+            height: 100vh;
+            opacity: 0.3;
+            will-change: transform;
+            background: url(/images/about/section-bg.webp) center / cover
+                no-repeat;
+        }
+    }
+    .boxHead {
+        position: relative;
+        font-size: inherit;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto 1fr;
+        gap: 4rem 10rem;
+        margin-left: 6rem;
+        .itemLogo {
+            grid-row: span 2;
+            width: 16.3rem;
+            svg {
+                width: 100%;
+                fill: $main-black;
+                aspect-ratio: 18/22;
             }
         }
-        .boxBottom {
+        h2 {
+            @include itemTitle;
+            --c: #1a1a1a;
+            justify-self: start;
+            text-align: left;
+            padding-left: 1em;
+            padding-right: 1.4em;
+            min-width: unset;
+        }
+        p {
+            font-size: FZ(16);
+            max-width: 31em;
+            letter-spacing: 0.04em;
+            line-height: 2.4em;
+        }
+    }
+    article {
+        display: flex;
+        justify-content: space-between;
+        max-width: $articleMaxWidth;
+        h3 {
+            @include itemH3();
+        }
+        .boxContents {
             position: relative;
             font-size: inherit;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            background-color: $main-orange;
-            align-items: center;
-            gap: 0 1.4em;
-            padding: 0.8em var(--padding-inline);
-            @include bottom-radius($radius24);
-            .itemInput {
-                position: relative;
-                flex: 1;
-                background-color: #fff;
-                border-radius: $radius14;
-                height: 2.75em;
-                display: flex;
-                align-items: center;
-                font-size: inherit;
-                @include box-shadow;
-                padding-left: 3em;
-                &::before {
-                    content: "";
-                    position: absolute;
-                    top: 50%;
-                    translate: 0 -50%;
-                    left: 1.6em;
-                    width: 1em;
-                    @include svg-icon-building($color-orange);
-                    z-index: 1;
-                }
-                input {
-                    font-size: FZ(14);
-                    padding: 0.5em 1em;
-                    width: 100%;
-                    &::placeholder {
-                        color: rgba(#726b6299, 0.6);
-                    }
-                }
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            border-top: 1px solid;
+            border-left: 1px solid;
+            padding-bottom: 1.6rem;
+            .itemImage {
+                grid-column: span 2;
             }
-            button {
+            img {
+                aspect-ratio: 1.9;
+                object-fit: cover;
+            }
+            p {
+                font-size: FZ(16);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                line-height: 1.6em;
+                padding-left: 4rem;
+            }
+            a {
                 position: relative;
-                font-size: inherit;
-                width: 3.8rem;
+                display: inline-block;
+                width: 4.8rem;
                 aspect-ratio: 1;
                 border-radius: 50%;
-                background-color: #fff;
-                @include box-shadow;
-                margin-right: 0.6em;
+                background-color: $main-black;
+                margin-right: 4rem;
+                align-self: center;
                 &::before {
                     content: "";
                     position: absolute;
                     inset: 0;
                     margin: auto;
-                    width: 45%;
-                    @include svg-icon-loupe($color-orange);
+                    width: 14px;
+                    @include svg-arrow-right("fff");
                 }
             }
         }
     }
 }
-
 /* =================================
- * 積極採用企業
+ * お知らせ
  * ------------------------------ */
-.containerPickUp {
+.containerTopNews {
     @include flex-center;
-    background-color: $bg-white;
-    padding: 3em 4vw 0;
-    z-index: 2;
-    &::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        height: 5em;
-        @include bottom-radius($radius80);
-        background-color: $bg-white;
-        font-size: inherit;
-    }
+    padding-inline: 4vw;
     article {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         max-width: $articleMaxWidth;
-        h2 {
-            &::before {
-                width: 1.25em;
-                top: 40%;
-                @include svg-object-fire($color-orange);
-            }
-        }
-        .listPickUp {
-            position: relative;
-            font-size: inherit;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            margin-top: 2em;
-            gap: 1em;
-            .boxShop {
-                position: relative;
-                font-size: inherit;
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                @include box-shadow;
-                border-radius: $radius14;
-                .iconNew {
-                    position: absolute;
-                    top: -0.5em;
-                    left: -0.5em;
-                    width: 45px;
-                    height: 40px;
-                    @include flex-center;
-                    background-color: #d0442e;
-                    color: #fff;
-                    font-size: FZ(12);
-                    border-radius: 54px;
-                }
-                a {
-                    display: block;
-                    font-size: inherit;
-                    width: 100%;
-                    img {
-                        width: 100%;
-                        aspect-ratio: 218/130;
-                        object-fit: cover;
-                        font-size: inherit;
-                        @include top-radius;
-                    }
-                }
-                .typeList {
-                    background-color: $sub-orange;
-                    font-size: inherit;
-                    display: flex;
-                    justify-content: center;
-                    @include bottom-radius;
-                    li {
-                        padding-block: 0.9em;
-                        font-size: FZ(12);
-                        color: $font-black;
-                        position: relative;
-                        padding-inline: 0.6em;
-                        &:not(:first-of-type) {
-                            &::before {
-                                content: "";
-                                position: absolute;
-                                left: 0;
-                                top: 50%;
-                                translate: 0 -50%;
-                                width: 1px;
-                                height: 1em;
-                                background-color: #d6d6d6;
-                                mix-blend-mode: multiply;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/* =================================
- * 注目の求人
- * ------------------------------ */
-.containerSpotlightCard {
-    @include flex-center;
-    background-color: $base-white;
-    padding: 9em 4vw 0;
-    article {
-        display: flex;
-        flex-direction: column;
-        max-width: $articleMaxWidth;
-        gap: 2em 0;
-        .boxH2 {
-            h2 {
-                padding-left: 2em;
-                &::before {
-                    width: 1.5em;
-                    top: 40%;
-                    @include svg-icon-speaker($color-orange);
-                }
-            }
-        }
-        .boxSlideList {
-            position: relative;
-            --half-size: 12%;
-            font-size: inherit;
-            &::before,
-            &::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: var(--half-size);
-                background-color: $base-white;
-                z-index: 1;
-                pointer-events: none;
-                opacity: 0.5;
-            }
-            &::before {
-                left: 0;
-            }
-            &::after {
-                right: 0;
-            }
-
-            // :global(.splide__track) {
-            //     overflow: visible;
-            // }
-            :global(.splide) {
-                font-size: inherit;
-            }
-            :global(.splide__track) {
-                font-size: inherit;
-            }
-            :global(.splide__list) {
-                font-size: inherit;
-                translate: calc(var(--half-size) * -1);
-            }
-            :global(.splide__slide) {
-                font-size: inherit;
-                padding-bottom: 1rem;
-            }
-
-            // 矢印まわり（機能クラス splide__arrows は TSX 側で付与）
-            .splideArrows {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                translate: -50% -50%;
-                width: calc(100% + 5rem);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                pointer-events: none;
-                font-size: inherit;
-                z-index: 2;
-
-                // ★ ここで Splide デフォルトを打ち消す
-                :global(.splide__arrow--prev),
-                :global(.splide__arrow--next) {
-                    left: auto;
-                    right: auto;
-                    position: static;
-                    transform: unset;
-                }
-
-                // ★ 矢印ボタン本体と svg をまとめて上書き
-                :global(.splide__arrow) {
-                    pointer-events: auto;
-                    opacity: 1;
-                    width: 4.5rem;
-                    height: 4.5rem;
-                    @include flex-center;
-                    background-color: transparent;
-                    svg {
-                        width: 4.5rem;
-                        height: 4.5rem;
-                        fill: $main-black;
-                    }
-                }
-                :global(.splide__arrow--prev) {
-                    svg {
-                        rotate: -90deg;
-                    }
-                }
-                :global(.splide__arrow--next) {
-                    svg {
-                        rotate: 90deg;
-                    }
-                }
-            }
-
-            // スライド内の画像(button)
-            .tagButton {
-                width: 100%;
-                aspect-ratio: 211/256;
-                padding: 1.4rem;
-                display: flex;
-                align-items: flex-end;
-                justify-content: center;
-                border-radius: 14px;
-                @include box-shadow;
-                .label {
-                    width: 100%;
-                    @include flex-center;
-                    background-color: #4c6be8;
-                    font-size: 1.6rem;
-                    color: $base-white;
-                    height: 2.4em;
-                    border-radius: $radius8;
-                }
-            }
-        }
-    }
-}
-
-/* =================================
- * 人気の条件
- * ------------------------------ */
-.containerConditions {
-    @include flex-center;
-    background-color: $base-white;
-    padding: 5em 4vw 0;
-    article {
-        display: flex;
-        flex-direction: column;
-        max-width: $articleMaxWidth;
-        gap: 2em 0;
-        h2 {
-            padding-left: 2em;
-            &::before {
-                width: 1.7em;
-                top: 40%;
-                @include svg-object-star($color-orange);
-            }
-        }
-        .boxSlideList {
-            position: relative;
-            --half-size: 9.5%;
-            &::before,
-            &::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: var(--half-size);
-                background-color: $base-white;
-                z-index: 1;
-                pointer-events: none;
-                opacity: 0.5;
-            }
-            &::before {
-                left: 0;
-            }
-            &::after {
-                right: 0;
-            }
-
-            // :global(.splide__track) {
-            //     overflow: visible;
-            // }
-            :global(.splide__list) {
-                translate: calc(var(--half-size) * -1);
-            }
-
-            // 矢印まわり（機能クラス splide__arrows は TSX 側で付与）
-            .splideArrows {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                translate: -50% -50%;
-                width: calc(100% + 5rem);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                pointer-events: none;
-                font-size: inherit;
-                z-index: 2;
-
-                // ★ ここで Splide デフォルトを打ち消す
-                :global(.splide__arrow--prev),
-                :global(.splide__arrow--next) {
-                    left: auto;
-                    right: auto;
-                    position: static;
-                    transform: unset;
-                }
-
-                // ★ 矢印ボタン本体と svg をまとめて上書き
-                :global(.splide__arrow) {
-                    pointer-events: auto;
-                    opacity: 1;
-                    width: 4.5rem;
-                    height: 4.5rem;
-                    @include flex-center;
-                    background-color: transparent;
-                    svg {
-                        width: 4.5rem;
-                        height: 4.5rem;
-                        fill: $main-black;
-                    }
-                }
-                :global(.splide__arrow--prev) {
-                    svg {
-                        rotate: -90deg;
-                    }
-                }
-                :global(.splide__arrow--next) {
-                    svg {
-                        rotate: 90deg;
-                    }
-                }
-            }
-
-            // スライド内の画像(button)
-            .tagButton {
-                width: 100%;
-                aspect-ratio: 211/256;
-                padding: 1.4rem;
-                display: flex;
-                align-items: flex-end;
-                justify-content: center;
-                border-radius: 14px;
-                @include box-shadow;
-                .label {
-                    width: 100%;
-                    @include flex-center;
-                    background-color: #4c6be8;
-                    font-size: 1.6rem;
-                    color: $base-white;
-                    height: 2.4em;
-                    border-radius: $radius8;
-                }
-            }
-        }
-    }
-}
-
-/* =================================
- * 転職のヒント
- * ------------------------------ */
-.containerTips {
-    @include flex-center;
-    background-color: $base-white;
-    padding: 4em 4vw 0;
-    &::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        height: 5em;
-        @include bottom-radius($radius80);
-        background-color: $base-white;
-        font-size: inherit;
-    }
-    article {
-        display: flex;
-        flex-direction: column;
-        max-width: $articleMaxWidth;
-        gap: 2em 0;
-        h2 {
-            padding-left: 2.2em;
-            &::before {
-                width: 1.7em;
-                top: 40%;
-                @include svg-object-book($color-orange);
-            }
+        padding-bottom: 18rem;
+        padding-top: 5rem;
+        h3 {
+            @include itemH3();
         }
         ul {
             position: relative;
-            display: grid;
+            flex: 1;
             font-size: inherit;
-            max-width: $articleMaxWidth;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.8rem 2.4rem;
-            margin-bottom: 2rem;
-            li {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            li,
+            a {
                 font-size: inherit;
-                grid-row: span 3;
+                grid-column: span 3;
                 display: grid;
-                grid-template-rows: subgrid;
-                a {
-                    font-size: inherit;
-                    grid-row: span 3;
-                    display: grid;
-                    grid-template-rows: subgrid;
-                    gap: 0;
-                    .itemImage {
-                        position: relative;
-                        img {
-                            aspect-ratio: 304/230;
-                            border-radius: 1.4rem;
-                            object-fit: cover;
-                        }
-                    }
-                    h3 {
-                        padding-inline: 1.3rem;
-                        font-size: FZ(20);
-                        margin-top: 1.6rem;
-                        line-height: 1.4em;
-                        letter-spacing: 0.1em;
-                        font-weight: 500;
-                    }
-                    .summary {
-                        padding-inline: 1.3rem;
-                        margin-top: 0.8rem;
-                        font-size: FZ(14);
-                        letter-spacing: 0.1em;
-                        text-align: justify;
-                        line-height: 1.4em;
-                        display: -webkit-box; /* 必須 */
-                        -webkit-box-orient: vertical; /* 必須 */
-                        -webkit-line-clamp: 2;
-                        line-clamp: 2; /* 行数を制限 */
-                        overflow: hidden;
+                grid-template-columns: subgrid;
+                align-items: center;
+            }
+            li {
+                border-bottom: 1px solid;
+                padding: 4.6rem 4rem;
+                &:first-of-type {
+                    border-top: 1px solid;
+                }
+            }
+            a {
+                gap: 0 5rem;
+                span {
+                    font-size: FZ(14);
+                    letter-spacing: 0.04em;
+                }
+                p {
+                    font-size: FZ(16);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                }
+                i {
+                    position: relative;
+                    width: 3.6rem;
+                    aspect-ratio: 1;
+                    border-radius: 50%;
+                    background-color: $main-black;
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        margin: auto;
+                        width: 11px;
+                        @include svg-arrow-right("fff");
                     }
                 }
             }
         }
     }
 }
-
 /* =================================
- * Message
+ * 協会概要
  * ------------------------------ */
-.containerMessage {
-    padding: 10em 4vw 0;
-    z-index: 0;
+.containerTopAssociationOverview {
     @include flex-center;
+    padding: 9rem 4vw 12rem;
     &::before,
     &::after {
         content: "";
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        position: absolute;
+        inset: 0;
         z-index: -1;
-        height: 100vh;
-        height: 100dvh;
     }
     &::before {
-        background: url("/images/bg-top-message.webp") no-repeat center center /
-            cover;
-        filter: blur(4px);
-        scale: 1.01;
+        background: url(/images/top/bg-association-overview.webp) no-repeat
+            center center/cover;
     }
     &::after {
-        background-color: rgba(#fff, 0.3);
+        background: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.4) 100%
+        );
     }
     article {
-        max-width: 1032px;
-        display: flex;
-        justify-content: space-between;
-        gap: 0 4em;
-        align-items: flex-start;
-        .itemImage {
-            flex: 1;
-            font-size: inherit;
-            overflow: hidden;
-            height: 37em;
+        @include flex-center(column);
+        color: $main-white;
+        max-width: 71rem;
+        h2 {
+            @include itemTitle;
+            --c: #fff;
         }
-        .wrapMessage {
+        dl {
             position: relative;
-            background-color: #fff;
-            color: $font-black;
+            margin-top: 7.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr;
             font-size: inherit;
-
-            // width: 38.125em;
-            width: 58%;
-            display: flex;
-            flex-direction: column;
-            padding: 3em;
-            border-radius: 0 3.75em 3.75em;
-            margin-top: 2em;
-            @include box-shadow;
-            gap: 1em;
-            &::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                right: 100%;
-                width: 1.625em;
-                @include svg-object-radius("fff");
+            div {
+                grid-column: span 2;
+                font-size: inherit;
+                display: grid;
+                grid-template-columns: subgrid;
+                gap: 0 5rem;
+                &:first-of-type {
+                    dt,
+                    dd {
+                        border-top: 1px solid;
+                    }
+                }
+                dt,
+                dd {
+                    font-size: FZ(16);
+                    font-weight: 500;
+                    padding-block: 3.2rem;
+                    border-bottom: 1px solid;
+                }
+                dt {
+                    min-width: 12rem;
+                }
+                dd {
+                    padding-right: 2em;
+                    a,
+                    address,
+                    span,
+                    i {
+                        font-size: inherit;
+                    }
+                    address {
+                        display: flex;
+                        gap: 1em;
+                    }
+                }
             }
-            h2 {
-                font-size: FZ(24);
-                color: $main-orange;
-                font-weight: 500;
-                text-transform: capitalize;
-            }
-            p {
-                font-size: FZ(16);
-                text-align: justify;
-                font-feature-settings: "palt";
-                line-height: 1.8em;
-                letter-spacing: 0.04em;
-            }
-        }
-        .itemMascot {
-            position: absolute;
-            left: -4rem;
-            bottom: -3rem;
-            width: 9.4rem;
-            aspect-ratio: 509/996;
-            background: url("/images/mascot03.webp") no-repeat center
-                center/contain;
         }
     }
-}
-
-/* =================================
- * LINEで応募するモーダル
- * ------------------------------ */
-.boxLineModal {
-    @include box-line-modal;
 }

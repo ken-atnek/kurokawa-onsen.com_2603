@@ -1,5 +1,6 @@
 @use "reset_v2.5" as *;
 @use "variable" as *;
+@use "modal-video";
 
 // @import "swiper/css";
 // @import "swiper/css/navigation";
@@ -17,7 +18,7 @@ body {
     justify-content: space-between;
     width: 100%;
     color: $main-black;
-    background-color: $base-white;
+    background-color: #eaebec;
     @include tbw {
         overflow-x: clip;
     }
