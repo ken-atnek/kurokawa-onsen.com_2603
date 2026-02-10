@@ -8,7 +8,6 @@
 /* stylelint-disable keyframes-name-pattern */
 /* stylelint-disable custom-property-pattern */
 // このファイル全体のルールを無効にする
-
 @mixin layoutBlockHead {
     width: stretch;
     font-size: inherit;
@@ -27,7 +26,7 @@
     margin-bottom: 2em;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2em 2em;
+    gap: 2em;
     @include sp {
         padding: 4vw 4vw 16vw;
         display: flex;
@@ -75,9 +74,9 @@
     flex-direction: column;
     width: stretch;
     gap: 2em 0;
-    padding: 2em 0 2em;
+    padding: 2em 0;
     @include sp {
-        padding: 4vw 4vw;
+        padding: 4vw;
     }
     .titleMonthNumber {
         font-size: inherit;
@@ -143,12 +142,13 @@
         }
     }
 }
+
 /* =================================
  * 年間スケジュール
  * ------------------------------ */
 .containerSchedule {
     @include flex-center(column);
-    padding: 8rem 4vw 8rem;
+    padding: 8rem 4vw;
     h3 {
         font-size: FZ(26);
         font-weight: 700;
@@ -171,53 +171,6 @@
         &:not(:last-child) {
             border-bottom: 1px solid #707070;
         }
-    }
-    .blockSpring {
-        .blockHead {
-            @include layoutBlockHead;
-        }
-        .movieContents {
-            @include layoutMovieContents;
-        }
-        .boxDetails {
-            font-size: inherit;
-            @include layoutArticleSchedule;
-        }
-    }
-    .blockEarlySummer {
-        .blockHead {
-            @include layoutBlockHead;
-        }
-        .boxDetails {
-            font-size: inherit;
-            @include layoutArticleSchedule;
-        }
-    }
-    .blockSummer {
-        .blockHead {
-            @include layoutBlockHead;
-        }
-        .movieContents {
-            @include layoutMovieContents;
-        }
-        .boxDetails {
-            font-size: inherit;
-            @include layoutArticleSchedule;
-        }
-    }
-    .blockAutumn {
-        .blockHead {
-            @include layoutBlockHead;
-        }
-        .movieContents {
-            @include layoutMovieContents;
-        }
-        .boxDetails {
-            font-size: inherit;
-            @include layoutArticleSchedule;
-        }
-    }
-    .blockWinter {
         .blockHead {
             @include layoutBlockHead;
         }

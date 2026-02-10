@@ -4,7 +4,6 @@
 @use "../styles/variable" as *;
 @use "../styles/svg" as *;
 @use "../styles/mixin" as *;
-
 .containerPageTop {
     @include flex-center(column);
     background-size: cover;
@@ -13,7 +12,6 @@
     color: $main-white;
     padding-bottom: 12.25em;
     padding-top: 1.5em;
-
     h1 {
         width: 5.2rem;
         svg {
@@ -34,7 +32,7 @@
         letter-spacing: 0.08em;
     }
     &.bg-schedule {
-        background-image: url(/images/schedule/hero.webp);
+        background-image: url("/images/schedule/hero.webp");
         background-position: bottom center;
     }
 }

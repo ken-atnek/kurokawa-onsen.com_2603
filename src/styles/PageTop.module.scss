@@ -14,9 +14,9 @@
     font-size: FZ(20);
     font-weight: 600;
     letter-spacing: 0.04em;
-    writing-mode: vertical-rl; //縦書き
-    text-orientation: upright; //縦書き英数回転
-    font-feature-settings: initial; //左詰め解除
+    writing-mode: vertical-rl; // 縦書き
+    text-orientation: upright; // 縦書き英数回転
+    font-feature-settings: initial; // 左詰め解除
     padding-top: 1em;
     padding-right: 0.2em;
     &::before {
@@ -78,52 +78,52 @@
             calc(100% - 17.446px) calc(50% - -3.475px),
             calc(100% - 17.446px) 11.0247px,
             calc(100% - 17.446px) 11.0247px,
-            calc(100% - 17.589572px) 9.23576418px,
-            calc(100% - 18.005256px) 7.53897984px,
-            calc(100% - 18.670504px) 5.95699566px,
-            calc(100% - 19.562768px) 4.51246032px,
-            calc(100% - 20.6595px) 3.2280225px,
-            calc(100% - 21.938152px) 2.12633088px,
-            calc(100% - 23.376176px) 1.23003414px,
-            calc(100% - 24.951024px) 0.56178096px,
-            calc(100% - 26.640148px) 0.14422002px,
-            calc(100% - 28.421px) 1.824176748375e-31px,
-            28.4205px 0px,
-            28.4205px 0px,
-            26.6396779px 0.14422002px,
-            24.9505832px 0.56178096px,
-            23.3757633px 1.23003414px,
-            21.9377656px 2.12633088px,
-            20.6591375px 3.2280225px,
-            19.5624264px 4.51246032px,
-            18.6701797px 5.95699566px,
-            18.0049448px 7.53897984px,
-            17.5892691px 9.23576418px,
+            calc(100% - 17.5896px) 9.2358px,
+            calc(100% - 18.0053px) 7.539px,
+            calc(100% - 18.6705px) 5.957px,
+            calc(100% - 19.5628px) 4.5125px,
+            calc(100% - 20.6595px) 3.228px,
+            calc(100% - 21.9382px) 2.1263px,
+            calc(100% - 23.3762px) 1.23px,
+            calc(100% - 24.951px) 0.5618px,
+            calc(100% - 26.6401px) 0.1442px,
+            calc(100% - 28.421px) 0,
+            28.4205px 0,
+            28.4205px 0,
+            26.6397px 0.1442px,
+            24.9506px 0.5618px,
+            23.3758px 1.23px,
+            21.9378px 2.1263px,
+            20.6591px 3.228px,
+            19.5624px 4.5125px,
+            18.6702px 5.957px,
+            18.0049px 7.539px,
+            17.5893px 9.2358px,
             17.4457px 11.0247px,
             17.4457px calc(50% - -3.475px),
             17.4457px calc(50% - -3.475px),
-            17.21727846px calc(50% - -6.3168465px),
-            16.55599808px calc(50% - -9.012992px),
-            15.49783522px calc(50% - -11.5272955px),
-            14.07876624px calc(50% - -13.823616px),
-            12.3347675px calc(50% - -15.8658125px),
-            10.30181536px calc(50% - -17.617744px),
-            8.01588618px calc(50% - -19.0432695px),
-            5.51295632px calc(50% - -20.106248px),
-            2.82900214px calc(50% - -20.7705385px),
-            3.2080271772372e-15px calc(50% - -21px),
+            17.2173px calc(50% - -6.3168px),
+            16.556px calc(50% - -9.013px),
+            15.4978px calc(50% - -11.5273px),
+            14.0788px calc(50% - -13.8236px),
+            12.3348px calc(50% - -15.8658px),
+            10.3018px calc(50% - -17.6177px),
+            8.0159px calc(50% - -19.0433px),
+            5.513px calc(50% - -20.1062px),
+            2.829px calc(50% - -20.7705px),
+            0 calc(50% - -21px),
             17.4457px calc(100% - 0px),
             calc(100% - 0px) calc(100% - 0px),
             calc(100% - 0px) calc(100% - 0px),
-            calc(100% - 2.829064px) calc(100% - 0.22946149999999px),
-            calc(100% - 5.513072px) calc(100% - 0.893752px),
-            calc(100% - 8.016048px) calc(100% - 1.9567305px),
-            calc(100% - 10.302016px) calc(100% - 3.382256px),
-            calc(100% - 12.335px) calc(100% - 5.1341875px),
-            calc(100% - 14.079024px) calc(100% - 7.176384px),
-            calc(100% - 15.498112px) calc(100% - 9.4727045px),
-            calc(100% - 16.556288px) calc(100% - 11.987008px),
-            calc(100% - 17.217576px) calc(100% - 14.6831535px),
+            calc(100% - 2.8291px) calc(100% - 0.2295px),
+            calc(100% - 5.5131px) calc(100% - 0.8938px),
+            calc(100% - 8.016px) calc(100% - 1.9567px),
+            calc(100% - 10.302px) calc(100% - 3.3823px),
+            calc(100% - 12.335px) calc(100% - 5.1342px),
+            calc(100% - 14.079px) calc(100% - 7.1764px),
+            calc(100% - 15.4981px) calc(100% - 9.4727px),
+            calc(100% - 16.5563px) calc(100% - 11.987px),
+            calc(100% - 17.2176px) calc(100% - 14.6832px),
             calc(100% - 17.446px) calc(100% - 17.525px)
         );
         p {
@@ -139,6 +139,7 @@
         }
     }
 }
+
 /* =================================
  * 黒川温泉観光協会について
  * ------------------------------ */
@@ -162,7 +163,7 @@
             height: 100vh;
             opacity: 0.3;
             will-change: transform;
-            background: url(/images/about/section-bg.webp) center / cover
+            background: url("/images/about/section-bg.webp") center / cover
                 no-repeat;
         }
     }
@@ -204,7 +205,7 @@
         justify-content: space-between;
         max-width: $articleMaxWidth;
         h3 {
-            @include itemH3();
+            @include itemH3;
         }
         .boxContents {
             position: relative;
@@ -250,6 +251,7 @@
         }
     }
 }
+
 /* =================================
  * お知らせ
  * ------------------------------ */
@@ -263,7 +265,7 @@
         padding-bottom: 18rem;
         padding-top: 5rem;
         h3 {
-            @include itemH3();
+            @include itemH3;
         }
         ul {
             position: relative;
@@ -316,6 +318,7 @@
         }
     }
 }
+
 /* =================================
  * 協会概要
  * ------------------------------ */
@@ -330,14 +333,14 @@
         z-index: -1;
     }
     &::before {
-        background: url(/images/top/bg-association-overview.webp) no-repeat
+        background: url("/images/top/bg-association-overview.webp") no-repeat
             center center/cover;
     }
     &::after {
         background: linear-gradient(
             0deg,
-            rgba(0, 0, 0, 0.4) 0%,
-            rgba(0, 0, 0, 0.4) 100%
+            rgb(0 0 0 / 40%) 0%,
+            rgb(0 0 0 / 40%) 100%
         );
     }
     article {

@@ -5,8 +5,8 @@
  * Last updated: 2026-02-09
  * ======================================= */
 import styles from './Footer.module.scss';
-import Link from 'next/link';
 import ExternalLink from '@/components/common/ExternalLink';
+import ScrollLink from '@/components/common/ScrollLink';
 
 const Footer = () => {
   return (
@@ -14,26 +14,33 @@ const Footer = () => {
       <footer className={styles.containerFooter}>
         <section>
           <nav>
-            <Link href="/">黒川温泉とは</Link>
-            <Link href="/">加盟店一覧</Link>
-            <Link href="/">年間スケジュール</Link>
-            <Link href="/">交通アクセス</Link>
-            <Link href="/">駐車場ライブカメラ</Link>
+            <ScrollLink href="/">黒川温泉とは</ScrollLink>
+            <ScrollLink href="/">加盟店一覧</ScrollLink>
+            <ScrollLink href="/schedule/">年間スケジュール</ScrollLink>
+            <ScrollLink href="/">交通アクセス</ScrollLink>
+            <ExternalLink href="https://www.youmore-minamioguni.com/livecamera/">
+              駐車場ライブカメラ
+            </ExternalLink>
           </nav>
           <div className={styles.boxLogo}>
-            <svg role="img" aria-labelledby="footerLogoTitle">
-              <title id="footerLogoTitle">黒川温泉観光協会</title>
-              <use href="#svg_logo" />
-            </svg>
+            <ScrollLink href="/">
+              <svg role="img" aria-labelledby="footerLogoTitle">
+                <title id="footerLogoTitle">黒川温泉観光協会</title>
+                <use href="#svg_logo" />
+              </svg>
+            </ScrollLink>
             <div className={styles.copyRight}>
               © 2026 Kurokawa Onsen Tourism Association
             </div>
           </div>
           <nav>
-            <Link href="/">ご利用規約</Link>
-            <Link href="/">特定商法取引法に基づく表記</Link>
-            <Link href="/">プライバシーポリシ＝</Link>
-            <ExternalLink className={styles.linkContact}>
+            <ScrollLink href="/">ご利用規約</ScrollLink>
+            <ScrollLink href="/">特定商法取引法に基づく表記</ScrollLink>
+            <ScrollLink href="/">プライバシーポリシ＝</ScrollLink>
+            <ExternalLink
+              className={styles.linkContact}
+              href="mailto:info@kurokawa-onsen.com"
+            >
               <span>お問い合わせ</span>
             </ExternalLink>
           </nav>
