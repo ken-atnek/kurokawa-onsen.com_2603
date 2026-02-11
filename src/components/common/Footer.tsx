@@ -14,7 +14,7 @@ const Footer = () => {
       <footer className={styles.containerFooter}>
         <section>
           <nav>
-            <ScrollLink href="/">黒川温泉とは</ScrollLink>
+            <ScrollLink href="/about/">黒川温泉とは</ScrollLink>
             <ScrollLink href="/">加盟店一覧</ScrollLink>
             <ScrollLink href="/schedule/">年間スケジュール</ScrollLink>
             <ScrollLink href="/">交通アクセス</ScrollLink>

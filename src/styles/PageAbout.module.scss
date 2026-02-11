@@ -1,0 +1,56 @@
+/* =================================
+ * 	黒川温泉観光協会 黒川温泉について
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+
+/* =================================
+ * HEAD
+ * ------------------------------ */
+.containerHeadBlack,
+.containerHeadWhite {
+    @include flex-center;
+    padding: 4em 0;
+    gap: 0 4rem;
+    .boxImage {
+        flex: 1;
+        max-width: 98rem;
+        img {
+            width: 100%;
+        }
+    }
+    .boxText {
+        font-size: inherit;
+        align-self: flex-start;
+        p {
+            display: inline-block;
+            font-size: FZ(16);
+            @include Serif;
+            line-height: 2.5em;
+            letter-spacing: 0.04em;
+        }
+    }
+}
+.containerHeadBlack {
+    background-color: $main-black;
+    color: $main-white;
+    .boxText {
+        padding-right: 4rem;
+        p {
+            width: 36em;
+        }
+    }
+}
+.containerHeadWhite {
+    .boxText {
+        padding-left: 4rem;
+        p {
+            width: 28em;
+        }
+    }
+}
