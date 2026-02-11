@@ -54,3 +54,190 @@
         }
     }
 }
+/* =================================
+ * 黒川温泉郷とは・他
+ * ------------------------------ */
+.containerAboutDetails {
+    @include flex-center(column);
+    background-color: $main-black;
+    color: $main-white;
+    padding-inline: 4vw;
+    padding-bottom: 8rem;
+    gap: 5em 0;
+    article {
+        @include flex-center(column);
+        max-width: 84rem;
+        @include Serif;
+        .boxImage {
+            position: relative;
+            &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 60%;
+                background-image: linear-gradient(
+                    to top,
+                    rgba($main-black, 1),
+                    rgba($main-black, 0)
+                );
+            }
+            img {
+                aspect-ratio: 1.5;
+                object-fit: cover;
+            }
+        }
+        h3 {
+            position: relative;
+            font-size: FZ(30);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1em;
+        }
+        p {
+            font-size: FZ(16);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            line-height: 2.25em;
+            text-align: justify;
+        }
+    }
+}
+/* =================================
+ * 黒川温泉郷の歴史
+ * ------------------------------ */
+.containerHistory {
+    @include flex-center(column);
+    padding: 8rem 4vw 8rem;
+    @include Serif;
+    h3 {
+        font-size: FZ(36);
+        font-weight: 600;
+    }
+    ul {
+        position: relative;
+        font-size: 1em;
+        width: 100%;
+        max-width: $articleMaxWidth;
+        display: flex;
+        flex-direction: column;
+        margin-top: 3em;
+        gap: 6em 0;
+        flex-wrap: wrap;
+        padding-top: 3em;
+        height: 170em;
+        //  NOTE 高さ調整
+        @include sp {
+            height: auto;
+            padding-left: 8vw;
+            gap: 10vw 0;
+            padding-top: 4vw;
+        }
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transition: -50%;
+            width: 1px;
+            height: 100%;
+            background-color: $main-black;
+            @include sp {
+                left: 0;
+                translate: unset;
+            }
+        }
+        li {
+            position: relative;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            width: calc(50% - 2.5em);
+            align-items: flex-end;
+            @include sp {
+                width: 100%;
+                align-items: flex-start;
+            }
+            &.list1970,
+            &.list1990,
+            &.list2010 {
+                order: 1;
+                align-self: flex-end;
+                align-items: flex-start;
+                @include sp {
+                    order: unset;
+                }
+                .year {
+                    &::before {
+                        left: unset;
+                        right: calc((100% + 1em) - 0.2em);
+                        @include sp {
+                            right: calc((100% + 8vw) - 1.6vw);
+                        }
+                    }
+                }
+            }
+            &.list1970 {
+                margin-top: 14em;
+                @include sp {
+                    margin-top: unset;
+                }
+            }
+            &.list2010 {
+                margin-top: 10em;
+                @include sp {
+                    margin-top: unset;
+                }
+            }
+            .boxImage {
+                font-size: 1em;
+                margin-top: 0.5em;
+                @include sp {
+                    width: 80%;
+                }
+            }
+            .year {
+                position: relative;
+                font-size: FZ(40);
+                font-weight: 600;
+                &::before {
+                    content: "";
+                    position: absolute;
+                    width: 0.325em;
+                    aspect-ratio: 1;
+                    background-color: $main-black;
+                    border-radius: 50%;
+                    top: 50%;
+                    translate: 0 -50%;
+                    left: calc((100% + 1em) - 0.12em);
+                    @include sp {
+                        width: 3vw;
+                        left: unset;
+                        right: calc((100% + 8vw) - 1.6vw);
+                    }
+                }
+            }
+            h4 {
+                font-size: FZ(20);
+                margin-block: 1em;
+                @include sp {
+                    font-weight: 600;
+                    letter-spacing: 0.04em;
+                }
+            }
+            .boxText {
+                font-size: 1em;
+                p {
+                    font-size: FZ(16);
+                    line-height: 2em;
+                    text-align: justify;
+                    @include sp {
+                        font-size: FZ(16);
+                        line-height: 1.6em;
+                    }
+                }
+            }
+        }
+    }
+}
