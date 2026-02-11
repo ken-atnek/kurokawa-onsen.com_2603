@@ -54,6 +54,7 @@
         }
     }
 }
+
 /* =================================
  * 黒川温泉郷とは・他
  * ------------------------------ */
@@ -104,12 +105,13 @@
         }
     }
 }
+
 /* =================================
  * 黒川温泉郷の歴史
  * ------------------------------ */
 .containerHistory {
     @include flex-center(column);
-    padding: 8rem 4vw 8rem;
+    padding: 8rem 4vw;
     @include Serif;
     h3 {
         font-size: FZ(36);
@@ -121,12 +123,12 @@
         width: 100%;
         max-width: $articleMaxWidth;
         display: flex;
-        flex-direction: column;
+        flex-flow: column wrap;
         margin-top: 3em;
         gap: 6em 0;
-        flex-wrap: wrap;
         padding-top: 3em;
         height: 170em;
+
         //  NOTE 高さ調整
         @include sp {
             height: auto;

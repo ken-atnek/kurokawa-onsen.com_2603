@@ -39,4 +39,8 @@
         background-image: url("/images/about/hero.webp");
         background-position: center center;
     }
+    &.bg-access {
+        background-image: url("/images/access/hero.webp");
+        background-position: bottom center;
+    }
 }
