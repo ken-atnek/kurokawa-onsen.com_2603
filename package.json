@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=\"--no-warnings --no-deprecation\" next dev --webpack",
-    "build:demo": "cross-env NEXT_PUBLIC_IS_REAL_PROD=false NEXT_PUBLIC_METADATA_BASE=https://rita5258.xbiz.jp/ next build && rimraf out/404.html out/404 out/db out/backend",
+    "build:demo": "cross-env NEXT_PUBLIC_IS_REAL_PROD=false NEXT_PUBLIC_METADATA_BASE=https://demo-kurokawa-onsen.tuna-pic.co.jp/ next build && rimraf out/404.html out/404 out/db out/backend",
     "build:prod": "cross-env NEXT_PUBLIC_IS_REAL_PROD=true NEXT_PUBLIC_METADATA_BASE=https://kurokawa-onsen.com/ next build && rimraf out/404.html out/404 out/db out/backend",
     "start": "next start",
     "lint": "next lint",

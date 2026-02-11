@@ -46,7 +46,7 @@
             object-fit: cover;
         }
     }
-    h1 {
+    .itemLogo {
         display: inline-block;
         position: absolute;
         inset: 0;
@@ -247,6 +247,17 @@
                     width: 14px;
                     @include svg-arrow-right("fff");
                 }
+                .srOnly {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    padding: 0;
+                    margin: -1px;
+                    overflow: hidden;
+                    clip-path: inset(50%);
+                    white-space: nowrap;
+                    border: 0;
+                }
             }
         }
     }
@@ -262,7 +273,7 @@
         display: flex;
         justify-content: space-between;
         max-width: $articleMaxWidth;
-        padding-bottom: 18rem;
+        padding-bottom: 8rem;
         padding-top: 5rem;
         h3 {
             @include itemH3;
@@ -318,7 +329,28 @@
         }
     }
 }
-
+/* =================================
+ * 組合バナー
+ * ------------------------------ */
+.containerTopBan {
+    @include flex-center;
+    padding-bottom: 14rem;
+    a {
+        width: 100%;
+        max-width: 1086px;
+        aspect-ratio: 1086/260;
+        @include flex-center;
+        font-size: inherit;
+        background: url(/images/top/ban-bg.webp) no-repeat center center / cover;
+        span {
+            font-size: FZ(32);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #fff;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+    }
+}
 /* =================================
  * 協会概要
  * ------------------------------ */
@@ -390,6 +422,20 @@
                     address {
                         display: flex;
                         gap: 1em;
+                    }
+                    &.itemMember {
+                        display: flex;
+                        align-items: center;
+                        span {
+                            display: flex;
+                            gap: 0 1em;
+                            &:first-of-type {
+                                &::after {
+                                    content: "／";
+                                    margin-right: 1em;
+                                }
+                            }
+                        }
                     }
                 }
             }

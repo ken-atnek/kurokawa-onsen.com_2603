@@ -30,7 +30,7 @@ export default function ContainerTopAssociationOverview() {
           </div>
           <div>
             <dt>役員</dt>
-            <dd>
+            <dd className={styles.itemMember}>
               <span>
                 <i>会長</i>音成　貴道
               </span>

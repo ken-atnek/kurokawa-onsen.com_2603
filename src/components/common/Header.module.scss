@@ -16,6 +16,91 @@
     @include flex-center;
     z-index: 5;
     transition: 0.3s ease-out;
+    article {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        color: $base-white;
+        padding: 2.4rem 3.2rem 0;
+        z-index: 6;
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 14rem;
+            background-image: linear-gradient(
+                to bottom,
+                rgb(26 26 26 / 35%),
+                rgba(#000, 0)
+            );
+            z-index: -1;
+        }
+        nav {
+            position: relative;
+            font-size: inherit;
+            display: flex;
+            flex-direction: column;
+            a {
+                font-size: FZ(14);
+                font-weight: 600;
+                padding-block: 0.3em;
+            }
+        }
+        h1 {
+            width: 5.2rem;
+            transition: opacity 0.5s ease-out;
+            a {
+                font-size: inherit;
+                display: block;
+                svg {
+                    fill: #fff;
+                    aspect-ratio: 18/22;
+                }
+            }
+            &.isHidden {
+                opacity: 0;
+            }
+            &.isVisible {
+                opacity: 1;
+            }
+        }
+        .linkCamera {
+            justify-self: end;
+            font-size: inherit;
+            a {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-size: inherit;
+                gap: 1rem 0;
+                i {
+                    position: relative;
+                    width: 3.6rem;
+                    aspect-ratio: 1;
+                    border-radius: 50%;
+                    background-color: $main-white;
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        margin: auto;
+                        width: 2rem;
+                        @include svg-iconCamera("1a1a1a");
+                    }
+                }
+                span {
+                    display: inline-block;
+                    font-size: FZ(12);
+                    font-weight: 600;
+                    letter-spacing: 0.04em;
+                    line-height: 1.6em;
+                    text-align: center;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
 .hamburgerButton {
     position: fixed;

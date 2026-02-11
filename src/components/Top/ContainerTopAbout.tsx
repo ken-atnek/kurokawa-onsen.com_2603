@@ -7,7 +7,7 @@
  * ======================================= */
 'use client';
 import styles from '@/styles/PageTop.module.scss';
-import Link from 'next/link';
+import ScrollLink from '@/components/common/ScrollLink';
 import { useEffect, useRef } from 'react';
 
 export default function ContainerTopAbout() {
@@ -73,7 +73,9 @@ export default function ContainerTopAbout() {
             <br />
             統一された景観とおもてなし文化が息づく温泉街です。
           </p>
-          <Link href="#"></Link>
+          <ScrollLink href="/about/">
+            <span className={styles.srOnly}>黒川温泉とはの詳細へ</span>
+          </ScrollLink>
         </div>
       </article>
       <article>
@@ -93,7 +95,9 @@ export default function ContainerTopAbout() {
             <br />
             黒川温泉では年間を通して多彩な催しを開催しています。
           </p>
-          <Link href="/schedule/"></Link>
+          <ScrollLink href="/schedule/">
+            <span className={styles.srOnly}>年間スケジュールの詳細へ</span>
+          </ScrollLink>
         </div>
       </article>
     </section>

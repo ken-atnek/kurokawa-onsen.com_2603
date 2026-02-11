@@ -2,8 +2,8 @@
  * 黒川温泉観光協会 HERO
  * URL:src/components/Top/ContainerTopHero.tsx
  * Referenced in: : /app/page.tsx
- * Created: 2025-08-26
- * Last updated: 2025-08-26
+ * Created: 2026-02-09
+ * Last updated: 2026-02-09
  * ======================================= */
 
 import styles from '@/styles/PageTop.module.scss';
@@ -17,12 +17,12 @@ export default function ContainerTopHero() {
           <img src="/images/top/hero01.webp" alt="黒川温泉の湯あかり画像" />
         </picture>
       </div>
-      <h1>
+      <div className={styles.itemLogo}>
         <svg role="img" aria-labelledby="heroLogoTitle">
           <title id="heroLogoTitle">黒川温泉観光協会</title>
           <use href="#svg_logo" />
         </svg>
-      </h1>
+      </div>
       <div className={styles.boxWeather}>
         <p>今日の黒川</p>
         <span>2.3</span>

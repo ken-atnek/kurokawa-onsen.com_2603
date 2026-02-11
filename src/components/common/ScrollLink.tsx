@@ -1,7 +1,7 @@
 'use client';
 
 import Link, { type LinkProps } from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { MouseEvent, ReactNode } from 'react';
 
 type Props = LinkProps & {
@@ -13,29 +13,63 @@ type Props = LinkProps & {
   top?: number;
 };
 
-const normalizePath = (href: LinkProps['href']): string | null => {
-  if (typeof href === 'string') {
-    // "/works/?a=1#x" → "/works/"
-    const noHash = href.split('#')[0] ?? href;
-    const noQuery = noHash.split('?')[0] ?? noHash;
-    return noQuery;
-  }
-  // UrlObject
-  return href.pathname ?? null;
-};
-
-// ★ 追加：末尾スラッシュを除去して比較用に正規化
-const normalizeTrailingSlash = (path: string): string => {
+const normalizePathForCompare = (path: string): string => {
   if (path === '/') return '/';
   return path.replace(/\/+$/, '');
 };
 
-const getHash = (href: LinkProps['href']): string | null => {
-  if (typeof href !== 'string') return null;
-  const parts = href.split('#');
-  if (parts.length < 2) return null;
-  const hash = parts[1];
-  return hash ? `#${hash}` : null;
+const getHrefParts = (
+  href: LinkProps['href']
+): { path: string | null; hash: string | null } => {
+  if (typeof href === 'string') {
+    // "/about/?a=1#sec" → path="/about/" hash="#sec"
+    const [beforeHash, hashPart] = href.split('#');
+    const pathOnly = (beforeHash ?? '').split('?')[0] ?? '';
+    const hash = hashPart ? `#${hashPart}` : null;
+    return { path: pathOnly || null, hash };
+  }
+
+  // UrlObject
+  const path = href.pathname ?? null;
+  const hashRaw =
+    typeof href.hash === 'string' && href.hash.length > 0 ? href.hash : '';
+  const hash = hashRaw
+    ? hashRaw.startsWith('#')
+      ? hashRaw
+      : `#${hashRaw}`
+    : null;
+
+  return { path, hash };
+};
+
+const hrefToString = (href: LinkProps['href']): string => {
+  if (typeof href === 'string') return href;
+
+  const pathname = href.pathname ?? '/';
+
+  const query = (() => {
+    if (!href.query) return '';
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(href.query)) {
+      if (value == null) continue;
+      if (Array.isArray(value)) {
+        for (const v of value) params.append(key, String(v));
+      } else {
+        params.append(key, String(value));
+      }
+    }
+    return params.toString();
+  })();
+
+  const hashRaw =
+    typeof href.hash === 'string' && href.hash.length > 0 ? href.hash : '';
+  const hash = hashRaw
+    ? hashRaw.startsWith('#')
+      ? hashRaw
+      : `#${hashRaw}`
+    : '';
+
+  return `${pathname}${query ? `?${query}` : ''}${hash}`;
 };
 
 export default function ScrollLink({
@@ -47,13 +81,12 @@ export default function ScrollLink({
   ...rest
 }: Props) {
   const pathname = usePathname();
-  const targetPath = normalizePath(href);
-  const targetHash = getHash(href);
+  const router = useRouter();
 
-  // ★ 比較用に正規化
-  const currentPath = normalizeTrailingSlash(pathname);
+  const currentPath = normalizePathForCompare(pathname);
+  const { path: targetPath, hash: targetHash } = getHrefParts(href);
   const compareTargetPath = targetPath
-    ? normalizeTrailingSlash(targetPath)
+    ? normalizePathForCompare(targetPath)
     : null;
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -61,7 +94,6 @@ export default function ScrollLink({
     if (compareTargetPath && currentPath === compareTargetPath) {
       e.preventDefault();
 
-      // ハッシュがあれば、その要素へスクロール
       if (targetHash) {
         const el = document.querySelector(targetHash);
         if (el) {
@@ -70,16 +102,28 @@ export default function ScrollLink({
         }
       }
 
-      // ハッシュが無い場合はトップへ
       window.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
+      return;
     }
+
+    // 別ページ：遷移だけ（スクロールはいじらない）
+    // Link側の自動スクロールは止めているので、必要なら template.tsx 側でトップ固定する想定
+    e.preventDefault();
+
+    // フォーカスが残るとスクロール復元がブレることがあるので消す
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    router.push(hrefToString(href));
   };
 
   return (
     <Link
       href={href}
       className={className}
-      scroll
+      // Nextの自動スクロール（遷移後のscrollTo）を止めて、挙動を安定させる
+      scroll={false}
       onClick={handleClick}
       {...rest}
     >

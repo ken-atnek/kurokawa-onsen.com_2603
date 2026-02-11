@@ -12,14 +12,6 @@
     color: $main-white;
     padding-bottom: 12.25em;
     padding-top: 1.5em;
-    h1 {
-        width: 5.2rem;
-        svg {
-            width: 100%;
-            aspect-ratio: 18/22;
-            fill: #fff;
-        }
-    }
     .sidebarH2 {
         @include Marcellus;
         font-size: FZ(74);
