@@ -329,6 +329,7 @@
         }
     }
 }
+
 /* =================================
  * 組合バナー
  * ------------------------------ */
@@ -341,16 +342,17 @@
         aspect-ratio: 1086/260;
         @include flex-center;
         font-size: inherit;
-        background: url(/images/top/ban-bg.webp) no-repeat center center / cover;
+        background: url("/images/top/ban-bg.webp") no-repeat center center / cover;
         span {
             font-size: FZ(32);
             font-weight: 600;
             letter-spacing: 0.08em;
             color: #fff;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
         }
     }
 }
+
 /* =================================
  * 協会概要
  * ------------------------------ */

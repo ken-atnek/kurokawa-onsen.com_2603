@@ -1,0 +1,455 @@
+/* =================================
+ * 	黒川温泉観光協会 店舗詳細ページ
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+
+/* =================================
+ * HEADER
+ * ------------------------------ */
+.containerHeader {
+    @include flex-center;
+    padding: 153px 4vw 56px;
+    background-color: #eaebec;
+    article {
+        display: flex;
+        justify-content: space-between;
+        max-width: $articleMaxWidth;
+        color: $main-white;
+        gap: 0 2.8rem;
+        .itemCategory {
+            position: relative;
+            width: 7.2rem;
+            aspect-ratio: 1;
+            background-color: $main-black;
+            border-radius: 50%;
+            align-self: flex-start;
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                margin: auto;
+            }
+        }
+        .boxContents {
+            flex: 1;
+            position: relative;
+            font-size: inherit;
+            display: flex;
+            flex-direction: column;
+            h2 {
+                font-size: FZ(24);
+                font-weight: 500;
+                letter-spacing: 0.08em;
+                margin-bottom: 1.6rem;
+            }
+            .leadCopy {
+                font-size: FZ(16);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                line-height: 1.6em;
+                text-align: justify;
+            }
+            .wrapShopInfo {
+                position: relative;
+                font-size: inherit;
+                display: flex;
+                align-items: center;
+                margin-top: 0.5rem;
+                div {
+                    font-size: inherit;
+                    display: flex;
+                    align-items: center;
+                    gap: 0 0.5em;
+                    dt {
+                        font-size: FZ(14);
+                        letter-spacing: 0.04em;
+                    }
+                    dd {
+                        font-size: inherit;
+                        display: flex;
+                        align-items: center;
+                        a {
+                            font-size: FZ(14);
+                            letter-spacing: 0.04em;
+                        }
+                    }
+                    &:first-of-type {
+                        &::after {
+                            content: "|";
+                            margin-right: 1em;
+                            margin-left: 0.5em;
+                        }
+                    }
+                }
+            }
+            .itemOnlineLink {
+                position: relative;
+                margin-top: 1.8rem;
+                align-self: flex-end;
+                width: 20rem;
+                height: 3.6rem;
+                border: 1px solid;
+                @include flex-center;
+                font-size: FZ(14);
+                border-radius: 4px;
+            }
+        }
+    }
+    &.category-food {
+        background-color: #ae6a6a;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+}
+
+/* =================================
+ * HERO画像
+ * ------------------------------ */
+.containerHero {
+    position: relative;
+    overflow: hidden;
+    height: 46rem;
+    .heroImage {
+        object-fit: cover; // ← fill のとき必須級
+        will-change: transform;
+    }
+}
+
+/* =================================
+ * ピックアップ画像
+ * ------------------------------ */
+.containerPickup {
+    @include flex-center;
+    padding: 8rem 4vw;
+    background-color: #eaebec;
+    article {
+        display: flex;
+        justify-content: space-between;
+        max-width: $articleMaxWidth;
+        gap: 0 4rem;
+        .boxPickupMain {
+            position: relative;
+            font-size: inherit;
+            flex: 1;
+            .itemPickupFigure {
+                position: relative;
+                font-size: inherit;
+                background-color: #000;
+                &::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 56px;
+                    background-image: linear-gradient(
+                        to top,
+                        rgba($main-black, 0.5),
+                        rgba($main-black, 0)
+                    );
+                    z-index: 2;
+                }
+                .boxImageStack {
+                    position: relative;
+                    aspect-ratio: 861/564;
+                    overflow: hidden;
+                    img {
+                        position: absolute;
+                        inset: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: opacity 0.25s ease;
+                    }
+                    .imageActive {
+                        z-index: 1;
+                        opacity: 1;
+                    }
+                    .imagePrev {
+                        z-index: 2;
+                        opacity: 1;
+                        animation: fadeOut 0.25s ease forwards;
+                    }
+                }
+                @keyframes fadeOut {
+                    to {
+                        opacity: 0;
+                    }
+                }
+                .itemPickupCaption {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    padding: 2.5rem 1.8rem;
+                    font-size: FZ(14);
+                    font-weight: 500;
+                    color: #fff;
+                    letter-spacing: 0.04em;
+                    z-index: 3;
+                }
+            }
+        }
+        .listPickupThumbs {
+            position: relative;
+            font-size: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 4rem 0;
+            width: 185px;
+            .itemPickupThumb {
+                width: 100%;
+                button {
+                    position: relative;
+                    transition: 0.3s ease-out;
+                    img {
+                        width: 100%;
+                        aspect-ratio: 185/120;
+                        object-fit: cover;
+                    }
+                }
+                button[aria-current="true"] {
+                    opacity: 0.6;
+                }
+            }
+        }
+    }
+}
+
+/* =================================
+ * 営業時間・MAP
+ * ------------------------------ */
+.containerInfo {
+    @include flex-center;
+    padding: 0 4vw 8rem;
+    background-color: #eaebec;
+    article {
+        display: flex;
+        max-width: $articleMaxWidth;
+        gap: 0 6rem;
+        justify-content: space-between;
+        .listInfo {
+            position: relative;
+            font-size: inherit;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            width: fit-content;
+            & > div {
+                position: relative;
+                font-size: inherit;
+                grid-column: span 2;
+                display: grid;
+                grid-template-columns: subgrid;
+                gap: 0 4rem;
+                dt,
+                dd {
+                    padding-block: 2.4rem;
+                    border-bottom: 1px solid;
+                }
+                &:first-of-type {
+                    dt,
+                    dd {
+                        border-top: 1px solid;
+                    }
+                }
+                dt {
+                    font-size: FZ(14);
+                    min-width: 7.2rem;
+                }
+                dd {
+                    font-size: FZ(14);
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem 0;
+                    padding-right: 2em;
+                    & * {
+                        font-size: inherit;
+                    }
+                    & > div {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.5rem 0;
+                    }
+                }
+            }
+        }
+        .boxMap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            iframe {
+                width: 100%;
+                filter: saturate(0);
+            }
+            a {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                background-color: #313131;
+                color: $base-white;
+                font-size: FZ(12);
+                font-weight: 500;
+                padding: 0.5em 2em;
+                letter-spacing: 0.04em;
+            }
+        }
+    }
+}
+
+/* =================================
+ * おすすめ商品
+ * ------------------------------ */
+.containerRecommended {
+    @include flex-center;
+    padding: 4rem 4vw;
+    background-color: #eaebec;
+    &.isLastSection {
+        padding-bottom: 16rem; // 下にECが無い時だけ余白増やす
+    }
+    article {
+        display: flex;
+        flex-direction: column;
+        max-width: $articleMaxWidth;
+        .boxH2 {
+            @include itemH2;
+        }
+        .listRecommended {
+            margin-top: 6rem;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0 4rem;
+            font-size: inherit;
+            grid-template-rows: auto auto auto 1fr;
+            li {
+                grid-row: span 4;
+                font-size: inherit;
+                display: grid;
+                grid-template-rows: subgrid;
+                .itemImage {
+                    position: relative;
+                    width: 100%;
+                    img {
+                        aspect-ratio: 335/218;
+                        object-fit: cover;
+                    }
+                }
+                h3 {
+                    font-size: FZ(18);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                    margin-top: 2rem;
+                    margin-bottom: 0.6rem;
+                }
+                .itemPrice {
+                    color: #a5945a;
+                    font-size: FZ(18);
+                    margin-bottom: 0.8rem;
+                    span {
+                        font-size: 0.7em;
+                    }
+                }
+                .itemRecommendedDescription {
+                    font-size: FZ(16);
+                    text-align: justify;
+                    line-height: 1.6em;
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                }
+            }
+        }
+    }
+}
+
+/* =================================
+ * オンライン商品
+ * ------------------------------ */
+.containerOnline {
+    @include flex-center(column);
+    padding: 4rem 4vw 14rem;
+    background-color: #eaebec;
+    article {
+        display: flex;
+        flex-direction: column;
+        max-width: $articleMaxWidth;
+        .boxH2 {
+            @include itemH2;
+        }
+        .listOnline {
+            margin-top: 6rem;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0 4rem;
+            font-size: inherit;
+            grid-template-rows: auto auto auto 1fr;
+            li {
+                grid-row: span 4;
+                font-size: inherit;
+                display: grid;
+                grid-template-rows: subgrid;
+                background-color: #f8f8f8;
+                padding: 2rem;
+                border-radius: 8px;
+                .itemImage {
+                    position: relative;
+                    width: 100%;
+                    img {
+                        aspect-ratio: 1;
+                        object-fit: cover;
+                    }
+                }
+                h3 {
+                    font-size: FZ(18);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                    margin-top: 2rem;
+                    margin-bottom: 0.6rem;
+                }
+                .itemPrice {
+                    color: #a5945a;
+                    font-size: FZ(18);
+                    margin-bottom: 0.8rem;
+                    i {
+                        margin-right: 0.2em;
+                    }
+                    span {
+                        font-size: 0.7em;
+                    }
+                }
+                .buyUrl {
+                    border: 1px solid;
+                    @include flex-center;
+                    height: 5.6rem;
+                    border-radius: 1rem;
+                    font-size: FZ(16);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                    margin-top: 1.6rem;
+                }
+            }
+        }
+    }
+    .btnOnlineList {
+        margin-top: 6.4rem;
+        align-self: center;
+        min-width: 48rem;
+        padding-inline: 1em;
+        height: 56px;
+        @include flex-center;
+        background-color: $main-black;
+        font-size: FZ(16);
+        font-weight: 500;
+        border-radius: 1rem;
+        color: #fff;
+    }
+}

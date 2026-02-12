@@ -9,7 +9,7 @@
 @mixin itemTitle {
     position: relative;
     font-size: FZ(24);
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.04em;
     padding: 0.5em 2em;
     min-width: 28rem;
@@ -54,5 +54,38 @@
             var(--w) 100%,
             var(--w) 100%,
             var(--w) 100%;
+    }
+}
+@mixin itemH2 {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    font-size: inherit;
+    i {
+        flex: 1;
+        position: relative;
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            translate: 0 -50%;
+            width: calc(100% + 6px);
+            height: 1px;
+            background-color: $main-black;
+        }
+        &.itemLeft {
+            &::before {
+                left: 0;
+            }
+        }
+        &.itemRight {
+            &::before {
+                right: 0;
+            }
+        }
+    }
+    h2 {
+        @include itemTitle;
+        --c: #1a1a1a;
     }
 }
