@@ -54,6 +54,10 @@
     border-radius: 50%;
     border: 1px solid #605c5c;
     z-index: 100;
+    mix-blend-mode: difference;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
     &::before {
         content: "";
         position: absolute;
@@ -62,5 +66,9 @@
         width: 11px;
         @include svg-arrow-right("fff");
         rotate: -90deg;
+    }
+    &.isShow {
+        opacity: 1;
+        pointer-events: auto;
     }
 }

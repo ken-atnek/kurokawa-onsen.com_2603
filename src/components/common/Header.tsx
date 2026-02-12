@@ -59,7 +59,7 @@ const Header = () => {
 
   return (
     <>
-      <header className={styles.containerHeader} id="Header">
+      <header className={styles.containerHeader}>
         <article className={styles.blockHeader}>
           <nav>
             <ScrollLink href="/about/">黒川温泉とは</ScrollLink>
