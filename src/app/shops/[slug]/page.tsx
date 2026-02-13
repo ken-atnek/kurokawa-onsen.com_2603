@@ -5,7 +5,12 @@
  * Last updated: 2026-02-12
  * ======================================= */
 
-import type { ShopDetail, ShopOnlineProduct } from '@/types/shop';
+import type {
+  ShopDetail,
+  ShopOnlineProduct,
+  ShopHourRow,
+  ShopTimeRange,
+} from '@/types/shop';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
@@ -15,6 +20,13 @@ import ShopPickup from '@/components/Shops/ShopPickup';
 import ShopInfo from '@/components/Shops/ShopInfo';
 import ShopRecommendedProducts from '@/components/Shops/ShopRecommendedProducts';
 import ShopOnlineProducts from '@/components/Shops/ShopOnlineProducts';
+
+function hasTimeRanges(
+  row: ShopHourRow
+): row is { label: string; timeRanges: ShopTimeRange[] } {
+  return 'timeRanges' in row;
+}
+
 /* =======================================
  * generateStaticParams（同期）
  * ======================================= */
@@ -65,18 +77,28 @@ export default async function ShopDetailPage({
     (detail.onlineProductsCount ?? 0) > 0 ||
     Boolean(detail.onlineShopUrl);
 
+  const hoursRow = detail.info.hours.find(
+    (row): row is { label: string; timeRanges: ShopTimeRange[] } =>
+      row.label === '営業時間' && hasTimeRanges(row)
+  );
+
+  const timeRanges = hoursRow?.timeRanges ?? [];
   return (
     <>
       <ShopHeader
         name={detail.name}
         leadCopy={detail.leadCopy}
         tel={detail.info.tel}
+        fax={detail.info.fax}
         web={detail.info.web}
         category={detail.category}
         shopSlug={slug}
         hasOnlineList={hasOnline}
+        statusFallbackKey={detail.statusFallbackKey}
+        closedWeekdays={detail.info.closedWeekdays}
+        timeRanges={timeRanges}
       />
-      <ShopHero src={detail.heroImage} alt={detail.name} />
+      <ShopHero src={detail.heroImage} alt={detail.name.join(' ')} />
       <ShopPickup items={detail.pickupItems} />
       <ShopInfo info={detail.info} />
       <ShopRecommendedProducts

@@ -1,23 +1,25 @@
-/* =======================================
- * Shop Types
- * URL: src/types/shop.ts
- * ======================================= */
-/* =======================================
- * 一覧
- * ======================================= */
+import type { ShopStatusView } from '@/lib/status';
+
+export type ShopWithStatus = ShopIndexItem & {
+  status: ShopStatusView;
+};
+
 export type ShopIndexItem = {
   id: string;
   slug: string;
   category: string;
-  name: string;
+  name: string[];
   thumb: string;
+  tel: string;
   statusFallbackKey: ShopStatusKey;
+  leadCopy: string[];
 };
+
 /* =======================================
  * 詳細ページ
  * ======================================= */
 
-export type ShopStatusKey = 'open' | 'closed' | string;
+export type ShopStatusKey = 'open' | 'closed' | 'other';
 
 export type ShopTimeRange = {
   open: string;
@@ -38,6 +40,7 @@ export type ShopHourRow =
 export type ShopInfo = {
   hours: ShopHourRow[];
   tel: string;
+  fax?: string;
   web?: string;
   mapUrl: string;
   mapLinkUrl?: string;
@@ -45,6 +48,7 @@ export type ShopInfo = {
     postalCode: string;
     full: string;
   };
+  closedWeekdays?: number[];
 };
 
 export type ShopPickupItem = {
@@ -72,7 +76,7 @@ export type ShopDetail = {
   id: string;
   slug: string;
   category: string;
-  name: string;
+  name: string[];
   statusFallbackKey: ShopStatusKey;
   heroImage: string;
   leadCopy: string[];

@@ -5,9 +5,10 @@
  * Created: 2026-02-12
  * Last updated: 2026-02-12
  * ======================================= */
+'use client';
 import clsx from 'clsx';
-
-import type { ShopDetail } from '@/types/shop';
+import { getShopStatusView } from '@/lib/status';
+import type { ShopDetail, ShopTimeRange } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
 import ExternalLink from '@/components/common/ExternalLink';
 import Link from 'next/link';
@@ -15,21 +16,34 @@ type Props = {
   name: ShopDetail['name'];
   leadCopy: ShopDetail['leadCopy'];
   tel: string;
+  fax?: string;
   web?: string;
   category: ShopDetail['category'];
   shopSlug: string;
   hasOnlineList?: boolean;
+  statusFallbackKey: ShopDetail['statusFallbackKey'];
+  closedWeekdays?: ShopDetail['info']['closedWeekdays'];
+  timeRanges?: ShopTimeRange[];
 };
 
 export default function ShopHeader({
   name,
   leadCopy,
   tel,
+  fax,
   web,
   category,
   shopSlug,
   hasOnlineList,
+  statusFallbackKey,
+  closedWeekdays,
+  timeRanges,
 }: Props) {
+  const status = getShopStatusView({
+    fallbackKey: statusFallbackKey,
+    closedWeekdays,
+    timeRanges,
+  });
   return (
     <section
       className={clsx(styles.containerHeader, styles[`category-${category}`])}
@@ -37,7 +51,22 @@ export default function ShopHeader({
       <article>
         <div className={styles.itemCategory}></div>
         <div className={styles.boxContents}>
-          <h2>{name}</h2>
+          <div
+            className={clsx(
+              styles.itemStatus,
+              styles[`status-${status.variant}`]
+            )}
+          >
+            {status.label}
+          </div>
+          <h2>
+            {name.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i !== name.length - 1 && <br />}
+              </span>
+            ))}
+          </h2>
           {leadCopy.map((line, i) => (
             <p key={i} className={styles.leadCopy}>
               {line}
@@ -52,12 +81,22 @@ export default function ShopHeader({
                 </ExternalLink>
               </dd>
             </div>
-            <div>
-              <dt>WEB</dt>
-              <dd>
-                <ExternalLink href={web}>{web}</ExternalLink>
-              </dd>
-            </div>
+            {fax ? (
+              <div>
+                <dt>FAX</dt>
+                <dd>
+                  <span>{fax}</span>
+                </dd>
+              </div>
+            ) : null}
+            {web ? (
+              <div>
+                <dt>WEB</dt>
+                <dd>
+                  <ExternalLink href={web}>{web}</ExternalLink>
+                </dd>
+              </div>
+            ) : null}
           </dl>
           {hasOnlineList ? (
             <Link

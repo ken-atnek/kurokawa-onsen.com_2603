@@ -63,7 +63,7 @@ const Header = () => {
         <article className={styles.blockHeader}>
           <nav>
             <ScrollLink href="/about/">黒川温泉とは</ScrollLink>
-            <ScrollLink href="/">加盟店一覧</ScrollLink>
+            <ScrollLink href="/shops/">加盟店一覧</ScrollLink>
             <ScrollLink href="/schedule/">年間スケジュール</ScrollLink>
             <ScrollLink href="/access/">交通アクセス</ScrollLink>
           </nav>

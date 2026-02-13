@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
 type Props = {
-  shopName: string;
+  shopName: string[];
   shopSlug: string;
   category: string;
   product: ShopProductDetail;

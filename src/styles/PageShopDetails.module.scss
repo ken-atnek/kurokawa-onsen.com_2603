@@ -42,6 +42,21 @@
             font-size: inherit;
             display: flex;
             flex-direction: column;
+            .itemStatus {
+                width: 16rem;
+                height: 3.2rem;
+                @include flex-center;
+                font-size: FZ(16);
+                font-weight: 500;
+                letter-spacing: 0.08em;
+                margin-bottom: 1.7rem;
+                &.status-open {
+                    background-color: #a5895a;
+                }
+                &.status-closed {
+                    background-color: #6e6e6e;
+                }
+            }
             h2 {
                 font-size: FZ(24);
                 font-weight: 500;
@@ -74,12 +89,13 @@
                         font-size: inherit;
                         display: flex;
                         align-items: center;
-                        a {
+                        a,
+                        span {
                             font-size: FZ(14);
                             letter-spacing: 0.04em;
                         }
                     }
-                    &:first-of-type {
+                    &:not(:last-of-type) {
                         &::after {
                             content: "|";
                             margin-right: 1em;
@@ -102,6 +118,24 @@
         }
     }
     &.category-food {
+        background-color: #ae6a6a;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-souvenir {
+        background-color: #6880a2;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-other {
         background-color: #ae6a6a;
         .itemCategory {
             &::before {

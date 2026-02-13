@@ -19,8 +19,8 @@ export default function PageTitle({ titleJp, titleEn, bgKey }: Props) {
     <section
       className={clsx(styles.containerPageTop, bgKey && styles[`bg-${bgKey}`])}
     >
-      {titleEn && <div className={styles.sidebarH2}>{titleEn}</div>}
       {titleJp && <h2>{titleJp}</h2>}
+      {titleEn && <div className={styles.sidebarH2}>{titleEn}</div>}
     </section>
   );
 }

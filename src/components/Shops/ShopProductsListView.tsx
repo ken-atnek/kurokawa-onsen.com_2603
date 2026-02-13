@@ -40,6 +40,7 @@ export default function ShopProductsListView({
         category={detail.category}
         shopSlug={shopSlug}
         hasOnlineList={false}
+        statusFallbackKey={detail.statusFallbackKey}
       />
       <section className={styles.containerProductList}>
         <article>

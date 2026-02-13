@@ -10,17 +10,17 @@
     background-repeat: no-repeat;
     background-position: center center;
     color: $main-white;
-    padding-bottom: 12.25em;
+    padding-bottom: 10.5em;
     padding-top: 1.5em;
+    h2 {
+        margin-top: 20rem;
+        font-size: FZ(34);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+    }
     .sidebarH2 {
         @include Marcellus;
-        font-size: FZ(74);
-        letter-spacing: 0.08em;
-        margin-top: 14rem;
-    }
-    h2 {
-        font-size: FZ(16);
-        font-weight: 500;
+        font-size: FZ(14);
         letter-spacing: 0.08em;
     }
     &.bg-schedule {
@@ -34,5 +34,9 @@
     &.bg-access {
         background-image: url("/images/access/hero.webp");
         background-position: bottom center;
+    }
+    &.bg-shops {
+        background-image: url("/images/shops/hero.webp");
+        background-position: 10% center;
     }
 }
