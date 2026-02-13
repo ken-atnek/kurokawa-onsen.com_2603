@@ -10,14 +10,15 @@ import clsx from 'clsx';
 import type { ShopDetail } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
 import ExternalLink from '@/components/common/ExternalLink';
-
+import Link from 'next/link';
 type Props = {
   name: ShopDetail['name'];
   leadCopy: ShopDetail['leadCopy'];
   tel: string;
   web?: string;
-  onlineShopUrl?: string;
   category: ShopDetail['category'];
+  shopSlug: string;
+  hasOnlineList?: boolean;
 };
 
 export default function ShopHeader({
@@ -25,8 +26,9 @@ export default function ShopHeader({
   leadCopy,
   tel,
   web,
-  onlineShopUrl,
   category,
+  shopSlug,
+  hasOnlineList,
 }: Props) {
   return (
     <section
@@ -57,13 +59,13 @@ export default function ShopHeader({
               </dd>
             </div>
           </dl>
-          {onlineShopUrl ? (
-            <ExternalLink
-              href={onlineShopUrl}
-              className={styles.itemOnlineLink}
+          {hasOnlineList ? (
+            <Link
+              href={`/shops/${shopSlug}/products/`}
+              className={styles.btnOnlineList}
             >
-              オンライン商品
-            </ExternalLink>
+              オンライン商品一覧
+            </Link>
           ) : null}
         </div>
       </article>

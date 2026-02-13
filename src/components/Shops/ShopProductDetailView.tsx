@@ -124,7 +124,7 @@ export default function ShopProductDetailView({
             </button>
           </div>
         </article>
-        <Link href={`/shops/${shopSlug}/`} className={styles.linkList}>
+        <Link href={`/shops/${shopSlug}/products/`} className={styles.linkList}>
           オンライン商品一覧に戻る
         </Link>
       </section>

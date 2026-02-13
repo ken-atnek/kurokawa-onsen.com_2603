@@ -13,26 +13,26 @@ import ShopProductDetailView from '@/components/Shops/ShopProductDetailView';
 
 /* =======================================
  * generateStaticParams（同期）
- * output: 'export' 対応
+ * 商品詳細ページ用
  * ======================================= */
 export function generateStaticParams() {
   const shopsIndexPath = path.join(
     process.cwd(),
     'public/db/shops/shopsIndex.json'
   );
+
   if (!fs.existsSync(shopsIndexPath)) return [];
 
   const shops = JSON.parse(fs.readFileSync(shopsIndexPath, 'utf-8'));
-
   if (!Array.isArray(shops)) return [];
 
   const params: { slug: string; productId: string }[] = [];
 
   for (const shop of shops) {
     const slug = shop?.slug;
-    if (typeof slug !== 'string') continue;
+    const shopId = shop?.id;
 
-    const shopId = typeof shop?.id === 'string' ? shop.id : getIdFromSlug(slug);
+    if (typeof slug !== 'string' || typeof shopId !== 'string') continue;
 
     const productsIndexPath = path.join(
       process.cwd(),
@@ -42,19 +42,21 @@ export function generateStaticParams() {
     if (!fs.existsSync(productsIndexPath)) continue;
 
     const items = JSON.parse(fs.readFileSync(productsIndexPath, 'utf-8'));
+
     if (!Array.isArray(items)) continue;
 
     for (const item of items) {
-      const productId = item?.id;
-      if (typeof productId !== 'string') continue;
+      if (typeof item?.id !== 'string') continue;
 
-      params.push({ slug, productId });
+      params.push({
+        slug,
+        productId: item.id,
+      });
     }
   }
 
   return params;
 }
-
 /* =======================================
  * Page
  * ======================================= */

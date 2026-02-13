@@ -72,8 +72,9 @@ export default async function ShopDetailPage({
         leadCopy={detail.leadCopy}
         tel={detail.info.tel}
         web={detail.info.web}
-        onlineShopUrl={detail.onlineShopUrl}
         category={detail.category}
+        shopSlug={slug}
+        hasOnlineList={hasOnline}
       />
       <ShopHero src={detail.heroImage} alt={detail.name} />
       <ShopPickup items={detail.pickupItems} />
@@ -82,10 +83,7 @@ export default async function ShopDetailPage({
         items={detail.recommendedProducts}
         isLastSection={!hasOnline}
       />
-      <ShopOnlineProducts
-        items={onlineProducts}
-        onlineShopUrl={detail.onlineShopUrl}
-      />
+      <ShopOnlineProducts items={onlineProducts} shopSlug={slug} />
     </>
   );
 }

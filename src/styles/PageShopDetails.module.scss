@@ -88,7 +88,7 @@
                     }
                 }
             }
-            .itemOnlineLink {
+            .btnOnlineList {
                 position: relative;
                 margin-top: 1.8rem;
                 align-self: flex-end;
@@ -374,7 +374,8 @@
 /* =================================
  * オンライン商品
  * ------------------------------ */
-.containerOnline {
+.containerOnline,
+.containerProductList {
     @include flex-center(column);
     padding: 4rem 4vw 14rem;
     background-color: #eaebec;
@@ -390,9 +391,9 @@
             position: relative;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0 4rem;
             font-size: inherit;
             grid-template-rows: auto auto auto 1fr;
+            gap: 4rem;
             li {
                 grid-row: span 4;
                 font-size: inherit;
@@ -401,6 +402,7 @@
                 background-color: #f8f8f8;
                 padding: 2rem;
                 border-radius: 8px;
+                gap: 0;
                 .itemImage {
                     position: relative;
                     width: 100%;
@@ -435,12 +437,28 @@
                     font-size: FZ(16);
                     font-weight: 500;
                     letter-spacing: 0.04em;
-                    margin-top: 1.6rem;
+                    margin-top: 1rem;
                 }
             }
         }
     }
     .btnOnlineList {
+        margin-top: 6.4rem;
+        align-self: center;
+        min-width: 48rem;
+        padding-inline: 1em;
+        height: 56px;
+        @include flex-center;
+        background-color: $main-black;
+        font-size: FZ(16);
+        font-weight: 500;
+        border-radius: 1rem;
+        color: #fff;
+    }
+}
+.containerProductList {
+    padding-top: 8rem;
+    .linkShopDetails {
         margin-top: 6.4rem;
         align-self: center;
         min-width: 48rem;

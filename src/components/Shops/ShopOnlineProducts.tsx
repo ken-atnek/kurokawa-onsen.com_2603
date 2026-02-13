@@ -8,16 +8,16 @@
 'use client';
 import { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { ShopOnlineProduct } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
-import ExternalLink from '@/components/common/ExternalLink';
 
 type Props = {
   items: ShopOnlineProduct[];
-  onlineShopUrl?: string;
+  shopSlug: string;
 };
 
-export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
+export default function ShopOnlineProducts({ items, shopSlug }: Props) {
   const displayItems = useMemo(() => {
     if (!Array.isArray(items) || items.length === 0) return [];
 
@@ -40,8 +40,7 @@ export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
   }, [items]);
 
   const hasItems = displayItems.length > 0;
-  const hasListUrl =
-    typeof onlineShopUrl === 'string' && onlineShopUrl.length > 0;
+  const hasListUrl = typeof shopSlug === 'string' && shopSlug.length > 0;
 
   // 商品もURLも無い店は表示しない
   if (!hasItems && !hasListUrl) return null;
@@ -74,18 +73,24 @@ export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
                     <span>（税込）</span>
                   </div>
                 ) : null}
-                <button type="button" className={styles.buyUrl}>
+                <Link
+                  href={`/shops/${shopSlug}/products/${item.id}/`}
+                  className={styles.buyUrl}
+                >
                   購入する
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
         </article>
       ) : null}
       {hasListUrl ? (
-        <ExternalLink href={onlineShopUrl} className={styles.btnOnlineList}>
+        <Link
+          href={`/shops/${shopSlug}/products/`}
+          className={styles.btnOnlineList}
+        >
           オンライン商品一覧を見る
-        </ExternalLink>
+        </Link>
       ) : null}
     </section>
   );
