@@ -20,7 +20,12 @@ type Props = {
 
 export default function ShopPickup({ items }: Props) {
   const safeItems = useMemo(
-    () => (Array.isArray(items) ? items.slice(0, 3) : []),
+    () =>
+      Array.isArray(items)
+        ? items
+            .filter((item) => item.image && item.image.length > 0)
+            .slice(0, 3)
+        : [],
     [items]
   );
 

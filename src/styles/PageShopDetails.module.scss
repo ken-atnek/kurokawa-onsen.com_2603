@@ -119,6 +119,7 @@
     position: relative;
     overflow: hidden;
     height: 46rem;
+    background-color: #eaebec;
     .heroImage {
         object-fit: cover; // ← fill のとき必須級
         will-change: transform;
@@ -130,7 +131,7 @@
  * ------------------------------ */
 .containerPickup {
     @include flex-center;
-    padding: 8rem 4vw;
+    padding: 8rem 4vw 0;
     background-color: #eaebec;
     article {
         display: flex;
@@ -230,7 +231,7 @@
  * ------------------------------ */
 .containerInfo {
     @include flex-center;
-    padding: 0 4vw 8rem;
+    padding: 8rem 4vw 8rem;
     background-color: #eaebec;
     article {
         display: flex;
