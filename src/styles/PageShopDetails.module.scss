@@ -231,7 +231,7 @@
  * ------------------------------ */
 .containerInfo {
     @include flex-center;
-    padding: 8rem 4vw 8rem;
+    padding: 8rem 4vw;
     background-color: #eaebec;
     article {
         display: flex;

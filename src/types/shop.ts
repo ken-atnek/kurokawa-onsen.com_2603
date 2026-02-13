@@ -64,9 +64,8 @@ export type ShopRecommendedProduct = {
 export type ShopOnlineProduct = {
   id: string;
   title: string;
-  price: number;
   image: string;
-  buyUrl: string;
+  price: number;
 };
 
 export type ShopDetail = {
@@ -82,4 +81,18 @@ export type ShopDetail = {
   recommendedProducts: ShopRecommendedProduct[];
   onlineShopUrl?: string;
   onlineProductsCount?: number;
+};
+/* =======================================
+ * オンライン商品：詳細
+ * ======================================= */
+
+export type ShopProductDetail = {
+  id: string;
+  shopId: string;
+  title: string;
+  price: number;
+  stock?: number;
+  images: string[];
+  comment: string[];
+  ecUrl: string;
 };

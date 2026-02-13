@@ -74,11 +74,9 @@ export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
                     <span>（税込）</span>
                   </div>
                 ) : null}
-                {item.buyUrl ? (
-                  <ExternalLink href={item.buyUrl} className={styles.buyUrl}>
-                    購入する
-                  </ExternalLink>
-                ) : null}
+                <button type="button" className={styles.buyUrl}>
+                  購入する
+                </button>
               </li>
             ))}
           </ul>
