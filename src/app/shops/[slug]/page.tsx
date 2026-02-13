@@ -5,7 +5,7 @@
  * Last updated: 2026-02-12
  * ======================================= */
 
-import type { ShopDetail } from '@/types/shop';
+import type { ShopDetail, ShopOnlineProduct } from '@/types/shop';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
@@ -47,7 +47,24 @@ export default async function ShopDetailPage({
 
   const file = fs.readFileSync(filePath, 'utf-8');
   const detail: ShopDetail = JSON.parse(file);
-  const hasOnline = detail.onlineProducts.length > 0 || detail.onlineShopUrl;
+
+  // オンライン商品一覧（店舗ごと）
+  const productsIndexPath = path.join(
+    process.cwd(),
+    `public/db/shops/products/${id}/index.json`
+  );
+
+  let onlineProducts: ShopOnlineProduct[] = [];
+  if (fs.existsSync(productsIndexPath)) {
+    const productsFile = fs.readFileSync(productsIndexPath, 'utf-8');
+    onlineProducts = JSON.parse(productsFile);
+  }
+
+  const hasOnline =
+    onlineProducts.length > 0 ||
+    (detail.onlineProductsCount ?? 0) > 0 ||
+    Boolean(detail.onlineShopUrl);
+
   return (
     <>
       <ShopHeader
@@ -66,7 +83,7 @@ export default async function ShopDetailPage({
         isLastSection={!hasOnline}
       />
       <ShopOnlineProducts
-        items={detail.onlineProducts}
+        items={onlineProducts}
         onlineShopUrl={detail.onlineShopUrl}
       />
     </>

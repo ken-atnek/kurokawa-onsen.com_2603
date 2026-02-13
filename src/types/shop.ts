@@ -81,5 +81,5 @@ export type ShopDetail = {
   info: ShopInfo;
   recommendedProducts: ShopRecommendedProduct[];
   onlineShopUrl?: string;
-  onlineProducts: ShopOnlineProduct[];
+  onlineProductsCount?: number;
 };

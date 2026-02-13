@@ -5,7 +5,8 @@
  * Created: 2026-02-12
  * Last updated: 2026-02-12
  * ======================================= */
-
+'use client';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import type { ShopOnlineProduct } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
@@ -17,7 +18,28 @@ type Props = {
 };
 
 export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
-  const hasItems = Array.isArray(items) && items.length > 0;
+  const displayItems = useMemo(() => {
+    if (!Array.isArray(items) || items.length === 0) return [];
+
+    // シードを作成（itemsのid連結から）
+    const seed = items.map((i) => i.id).join('');
+
+    // 簡易ハッシュ関数（純粋関数）
+    const hash = seed.split('').reduce((acc, char) => {
+      return acc + char.charCodeAt(0);
+    }, 0);
+
+    // 疑似ランダムソート（Math.random不使用）
+    const sorted = [...items].sort((a, b) => {
+      const aScore = (a.id.charCodeAt(0) + hash) % 100;
+      const bScore = (b.id.charCodeAt(0) + hash) % 100;
+      return aScore - bScore;
+    });
+
+    return sorted.slice(0, 3);
+  }, [items]);
+
+  const hasItems = displayItems.length > 0;
   const hasListUrl =
     typeof onlineShopUrl === 'string' && onlineShopUrl.length > 0;
 
@@ -34,7 +56,7 @@ export default function ShopOnlineProducts({ items, onlineShopUrl }: Props) {
             <i className={styles.itemRight}></i>
           </div>
           <ul className={styles.listOnline}>
-            {items.map((item) => (
+            {displayItems.map((item) => (
               <li key={item.id}>
                 <div className={styles.itemImage}>
                   <Image

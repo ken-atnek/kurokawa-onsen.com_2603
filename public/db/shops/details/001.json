@@ -82,27 +82,5 @@
     }
   ],
   "onlineShopUrl": "https://ec.example.com/products/list?shop=001",
-  "onlineProducts": [
-    {
-      "id": "ec-001",
-      "title": "あか牛御膳",
-      "image": "/db/images/shops/001/pickup-01.jpg",
-      "price": 2000,
-      "buyUrl": "https://ec.example.com/products01/"
-    },
-    {
-      "id": "ec-002",
-      "title": "あか牛まぶし膳",
-      "image": "/db/images/shops/001/pickup-02.jpg",
-      "price": 930,
-      "buyUrl": "https://ec.example.com/products02/"
-    },
-    {
-      "id": "ec-003",
-      "title": "あか牛カレー",
-      "image": "/db/images/shops/001/pickup-03.jpg",
-      "price": 1620,
-      "buyUrl": "https://ec.example.com/products03/"
-    }
-  ]
+  "onlineProductsCount": 4
 }
