@@ -12,6 +12,7 @@ import ContainerTopHero from '@/components/Top/ContainerTopHero';
 import ContainerTopNews from '@/components/Top/ContainerTopNews';
 import ContainerTopAbout from '@/components/Top/ContainerTopAbout';
 import ContainerTopBan from '@/components/Top/ContainerTopBan';
+import ContainerTopShopListServer from '@/components/Top/ContainerTopShopList.server';
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <>
       <ContainerTopHero />
+      <ContainerTopShopListServer />
       <ContainerTopAbout />
       <ContainerTopNews />
       <ContainerTopBan />

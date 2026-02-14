@@ -76,6 +76,8 @@
                 display: flex;
                 align-items: center;
                 margin-top: 0.5rem;
+                flex-wrap: wrap;
+                gap: 0.5rem 0;
                 div {
                     font-size: inherit;
                     display: flex;
@@ -93,6 +95,9 @@
                         span {
                             font-size: FZ(14);
                             letter-spacing: 0.04em;
+                            i {
+                                font-size: inherit;
+                            }
                         }
                     }
                     &:not(:last-of-type) {

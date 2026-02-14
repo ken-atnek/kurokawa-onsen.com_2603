@@ -42,6 +42,7 @@ export type ShopInfo = {
   tel: string;
   fax?: string;
   web?: string;
+  mail?: string;
   mapUrl: string;
   mapLinkUrl?: string;
   address: {

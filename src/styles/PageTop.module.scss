@@ -141,6 +141,44 @@
 }
 
 /* =================================
+ * 加盟店一覧
+ * ------------------------------ */
+.containerTopShopList {
+    padding-inline: 4vw;
+    padding-top: 8rem;
+    padding-bottom: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h2 {
+        @include itemTitle;
+        --c: #1a1a1a;
+    }
+    ul {
+        position: relative;
+        margin-top: 5rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto auto auto auto;
+        font-size: inherit;
+        gap: 3em;
+    }
+    .linkList {
+        width: 100%;
+        max-width: 48rem;
+        margin-top: 6.5rem;
+        @include flex-center;
+        height: 5.6rem;
+        background-color: $main-black;
+        color: $main-white;
+        border-radius: 1rem;
+        font-size: FZ(16);
+        letter-spacing: 0.04em;
+        font-weight: 500;
+    }
+}
+
+/* =================================
  * 黒川温泉観光協会について
  * ------------------------------ */
 .containerTopAbout {
@@ -342,7 +380,8 @@
         aspect-ratio: 1086/260;
         @include flex-center;
         font-size: inherit;
-        background: url("/images/top/ban-bg.webp") no-repeat center center / cover;
+        background: url("/images/top/ban-bg.webp") no-repeat center center /
+            cover;
         span {
             font-size: FZ(32);
             font-weight: 600;
