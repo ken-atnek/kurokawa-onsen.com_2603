@@ -91,6 +91,7 @@ export default async function ShopDetailPage({
         tel={detail.info.tel}
         fax={detail.info.fax}
         web={detail.info.web}
+        mail={detail.info.mail}
         category={detail.category}
         shopSlug={slug}
         hasOnlineList={hasOnline}

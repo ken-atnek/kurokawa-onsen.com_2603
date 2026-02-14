@@ -18,6 +18,7 @@ type Props = {
   tel: string;
   fax?: string;
   web?: string;
+  mail?: string;
   category: ShopDetail['category'];
   shopSlug: string;
   hasOnlineList?: boolean;
@@ -32,6 +33,7 @@ export default function ShopHeader({
   tel,
   fax,
   web,
+  mail,
   category,
   shopSlug,
   hasOnlineList,
@@ -86,6 +88,16 @@ export default function ShopHeader({
                 <dt>FAX</dt>
                 <dd>
                   <span>{fax}</span>
+                </dd>
+              </div>
+            ) : null}
+            {mail ? (
+              <div>
+                <dt>MAIL</dt>
+                <dd>
+                  <ExternalLink href={`mailto:${mail}`}>
+                    <i>{mail}</i>
+                  </ExternalLink>
                 </dd>
               </div>
             ) : null}
