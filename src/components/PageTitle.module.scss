@@ -1,0 +1,42 @@
+/* =================================
+ * 	 ページタイトル
+ * ------------------------------ */
+@use "../styles/variable" as *;
+@use "../styles/svg" as *;
+@use "../styles/mixin" as *;
+.containerPageTop {
+    @include flex-center(column);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: $main-white;
+    padding-bottom: 10.5em;
+    padding-top: 1.5em;
+    h2 {
+        margin-top: 20rem;
+        font-size: FZ(34);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+    }
+    .sidebarH2 {
+        @include Marcellus;
+        font-size: FZ(14);
+        letter-spacing: 0.08em;
+    }
+    &.bg-schedule {
+        background-image: url("/images/schedule/hero.webp");
+        background-position: bottom center;
+    }
+    &.bg-about {
+        background-image: url("/images/about/hero.webp");
+        background-position: center center;
+    }
+    &.bg-access {
+        background-image: url("/images/access/hero.webp");
+        background-position: bottom center;
+    }
+    &.bg-shops {
+        background-image: url("/images/shops/hero.webp");
+        background-position: 10% center;
+    }
+}

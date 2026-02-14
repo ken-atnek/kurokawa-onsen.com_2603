@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ec-001",
+    "title": "あか牛御膳",
+    "image": "/db/images/shops/001/pickup-01.jpg",
+    "price": 2000
+  },
+  {
+    "id": "ec-002",
+    "title": "あか牛まぶし膳",
+    "image": "/db/images/shops/001/pickup-02.jpg",
+    "price": 930
+  },
+  {
+    "id": "ec-003",
+    "title": "ローヤルゼリーゴールド[ゼリータイプ](20g×17本)",
+    "image": "/db/images/shops/001/products/ec-003/thumb.webp",
+    "price": 8532
+  },
+  {
+    "id": "ec-004",
+    "title": "あか牛カレー",
+    "image": "/db/images/shops/001/pickup-03.jpg",
+    "price": 1620
+  }
+]

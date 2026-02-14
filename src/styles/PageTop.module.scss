@@ -1,0 +1,446 @@
+/* =================================
+ * 	黒川温泉観光協会 TOPページ
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+@mixin itemH3 {
+    margin-block: 3em;
+    position: relative;
+    font-size: FZ(20);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    writing-mode: vertical-rl; // 縦書き
+    text-orientation: upright; // 縦書き英数回転
+    font-feature-settings: initial; // 左詰め解除
+    padding-top: 1em;
+    padding-right: 0.2em;
+    &::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        translate: -50%;
+        top: 0;
+        width: 14px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background-color: $main-black;
+    }
+}
+
+/* =================================
+ * HERO
+ * ------------------------------ */
+.containerTopHero {
+    border-bottom: 2px solid $main-black;
+    .boxImage {
+        position: relative;
+        width: 100%;
+        img {
+            width: 100%;
+            aspect-ratio: 1.78;
+            object-fit: cover;
+        }
+    }
+    .itemLogo {
+        display: inline-block;
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        z-index: 2;
+        width: 18rem;
+        aspect-ratio: 18/22;
+        svg {
+            width: 100%;
+            fill: $main-white;
+            aspect-ratio: 18/22;
+        }
+    }
+    .boxWeather {
+        position: absolute;
+        left: 50%;
+        translate: -50%;
+        bottom: 0;
+        z-index: 3;
+        color: $main-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: inherit;
+        min-width: 287px;
+        height: 42px;
+        background-color: rgba($main-black, 0.9);
+        clip-path: polygon(
+            calc(100% - 17.446px) calc(50% - -3.475px),
+            calc(100% - 17.446px) 11.0247px,
+            calc(100% - 17.446px) 11.0247px,
+            calc(100% - 17.5896px) 9.2358px,
+            calc(100% - 18.0053px) 7.539px,
+            calc(100% - 18.6705px) 5.957px,
+            calc(100% - 19.5628px) 4.5125px,
+            calc(100% - 20.6595px) 3.228px,
+            calc(100% - 21.9382px) 2.1263px,
+            calc(100% - 23.3762px) 1.23px,
+            calc(100% - 24.951px) 0.5618px,
+            calc(100% - 26.6401px) 0.1442px,
+            calc(100% - 28.421px) 0,
+            28.4205px 0,
+            28.4205px 0,
+            26.6397px 0.1442px,
+            24.9506px 0.5618px,
+            23.3758px 1.23px,
+            21.9378px 2.1263px,
+            20.6591px 3.228px,
+            19.5624px 4.5125px,
+            18.6702px 5.957px,
+            18.0049px 7.539px,
+            17.5893px 9.2358px,
+            17.4457px 11.0247px,
+            17.4457px calc(50% - -3.475px),
+            17.4457px calc(50% - -3.475px),
+            17.2173px calc(50% - -6.3168px),
+            16.556px calc(50% - -9.013px),
+            15.4978px calc(50% - -11.5273px),
+            14.0788px calc(50% - -13.8236px),
+            12.3348px calc(50% - -15.8658px),
+            10.3018px calc(50% - -17.6177px),
+            8.0159px calc(50% - -19.0433px),
+            5.513px calc(50% - -20.1062px),
+            2.829px calc(50% - -20.7705px),
+            0 calc(50% - -21px),
+            17.4457px calc(100% - 0px),
+            calc(100% - 0px) calc(100% - 0px),
+            calc(100% - 0px) calc(100% - 0px),
+            calc(100% - 2.8291px) calc(100% - 0.2295px),
+            calc(100% - 5.5131px) calc(100% - 0.8938px),
+            calc(100% - 8.016px) calc(100% - 1.9567px),
+            calc(100% - 10.302px) calc(100% - 3.3823px),
+            calc(100% - 12.335px) calc(100% - 5.1342px),
+            calc(100% - 14.079px) calc(100% - 7.1764px),
+            calc(100% - 15.4981px) calc(100% - 9.4727px),
+            calc(100% - 16.5563px) calc(100% - 11.987px),
+            calc(100% - 17.2176px) calc(100% - 14.6832px),
+            calc(100% - 17.446px) calc(100% - 17.525px)
+        );
+        p {
+            font-size: FZ(16);
+            border-right: 1px solid;
+            padding-right: 1em;
+            margin-right: 1em;
+        }
+        span {
+            &::after {
+                content: "℃";
+            }
+        }
+    }
+}
+
+/* =================================
+ * 黒川温泉観光協会について
+ * ------------------------------ */
+.containerTopAbout {
+    position: relative;
+    @include flex-center(column);
+    padding-inline: 4vw;
+    padding-top: 10rem;
+    padding-bottom: 8rem;
+    gap: 9rem 0;
+    .bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+        div {
+            position: absolute;
+            top: 10vh;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            opacity: 0.3;
+            will-change: transform;
+            background: url("/images/about/section-bg.webp") center / cover
+                no-repeat;
+        }
+    }
+    .boxHead {
+        position: relative;
+        font-size: inherit;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto 1fr;
+        gap: 4rem 10rem;
+        margin-left: 6rem;
+        .itemLogo {
+            grid-row: span 2;
+            width: 16.3rem;
+            svg {
+                width: 100%;
+                fill: $main-black;
+                aspect-ratio: 18/22;
+            }
+        }
+        h2 {
+            @include itemTitle;
+            --c: #1a1a1a;
+            justify-self: start;
+            text-align: left;
+            padding-left: 1em;
+            padding-right: 1.4em;
+            min-width: unset;
+        }
+        p {
+            font-size: FZ(16);
+            max-width: 31em;
+            letter-spacing: 0.04em;
+            line-height: 2.4em;
+        }
+    }
+    article {
+        display: flex;
+        justify-content: space-between;
+        max-width: $articleMaxWidth;
+        h3 {
+            @include itemH3;
+        }
+        .boxContents {
+            position: relative;
+            font-size: inherit;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            border-top: 1px solid;
+            border-left: 1px solid;
+            padding-bottom: 1.6rem;
+            .itemImage {
+                grid-column: span 2;
+            }
+            img {
+                aspect-ratio: 1.9;
+                object-fit: cover;
+            }
+            p {
+                font-size: FZ(16);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                line-height: 1.6em;
+                padding-left: 4rem;
+            }
+            a {
+                position: relative;
+                display: inline-block;
+                width: 4.8rem;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                background-color: $main-black;
+                margin-right: 4rem;
+                align-self: center;
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    margin: auto;
+                    width: 14px;
+                    @include svg-arrow-right("fff");
+                }
+                .srOnly {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    padding: 0;
+                    margin: -1px;
+                    overflow: hidden;
+                    clip-path: inset(50%);
+                    white-space: nowrap;
+                    border: 0;
+                }
+            }
+        }
+    }
+}
+
+/* =================================
+ * お知らせ
+ * ------------------------------ */
+.containerTopNews {
+    @include flex-center;
+    padding-inline: 4vw;
+    article {
+        display: flex;
+        justify-content: space-between;
+        max-width: $articleMaxWidth;
+        padding-bottom: 8rem;
+        padding-top: 5rem;
+        h3 {
+            @include itemH3;
+        }
+        ul {
+            position: relative;
+            flex: 1;
+            font-size: inherit;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            li,
+            a {
+                font-size: inherit;
+                grid-column: span 3;
+                display: grid;
+                grid-template-columns: subgrid;
+                align-items: center;
+            }
+            li {
+                border-bottom: 1px solid;
+                padding: 4.6rem 4rem;
+                &:first-of-type {
+                    border-top: 1px solid;
+                }
+            }
+            a {
+                gap: 0 5rem;
+                span {
+                    font-size: FZ(14);
+                    letter-spacing: 0.04em;
+                }
+                p {
+                    font-size: FZ(16);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                }
+                i {
+                    position: relative;
+                    width: 3.6rem;
+                    aspect-ratio: 1;
+                    border-radius: 50%;
+                    background-color: $main-black;
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        margin: auto;
+                        width: 11px;
+                        @include svg-arrow-right("fff");
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* =================================
+ * 組合バナー
+ * ------------------------------ */
+.containerTopBan {
+    @include flex-center;
+    padding-bottom: 14rem;
+    a {
+        width: 100%;
+        max-width: 1086px;
+        aspect-ratio: 1086/260;
+        @include flex-center;
+        font-size: inherit;
+        background: url("/images/top/ban-bg.webp") no-repeat center center / cover;
+        span {
+            font-size: FZ(32);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #fff;
+            text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
+        }
+    }
+}
+
+/* =================================
+ * 協会概要
+ * ------------------------------ */
+.containerTopAssociationOverview {
+    @include flex-center;
+    padding: 9rem 4vw 12rem;
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+    }
+    &::before {
+        background: url("/images/top/bg-association-overview.webp") no-repeat
+            center center/cover;
+    }
+    &::after {
+        background: linear-gradient(
+            0deg,
+            rgb(0 0 0 / 40%) 0%,
+            rgb(0 0 0 / 40%) 100%
+        );
+    }
+    article {
+        @include flex-center(column);
+        color: $main-white;
+        max-width: 71rem;
+        h2 {
+            @include itemTitle;
+            --c: #fff;
+        }
+        dl {
+            position: relative;
+            margin-top: 7.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            font-size: inherit;
+            div {
+                grid-column: span 2;
+                font-size: inherit;
+                display: grid;
+                grid-template-columns: subgrid;
+                gap: 0 5rem;
+                &:first-of-type {
+                    dt,
+                    dd {
+                        border-top: 1px solid;
+                    }
+                }
+                dt,
+                dd {
+                    font-size: FZ(16);
+                    font-weight: 500;
+                    padding-block: 3.2rem;
+                    border-bottom: 1px solid;
+                }
+                dt {
+                    min-width: 12rem;
+                }
+                dd {
+                    padding-right: 2em;
+                    a,
+                    address,
+                    span,
+                    i {
+                        font-size: inherit;
+                    }
+                    address {
+                        display: flex;
+                        gap: 1em;
+                    }
+                    &.itemMember {
+                        display: flex;
+                        align-items: center;
+                        span {
+                            display: flex;
+                            gap: 0 1em;
+                            &:first-of-type {
+                                &::after {
+                                    content: "／";
+                                    margin-right: 1em;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

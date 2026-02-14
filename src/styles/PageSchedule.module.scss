@@ -1,0 +1,185 @@
+/* =================================
+ * 	黒川温泉観光協会 年間スケジュール
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+@mixin layoutBlockHead {
+    width: stretch;
+    font-size: inherit;
+    margin-top: 1em;
+    .head {
+        img {
+            width: 100%;
+        }
+    }
+}
+@mixin layoutMovieContents {
+    background-color: $main-black;
+    color: $main-white;
+    font-size: inherit;
+    padding: 4em 1.8em 2em;
+    margin-bottom: 2em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2em;
+    @include sp {
+        padding: 4vw 4vw 16vw;
+        display: flex;
+        flex-direction: column;
+        gap: 8vw 0;
+    }
+    h4 {
+        grid-column: span 2;
+        font-size: FZ(18);
+        font-weight: 700;
+        text-indent: 0.5em;
+        @include sp {
+            text-indent: unset;
+        }
+    }
+    button {
+        font-size: inherit;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        @include sp {
+            width: stretch;
+            margin-inline: 8vw;
+        }
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 3.6em;
+            @include svg-iconMoviePlay("ffffff");
+            opacity: 0.8;
+        }
+        span {
+            font-size: FZ(14);
+            margin-top: 0.5em;
+            align-self: flex-start;
+        }
+    }
+}
+@mixin layoutArticleSchedule {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: stretch;
+    gap: 2em 0;
+    padding: 2em 0;
+    @include sp {
+        padding: 4vw;
+    }
+    .titleMonthNumber {
+        font-size: inherit;
+        width: 4.1em;
+    }
+    .listMonthEvent {
+        position: relative;
+        font-size: inherit;
+        display: flex;
+        flex-direction: column;
+        gap: 2em 0;
+        @include sp {
+            gap: 8vw 0;
+        }
+        li {
+            display: flex;
+            gap: 0 1.4em;
+            font-size: inherit;
+            @include sp {
+                flex-direction: column;
+                gap: 2vw 0;
+            }
+            .itemPhoto {
+                font-size: inherit;
+                width: 45%;
+                @include sp {
+                    width: stretch;
+                }
+                img {
+                    aspect-ratio: 1.6;
+                    object-fit: cover;
+                }
+            }
+            .itemText {
+                font-size: inherit;
+                display: flex;
+                width: stretch;
+                flex-direction: column;
+                gap: 1em 0;
+                flex: 1;
+                @include sp {
+                    gap: 1vw 0;
+                }
+                h5 {
+                    font-size: FZ(20);
+                    font-weight: 700;
+                    line-height: 1.6em;
+                    @include sp {
+                        font-size: FZ(18);
+                    }
+                }
+                p {
+                    font-size: FZ(14);
+                    line-height: 2em;
+                    letter-spacing: 0.04em;
+                    text-align: justify;
+                    @include sp {
+                        font-size: FZ(16);
+                        line-height: 1.6em;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* =================================
+ * 年間スケジュール
+ * ------------------------------ */
+.containerSchedule {
+    @include flex-center(column);
+    padding: 8rem 4vw;
+    h3 {
+        font-size: FZ(26);
+        font-weight: 700;
+    }
+    .sidebarH3 {
+        font-size: FZ(14);
+        display: flex;
+        flex-direction: column;
+        text-align: justify;
+        line-height: 2em;
+        margin-top: 2em;
+        gap: 0.5em 0;
+    }
+    article {
+        display: flex;
+        flex-direction: column;
+        max-width: $articleMaxWidth;
+        padding-top: 2.4em;
+        padding-bottom: 2em;
+        &:not(:last-child) {
+            border-bottom: 1px solid #707070;
+        }
+        .blockHead {
+            @include layoutBlockHead;
+        }
+        .movieContents {
+            @include layoutMovieContents;
+        }
+        .boxDetails {
+            font-size: inherit;
+            @include layoutArticleSchedule;
+        }
+    }
+}

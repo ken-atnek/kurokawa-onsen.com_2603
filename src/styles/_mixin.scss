@@ -1,0 +1,91 @@
+@use "variable" as *;
+@use "svg" as *;
+@mixin flex-center($direction: row) {
+    display: flex;
+    flex-direction: $direction;
+    align-items: center;
+    justify-content: center;
+}
+@mixin itemTitle {
+    position: relative;
+    font-size: FZ(24);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 0.5em 2em;
+    min-width: 28rem;
+
+    // --c: #fff;
+    text-align: center;
+    --w: 1px;
+    --gap: 4px;
+    --inset: 6px;
+    --over: 6px;
+    background:
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over)) top no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over))
+            calc(var(--gap)) no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over)) bottom
+            no-repeat,
+        linear-gradient(var(--c), var(--c)) calc(-1 * var(--over))
+            calc(100% - var(--gap)) no-repeat;
+    background-size:
+        calc(100% + (var(--over) * 2)) var(--w),
+        calc(100% + (var(--over) * 2)) var(--w),
+        calc(100% + (var(--over) * 2)) var(--w),
+        calc(100% + (var(--over) * 2)) var(--w);
+    &::before {
+        content: "";
+        position: absolute;
+        top: calc(-1 * var(--over));
+        left: 0;
+        width: 100%;
+        height: calc(100% + (var(--over) * 2));
+        pointer-events: none;
+        background:
+            linear-gradient(var(--c), var(--c)) var(--inset) 0 no-repeat,
+            linear-gradient(var(--c), var(--c)) calc(var(--inset) + var(--gap))
+                0 no-repeat,
+            linear-gradient(var(--c), var(--c)) calc(100% - var(--inset)) 0
+                no-repeat,
+            linear-gradient(var(--c), var(--c))
+                calc(100% - (var(--inset) + var(--gap))) 0 no-repeat;
+        background-size:
+            var(--w) 100%,
+            var(--w) 100%,
+            var(--w) 100%,
+            var(--w) 100%;
+    }
+}
+@mixin itemH2 {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    font-size: inherit;
+    i {
+        flex: 1;
+        position: relative;
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            translate: 0 -50%;
+            width: calc(100% + 6px);
+            height: 1px;
+            background-color: $main-black;
+        }
+        &.itemLeft {
+            &::before {
+                left: 0;
+            }
+        }
+        &.itemRight {
+            &::before {
+                right: 0;
+            }
+        }
+    }
+    h2 {
+        @include itemTitle;
+        --c: #1a1a1a;
+    }
+}

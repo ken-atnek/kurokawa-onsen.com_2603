@@ -1,0 +1,202 @@
+/* =================================
+ * 	黒川温泉観光協会 店舗オンライン商品 詳細ページ
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+
+/* =================================
+ * HEADER
+ * ------------------------------ */
+.containerHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 153px 4vw 62px;
+    background-color: #eaebec;
+    color: $main-white;
+    gap: 3rem 0;
+    p {
+        position: relative;
+        font-size: FZ(18);
+        letter-spacing: 0.08em;
+        &::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            translate: -50%;
+            top: calc(100% + 0.8em);
+            width: 2rem;
+            height: 1px;
+            background-color: $main-white;
+        }
+    }
+    h2 {
+        font-size: FZ(24);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+    }
+    &.category-food {
+        background-color: #ae6a6a;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+}
+
+/* =================================
+ * コンテンツ
+ * ------------------------------ */
+.containerDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8rem 4vw 12rem;
+    background-color: #eaebec;
+    article {
+        max-width: $articleMaxWidth;
+        display: flex;
+        justify-content: space-between;
+        gap: 0 5em;
+        .boxImage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4rem 0;
+            img {
+                width: 100%;
+                aspect-ratio: 1;
+                object-fit: cover;
+            }
+            ul {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0 4rem;
+            }
+        }
+        .boxDetail {
+            font-size: inherit;
+            display: flex;
+            flex-direction: column;
+            min-width: 40rem;
+            gap: 2rem 0;
+            .itemId {
+                font-size: FZ(14);
+                letter-spacing: 0.04em;
+            }
+            h3 {
+                font-size: FZ(24);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+            }
+            .itemPrice {
+                color: #a5945a;
+                font-size: FZ(18);
+                margin-bottom: 0.8rem;
+                i {
+                    margin-right: 0.2em;
+                }
+                span {
+                    font-size: 0.7em;
+                }
+            }
+            .itemComment {
+                font-size: FZ(16);
+                & > * {
+                    font-size: inherit;
+                    letter-spacing: 0.04em;
+                    line-height: 1.8em;
+                    text-align: justify;
+                }
+            }
+            .wrapInput {
+                font-size: inherit;
+                display: flex;
+                flex-direction: column;
+                margin-top: 1rem;
+                gap: 2rem 0;
+                h4 {
+                    font-size: FZ(16);
+                }
+                & > div {
+                    background-color: $main-white;
+                    align-self: flex-start;
+                    padding: 1.3rem;
+                    display: flex;
+                    align-items: center;
+                    font-size: inherit;
+                    gap: 0 3rem;
+                    span {
+                        color: #585858;
+                        font-size: FZ(24);
+                        font-weight: 500;
+                    }
+                    button {
+                        position: relative;
+                        display: block;
+                        width: 1.8rem;
+                        aspect-ratio: 1;
+                        &::before,
+                        &::after {
+                            content: "";
+                            position: absolute;
+                            inset: 0;
+                            margin: auto;
+                            width: 100%;
+                            height: 2px;
+                        }
+                        &.itemMinus {
+                            &::before {
+                                background-color: $main-black;
+                            }
+                        }
+                        &.itemPlus {
+                            &::before {
+                                background-color: $main-black;
+                            }
+                            &::after {
+                                background-color: $main-black;
+                                rotate: -90deg;
+                            }
+                        }
+                    }
+                    button:disabled {
+                        opacity: 0.3;
+                        pointer-events: none;
+                    }
+                }
+            }
+            .soldOut {
+                font-size: FZ(16);
+            }
+            .itemButton {
+                border: 1px solid;
+                height: 5.6rem;
+                border-radius: 1rem;
+                margin-top: 4rem;
+            }
+        }
+    }
+    .linkList {
+        grid-column: span 2;
+        width: 100%;
+        margin-top: 9.6rem;
+        @include flex-center;
+        max-width: $articleMaxWidth;
+        height: 5.6rem;
+        background-color: $main-black;
+        color: $main-white;
+        border-radius: 1rem;
+        font-size: FZ(16);
+        letter-spacing: 0.04em;
+        font-weight: 500;
+    }
+}

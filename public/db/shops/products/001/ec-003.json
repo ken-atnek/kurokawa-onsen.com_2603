@@ -1,0 +1,21 @@
+{
+  "id": "ec-003",
+  "shopId": "001",
+  "title": "ローヤルゼリーゴールド（17本）",
+  "price": 8532,
+  "stock": 5,
+  "images": [
+    "/db/images/shops/001/products/ec-003/image01.webp",
+    "/db/images/shops/001/products/ec-003/image02.webp",
+    "/db/images/shops/001/products/ec-003/image03.webp"
+  ],
+  "comment": [
+    "海外配送時は、税抜価格となります。",
+    "",
+    "商品コード：9589",
+    "容量：17本 (各20g)",
+    "アレルギー：該当なし",
+    "保存方法：直射日光を避け常温で保存"
+  ],
+  "ecUrl": "https://ec.example.com/products/royal-jelly-gold-17"
+}
