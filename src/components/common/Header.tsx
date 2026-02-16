@@ -78,10 +78,15 @@ const Header = () => {
             )}
             ref={navRef}
           >
+<<<<<<< HEAD
             <nav className={styles.mainMenu}>
               <ScrollLink href="/" className={styles.linkTop}>
                 トップページ<span>top</span>
               </ScrollLink>
+=======
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <nav className={styles.mainMenu} onClick={closeMenu}>
+>>>>>>> claude/hopeful-jones
               <ScrollLink href="/about/">
                 黒川温泉とは<span>about us</span>
               </ScrollLink>
@@ -98,17 +103,20 @@ const Header = () => {
             <ExternalLink
               href="https://www.kurokawaonsen.or.jp/oyado/"
               className={styles.itemBan}
+              onClick={closeMenu}
             >
               <span>黒川温泉のお宿一覧</span>
             </ExternalLink>
             <ExternalLink
               href="https://www.youmore-minamioguni.com/livecamera/"
               className={styles.itemCamera}
+              onClick={closeMenu}
             >
               <i></i>
               <span>駐車場ライブカメラ</span>
             </ExternalLink>
-            <nav className={styles.subMenu}>
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <nav className={styles.subMenu} onClick={closeMenu}>
               <ScrollLink href="#">ご利用規約</ScrollLink>
               <ScrollLink href="#">特定商取引法に基づく表示</ScrollLink>
               <ScrollLink href="#">プライバシーポリシー</ScrollLink>
@@ -116,6 +124,7 @@ const Header = () => {
             <ExternalLink
               className={styles.linkContact}
               href="mailto:info@kurokawa-onsen.com"
+              onClick={closeMenu}
             >
               <span>お問い合わせ</span>
             </ExternalLink>
