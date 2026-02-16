@@ -91,6 +91,12 @@
                             letter-spacing: 0.08em;
                         }
                     }
+                    &.linkTop {
+                        display: none;
+                        @include sp {
+                            display: flex;
+                        }
+                    }
                 }
             }
             .itemBan {

@@ -59,6 +59,11 @@ const Header = () => {
     };
   }, [isTop]);
 
+  // ページ遷移時にメニューを閉じる
+  useEffect(() => {
+    closeMenu();
+  }, [pathname]);
+
   const isVisible = !isTop || scrollY > 500;
 
   return (
@@ -74,6 +79,9 @@ const Header = () => {
             ref={navRef}
           >
             <nav className={styles.mainMenu}>
+              <ScrollLink href="/" className={styles.linkTop}>
+                トップページ<span>top</span>
+              </ScrollLink>
               <ScrollLink href="/about/">
                 黒川温泉とは<span>about us</span>
               </ScrollLink>
