@@ -78,15 +78,10 @@ const Header = () => {
             )}
             ref={navRef}
           >
-<<<<<<< HEAD
             <nav className={styles.mainMenu}>
               <ScrollLink href="/" className={styles.linkTop}>
                 トップページ<span>top</span>
               </ScrollLink>
-=======
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-            <nav className={styles.mainMenu} onClick={closeMenu}>
->>>>>>> claude/hopeful-jones
               <ScrollLink href="/about/">
                 黒川温泉とは<span>about us</span>
               </ScrollLink>
