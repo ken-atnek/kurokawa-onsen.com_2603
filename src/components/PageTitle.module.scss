@@ -12,16 +12,24 @@
     color: $main-white;
     padding-bottom: 10.5em;
     padding-top: 1.5em;
+    @include sp {
+        padding-bottom: 20vw;
+    }
     h2 {
         margin-top: 20rem;
         font-size: FZ(34);
         font-weight: 500;
         letter-spacing: 0.08em;
+        @include sp {
+            margin-top: 18vw;
+            font-size: FZ(30);
+        }
     }
     .sidebarH2 {
         @include Marcellus;
         font-size: FZ(14);
         letter-spacing: 0.08em;
+        text-transform: uppercase;
     }
     &.bg-schedule {
         background-image: url("/images/schedule/hero.webp");

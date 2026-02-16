@@ -18,6 +18,9 @@
     align-items: center;
     padding: 8rem 4vw;
     background-color: #eaebec;
+    @include sp {
+        padding: 8vw 4vw;
+    }
     nav {
         position: relative;
         display: grid;
@@ -26,6 +29,10 @@
         width: 100%;
         max-width: $articleMaxWidth;
         gap: 0 3rem;
+        @include sp {
+            grid-template-columns: unset;
+            gap: 2vw 0;
+        }
         a {
             position: relative;
             border: 1px solid;
@@ -34,6 +41,9 @@
             font-size: FZ(16);
             letter-spacing: 0.04em;
             border-radius: 1rem;
+            @include sp {
+                font-size: FZ(18);
+            }
             &::after {
                 content: "";
                 position: absolute;
@@ -51,6 +61,9 @@
         display: flex;
         flex-direction: column;
         padding: 9rem 0 0;
+        @include sp {
+            padding: 10vw 0;
+        }
         .boxH2 {
             @include itemH2;
         }
@@ -60,6 +73,11 @@
             font-size: FZ(12);
             color: #6a6a6a;
             translate: 0 -1em;
+            @include sp {
+                translate: unset;
+                align-self: center;
+                margin-top: 4vw;
+            }
         }
         ul {
             position: relative;
@@ -69,6 +87,10 @@
             grid-template-rows: auto auto auto auto;
             font-size: inherit;
             gap: 3em;
+            @include sp {
+                margin-top: 8vw;
+                grid-template-columns: unset;
+            }
         }
     }
 }

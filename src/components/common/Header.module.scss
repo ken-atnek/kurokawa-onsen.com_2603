@@ -40,7 +40,7 @@
             );
             z-index: -1;
             @include sp {
-                display: none;
+                height: 30vw;
             }
         }
         .boxMobileMenu {
