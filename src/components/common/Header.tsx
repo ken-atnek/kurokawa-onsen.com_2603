@@ -10,9 +10,11 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import ExternalLink from '@/components/common/ExternalLink';
 import ScrollLink from '@/components/common/ScrollLink';
+import clsx from 'clsx';
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
@@ -24,10 +26,13 @@ const Header = () => {
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
       if (
         isOpen &&
         navRef.current &&
-        !navRef.current.contains(event.target as Node)
+        buttonRef.current &&
+        !navRef.current.contains(target) &&
+        !buttonRef.current.contains(target)
       ) {
         closeMenu();
       }
@@ -60,13 +65,53 @@ const Header = () => {
     <>
       <header className={styles.containerHeader}>
         <article className={styles.blockHeader}>
-          <nav>
-            <ScrollLink href="/about/">黒川温泉とは</ScrollLink>
-            <ScrollLink href="/shops/">加盟店一覧</ScrollLink>
-            <ScrollLink href="/schedule/">年間スケジュール</ScrollLink>
-            <ScrollLink href="/access/">交通アクセス</ScrollLink>
-          </nav>
-
+          <div
+            className={clsx(
+              styles.boxMobileMenu,
+              isOpen && styles.isOpen,
+              !isOpen && styles.closing
+            )}
+            ref={navRef}
+          >
+            <nav className={styles.mainMenu}>
+              <ScrollLink href="/about/">
+                黒川温泉とは<span>about us</span>
+              </ScrollLink>
+              <ScrollLink href="/shops/">
+                加盟店一覧<span>Member Shops</span>
+              </ScrollLink>
+              <ScrollLink href="/schedule/">
+                年間スケジュール<span>SEASONAL EVENTS</span>
+              </ScrollLink>
+              <ScrollLink href="/access/">
+                交通アクセス<span>Access</span>
+              </ScrollLink>
+            </nav>
+            <ExternalLink
+              href="https://www.kurokawaonsen.or.jp/oyado/"
+              className={styles.itemBan}
+            >
+              <span>黒川温泉のお宿一覧</span>
+            </ExternalLink>
+            <ExternalLink
+              href="https://www.youmore-minamioguni.com/livecamera/"
+              className={styles.itemCamera}
+            >
+              <i></i>
+              <span>駐車場ライブカメラ</span>
+            </ExternalLink>
+            <nav className={styles.subMenu}>
+              <ScrollLink href="#">ご利用規約</ScrollLink>
+              <ScrollLink href="#">特定商取引法に基づく表示</ScrollLink>
+              <ScrollLink href="#">プライバシーポリシー</ScrollLink>
+            </nav>
+            <ExternalLink
+              className={styles.linkContact}
+              href="mailto:info@kurokawa-onsen.com"
+            >
+              <span>お問い合わせ</span>
+            </ExternalLink>
+          </div>
           <h1 className={isVisible ? styles.isVisible : styles.isHidden}>
             <ScrollLink href="/">
               <svg role="img" aria-labelledby="heroLogoTitle">
@@ -75,7 +120,6 @@ const Header = () => {
               </svg>
             </ScrollLink>
           </h1>
-
           <div className={styles.linkCamera}>
             <ExternalLink href="https://www.youmore-minamioguni.com/livecamera/">
               <i></i>
@@ -88,9 +132,9 @@ const Header = () => {
           </div>
         </article>
       </header>
-
       <button
         type="button"
+        ref={buttonRef}
         className={`${styles.hamburgerButton} ${
           isOpen ? styles['is-open'] : ''
         }`}
