@@ -14,11 +14,11 @@ import ShopsList from '@/components/Shops/ShopsList';
 import { getShopStatusView } from '@/lib/status';
 import type { ShopStatusView } from '@/lib/status';
 import { buildShopsWithStatus } from '@/lib/shops/buildShopsWithStatus';
+import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 import type {
   ShopIndexItem,
   ShopDetail,
-  ShopTimeRange,
   ShopWithStatus,
 } from '@/types/shop';
 
@@ -35,11 +35,7 @@ export default async function ShopsPage() {
   const shopsWithStatusFromDetails = await buildShopsWithStatus<ShopDetail>({
     indexJsonPath: indexPath,
     createStatus: (detail) => {
-      const hoursRow = detail.info.hours.find(
-        (row): row is { label: string; timeRanges: ShopTimeRange[] } =>
-          row.label === '営業時間' && 'timeRanges' in row
-      );
-
+      const hoursRow = getHoursRow(detail.info.hours);
       const timeRanges = hoursRow?.timeRanges ?? [];
 
       return getShopStatusView({

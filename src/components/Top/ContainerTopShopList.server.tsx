@@ -10,17 +10,14 @@ import ContainerTopShopListClient from '@/components/Top/ContainerTopShopList.cl
 
 import { buildShopsWithStatus } from '@/lib/shops/buildShopsWithStatus';
 import { getShopStatusView } from '@/lib/status';
+import { getHoursRow } from '@/lib/shops/getHoursRow';
 
-import type { ShopDetail, ShopTimeRange, ShopWithStatus } from '@/types/shop';
+import type { ShopDetail, ShopWithStatus } from '@/types/shop';
 
 export default async function ContainerTopShopListServer() {
   const shops = await buildShopsWithStatus<ShopDetail>({
     createStatus: (detail) => {
-      const hoursRow = detail.info.hours.find(
-        (row): row is { label: string; timeRanges: ShopTimeRange[] } =>
-          row.label === '営業時間' && 'timeRanges' in row
-      );
-
+      const hoursRow = getHoursRow(detail.info.hours);
       const timeRanges = hoursRow?.timeRanges ?? [];
 
       return getShopStatusView({

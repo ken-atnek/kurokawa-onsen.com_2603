@@ -8,7 +8,6 @@
 import styles from './Header.module.scss';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-// import Link from 'next/link';
 import ExternalLink from '@/components/common/ExternalLink';
 import ScrollLink from '@/components/common/ScrollLink';
 const Header = () => {

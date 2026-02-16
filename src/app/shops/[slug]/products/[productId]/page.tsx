@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import ShopProductDetailView from '@/components/Shops/ShopProductDetailView';
+import { getIdFromSlug } from '@/lib/shops/getIdFromSlug';
 
 /* =======================================
  * generateStaticParams（同期）
@@ -101,10 +102,3 @@ export default async function ShopProductPage({
   );
 }
 
-/* =======================================
- * slug → id変換（仮）
- * ======================================= */
-function getIdFromSlug(slug: string) {
-  if (slug === 'warokuya') return '001';
-  return slug;
-}
