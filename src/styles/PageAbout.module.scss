@@ -17,11 +17,20 @@
     @include flex-center;
     padding: 4em 0;
     gap: 0 4rem;
+    @include sp {
+        flex-direction: column;
+        padding: 4vw 4vw 8vw;
+        gap: 2vw;
+    }
     .boxImage {
         flex: 1;
         max-width: 98rem;
         img {
             width: 100%;
+            @include sp {
+                aspect-ratio: 16/9;
+                object-fit: cover;
+            }
         }
     }
     .boxText {
@@ -33,24 +42,42 @@
             @include Serif;
             line-height: 2.5em;
             letter-spacing: 0.04em;
+            @include sp {
+                line-height: 2em;
+            }
         }
     }
 }
 .containerHeadBlack {
     background-color: $main-black;
     color: $main-white;
+    @include sp {
+        flex-direction: column-reverse;
+    }
     .boxText {
         padding-right: 4rem;
+        @include sp {
+            padding-right: unset;
+        }
         p {
             width: 36em;
+            @include sp {
+                width: unset;
+            }
         }
     }
 }
 .containerHeadWhite {
     .boxText {
         padding-left: 4rem;
+        @include sp {
+            padding-left: unset;
+        }
         p {
             width: 28em;
+            @include sp {
+                width: unset;
+            }
         }
     }
 }
@@ -95,6 +122,9 @@
             font-weight: 600;
             text-align: center;
             margin-bottom: 1em;
+            @include sp {
+                font-size: FZ(24);
+            }
         }
         p {
             font-size: FZ(16);
@@ -102,6 +132,9 @@
             letter-spacing: 0.04em;
             line-height: 2.25em;
             text-align: justify;
+            @include sp {
+                line-height: 2em;
+            }
         }
     }
 }

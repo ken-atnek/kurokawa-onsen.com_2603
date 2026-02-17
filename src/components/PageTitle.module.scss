@@ -47,4 +47,16 @@
         background-image: url("/images/shops/hero.webp");
         background-position: 10% center;
     }
+    &.bg-terms {
+        background-image: url("/images/terms/hero.webp");
+        background-position: center 90%;
+    }
+    &.bg-law {
+        background-image: url("/images/law/hero.webp");
+        background-position: center 90%;
+    }
+    &.bg-privacy {
+        background-image: url("/images/privacy/hero.webp");
+        background-position: center 90%;
+    }
 }

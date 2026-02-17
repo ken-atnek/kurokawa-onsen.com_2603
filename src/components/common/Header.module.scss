@@ -57,7 +57,7 @@
                 color: $main-white;
                 width: 100vw;
                 height: 100vh;
-                height: 100vdh;
+                height: 100dvh;
                 padding: 20vw 8vw 8vw;
                 z-index: 50;
                 transition: 0.3s ease-out;
@@ -115,10 +115,8 @@
                         content: "";
                         position: absolute;
                         --inline-size: 2px;
-                        top: var(--inline-size);
-                        left: var(--inline-size);
-                        right: var(--inline-size);
-                        bottom: var(--inline-size);
+                        inset: var(--inline-size) var(--inline-size)
+                            var(--inline-size) var(--inline-size);
                         border: 2px solid $main-black;
                         z-index: +1;
                     }
@@ -288,7 +286,7 @@
     aspect-ratio: 1;
     z-index: 100;
     display: none;
-    background-color: rgba(26, 26, 26, 0.8);
+    background-color: rgb(26 26 26 / 80%);
     border-radius: 50%;
     @include sp {
         display: block;
@@ -309,7 +307,7 @@
         }
         &::after {
             width: 100%;
-            background-color: rgba(26, 26, 26, 0.8);
+            background-color: rgb(26 26 26 / 80%);
         }
     }
     span {
