@@ -5,12 +5,7 @@
  * Last updated: 2026-02-12
  * ======================================= */
 
-import type {
-  ShopDetail,
-  ShopOnlineProduct,
-  ShopHourRow,
-  ShopTimeRange,
-} from '@/types/shop';
+import type { ShopDetail, ShopOnlineProduct } from '@/types/shop';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
@@ -20,12 +15,8 @@ import ShopPickup from '@/components/Shops/ShopPickup';
 import ShopInfo from '@/components/Shops/ShopInfo';
 import ShopRecommendedProducts from '@/components/Shops/ShopRecommendedProducts';
 import ShopOnlineProducts from '@/components/Shops/ShopOnlineProducts';
-
-function hasTimeRanges(
-  row: ShopHourRow
-): row is { label: string; timeRanges: ShopTimeRange[] } {
-  return 'timeRanges' in row;
-}
+import { getIdFromSlug } from '@/lib/shops/getIdFromSlug';
+import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 /* =======================================
  * generateStaticParams（同期）
@@ -77,11 +68,7 @@ export default async function ShopDetailPage({
     (detail.onlineProductsCount ?? 0) > 0 ||
     Boolean(detail.onlineShopUrl);
 
-  const hoursRow = detail.info.hours.find(
-    (row): row is { label: string; timeRanges: ShopTimeRange[] } =>
-      row.label === '営業時間' && hasTimeRanges(row)
-  );
-
+  const hoursRow = getHoursRow(detail.info.hours);
   const timeRanges = hoursRow?.timeRanges ?? [];
   return (
     <>
@@ -111,11 +98,3 @@ export default async function ShopDetailPage({
   );
 }
 
-/* =======================================
- * slug → id変換
- * （本来は shopsIndex から引く）
- * ======================================= */
-function getIdFromSlug(slug: string) {
-  if (slug === 'warokuya') return '001';
-  return slug;
-}

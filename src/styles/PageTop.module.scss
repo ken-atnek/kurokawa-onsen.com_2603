@@ -19,6 +19,9 @@
     font-feature-settings: initial; // 左詰め解除
     padding-top: 1em;
     padding-right: 0.2em;
+    @include sp {
+        margin-block: unset;
+    }
     &::before {
         content: "";
         position: absolute;
@@ -44,6 +47,12 @@
             width: 100%;
             aspect-ratio: 1.78;
             object-fit: cover;
+            @include sp {
+                aspect-ratio: unset;
+                height: 100vh;
+                height: 100dvh;
+                object-position: 58% bottom;
+            }
         }
     }
     .itemLogo {
@@ -54,6 +63,9 @@
         z-index: 2;
         width: 18rem;
         aspect-ratio: 18/22;
+        @include sp {
+            width: 40vw;
+        }
         svg {
             width: 100%;
             fill: $main-white;
@@ -150,6 +162,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    @include sp {
+        padding: 8vw 4vw 8vw;
+    }
     h2 {
         @include itemTitle;
         --c: #1a1a1a;
@@ -188,6 +203,10 @@
     padding-top: 10rem;
     padding-bottom: 8rem;
     gap: 9rem 0;
+    @include sp {
+        padding: 14vw 4vw 2vw;
+        gap: 8vw 0;
+    }
     .bg {
         position: absolute;
         inset: 0;
@@ -203,6 +222,7 @@
             will-change: transform;
             background: url("/images/about/section-bg.webp") center / cover
                 no-repeat;
+            z-index: -1;
         }
     }
     .boxHead {
@@ -213,9 +233,16 @@
         grid-template-rows: auto 1fr;
         gap: 4rem 10rem;
         margin-left: 6rem;
+        @include sp {
+            display: contents;
+        }
         .itemLogo {
             grid-row: span 2;
             width: 16.3rem;
+            @include sp {
+                width: 30vw;
+                z-index: 3;
+            }
             svg {
                 width: 100%;
                 fill: $main-black;
@@ -236,12 +263,21 @@
             max-width: 31em;
             letter-spacing: 0.04em;
             line-height: 2.4em;
+            @include sp {
+                max-width: unset;
+                font-size: FZ(18);
+                line-height: 2em;
+            }
         }
     }
     article {
         display: flex;
         justify-content: space-between;
         max-width: $articleMaxWidth;
+        @include sp {
+            gap: 0 4vw;
+            margin-top: 4vw;
+        }
         h3 {
             @include itemH3;
         }
@@ -254,12 +290,21 @@
             border-top: 1px solid;
             border-left: 1px solid;
             padding-bottom: 1.6rem;
+            @include sp {
+                position: static;
+                padding-bottom: unset;
+                gap: 0;
+            }
             .itemImage {
                 grid-column: span 2;
             }
             img {
                 aspect-ratio: 1.9;
                 object-fit: cover;
+                @include sp {
+                    aspect-ratio: 294/407;
+                    object-position: 25% center;
+                }
             }
             p {
                 font-size: FZ(16);
@@ -267,6 +312,9 @@
                 letter-spacing: 0.04em;
                 line-height: 1.6em;
                 padding-left: 4rem;
+                @include sp {
+                    padding: 4vw 0 0 4vw;
+                }
             }
             a {
                 position: relative;
@@ -277,6 +325,13 @@
                 background-color: $main-black;
                 margin-right: 4rem;
                 align-self: center;
+                @include sp {
+                    margin-right: unset;
+                    width: 10vw;
+                    position: absolute;
+                    left: -1vw;
+                    bottom: 10vw;
+                }
                 &::before {
                     content: "";
                     position: absolute;
@@ -307,12 +362,19 @@
 .containerTopNews {
     @include flex-center;
     padding-inline: 4vw;
+    @include sp {
+        padding: 4vw 4vw 8vw;
+    }
     article {
         display: flex;
         justify-content: space-between;
         max-width: $articleMaxWidth;
         padding-bottom: 8rem;
         padding-top: 5rem;
+        @include sp {
+            gap: 0 4vw;
+            padding-bottom: 4vw;
+        }
         h3 {
             @include itemH3;
         }
@@ -322,6 +384,9 @@
             font-size: inherit;
             display: grid;
             grid-template-columns: auto 1fr auto;
+            @include sp {
+                grid-template-columns: 1fr auto;
+            }
             li,
             a {
                 font-size: inherit;
@@ -329,6 +394,9 @@
                 display: grid;
                 grid-template-columns: subgrid;
                 align-items: center;
+                @include sp {
+                    grid-column: span 2;
+                }
             }
             li {
                 border-bottom: 1px solid;
@@ -336,9 +404,15 @@
                 &:first-of-type {
                     border-top: 1px solid;
                 }
+                @include sp {
+                    padding: 6vw 0;
+                }
             }
             a {
                 gap: 0 5rem;
+                @include sp {
+                    gap: 0 8vw;
+                }
                 span {
                     font-size: FZ(14);
                     letter-spacing: 0.04em;
@@ -347,6 +421,9 @@
                     font-size: FZ(16);
                     font-weight: 500;
                     letter-spacing: 0.04em;
+                    @include sp {
+                        order: 1;
+                    }
                 }
                 i {
                     position: relative;
@@ -354,6 +431,10 @@
                     aspect-ratio: 1;
                     border-radius: 50%;
                     background-color: $main-black;
+                    @include sp {
+                        grid-row: span 2;
+                        width: 10vw;
+                    }
                     &::before {
                         content: "";
                         position: absolute;
@@ -374,7 +455,11 @@
 .containerTopBan {
     @include flex-center;
     padding-bottom: 14rem;
+    @include sp {
+        padding: 0 4vw 16vw;
+    }
     a {
+        position: relative;
         width: 100%;
         max-width: 1086px;
         aspect-ratio: 1086/260;
@@ -382,12 +467,36 @@
         font-size: inherit;
         background: url("/images/top/ban-bg.webp") no-repeat center center /
             cover;
+        border: 6px solid #1a1a1a;
+        @include sp {
+            border-width: 4px;
+            aspect-ratio: 329/220;
+            max-width: unset;
+        }
+        &::before {
+            content: "";
+            position: absolute;
+            --inline-size: 4px;
+            top: var(--inline-size);
+            left: var(--inline-size);
+            right: var(--inline-size);
+            bottom: var(--inline-size);
+            border: 4px solid $main-black;
+            z-index: +1;
+            @include sp {
+                --inline-size: 3px;
+                border-width: 3px;
+            }
+        }
         span {
             font-size: FZ(32);
             font-weight: 600;
             letter-spacing: 0.08em;
             color: #fff;
             text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
+            @include sp {
+                font-size: FZ(26);
+            }
         }
     }
 }
@@ -398,6 +507,9 @@
 .containerTopAssociationOverview {
     @include flex-center;
     padding: 9rem 4vw 12rem;
+    @include sp {
+        padding: 14vw 4vw 8vw;
+    }
     &::before,
     &::after {
         content: "";
@@ -420,6 +532,9 @@
         @include flex-center(column);
         color: $main-white;
         max-width: 71rem;
+        @include sp {
+            max-width: unset;
+        }
         h2 {
             @include itemTitle;
             --c: #fff;
@@ -430,16 +545,33 @@
             display: grid;
             grid-template-columns: auto 1fr;
             font-size: inherit;
+            @include sp {
+                grid-template-columns: unset;
+                margin-top: 10vw;
+            }
             div {
                 grid-column: span 2;
                 font-size: inherit;
                 display: grid;
                 grid-template-columns: subgrid;
                 gap: 0 5rem;
+                @include sp {
+                    border-bottom: 1px solid;
+                    display: flex;
+                    flex-direction: column;
+                    padding-block: 4vw;
+                    gap: 2vw 0;
+                }
                 &:first-of-type {
+                    @include sp {
+                        border-top: 1px solid;
+                    }
                     dt,
                     dd {
                         border-top: 1px solid;
+                        @include sp {
+                            border: unset;
+                        }
                     }
                 }
                 dt,
@@ -448,12 +580,19 @@
                     font-weight: 500;
                     padding-block: 3.2rem;
                     border-bottom: 1px solid;
+                    @include sp {
+                        border: unset;
+                        padding-block: unset;
+                    }
                 }
                 dt {
                     min-width: 12rem;
                 }
                 dd {
                     padding-right: 2em;
+                    @include sp {
+                        padding-right: unset;
+                    }
                     a,
                     address,
                     span,
@@ -463,6 +602,10 @@
                     address {
                         display: flex;
                         gap: 1em;
+                        @include sp {
+                            flex-direction: column;
+                            gap: 1vw 0;
+                        }
                     }
                     &.itemMember {
                         display: flex;

@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import ShopProductsListView from '@/components/Shops/ShopProductsListView';
+import { getIdFromSlug } from '@/lib/shops/getIdFromSlug';
 
 /* =======================================
  * generateStaticParams（同期）
@@ -72,24 +73,3 @@ async function ShopProductsPageInner({
   return <ShopProductsListView shopSlug={slug} detail={detail} items={items} />;
 }
 
-/* =======================================
- * slug → id変換
- * ======================================= */
-function getIdFromSlug(slug: string) {
-  const shopsIndexPath = path.join(
-    process.cwd(),
-    'public/db/shops/shopsIndex.json'
-  );
-
-  if (!fs.existsSync(shopsIndexPath)) return slug;
-
-  const shops = JSON.parse(fs.readFileSync(shopsIndexPath, 'utf-8'));
-
-  if (!Array.isArray(shops)) return slug;
-
-  const found = shops.find(
-    (shop: { id?: string; slug?: string }) => shop?.slug === slug
-  );
-
-  return typeof found?.id === 'string' ? found.id : slug;
-}
