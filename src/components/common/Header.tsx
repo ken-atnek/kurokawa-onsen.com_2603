@@ -112,9 +112,9 @@ const Header = () => {
             </ExternalLink>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <nav className={styles.subMenu} onClick={closeMenu}>
-              <ScrollLink href="#">ご利用規約</ScrollLink>
-              <ScrollLink href="#">特定商取引法に基づく表示</ScrollLink>
-              <ScrollLink href="#">プライバシーポリシー</ScrollLink>
+              <ScrollLink href="/terms/">ご利用規約</ScrollLink>
+              <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
+              <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>
             </nav>
             <ExternalLink
               className={styles.linkContact}

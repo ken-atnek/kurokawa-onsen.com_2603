@@ -1,0 +1,85 @@
+/* =================================
+ * 	黒川温泉観光協会 ご利用規約・他
+ * ------------------------------ */
+@use "variable" as *;
+@use "svg" as *;
+@use "mixin" as *;
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable keyframes-name-pattern */
+/* stylelint-disable custom-property-pattern */
+// このファイル全体のルールを無効にする
+
+/* =================================
+ * 黒川温泉郷とは・他
+ * ------------------------------ */
+.containerTerms,
+.containerPrivacy,
+.containerLaw {
+    @include flex-center(column);
+    padding: 5rem 4vw 8rem;
+    gap: 5em 0;
+    article {
+        display: flex;
+        flex-direction: column;
+        max-width: 84rem;
+        .headTitle {
+            font-size: FZ(24);
+            font-weight: 500;
+            margin-bottom: 3rem;
+        }
+        dl {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            font-size: inherit;
+            counter-reset: number 0;
+            width: 100%;
+            dt {
+                font-size: FZ(18);
+                border-bottom: 2px solid #eaeaea;
+                font-weight: 500;
+                padding-bottom: 0.5em;
+                &::before {
+                    content: counter(number) ".";
+                    counter-increment: number 1;
+                    margin-right: 0.3em;
+                }
+            }
+            dd {
+                font-size: FZ(16);
+                line-height: 1.8em;
+                letter-spacing: 0.08em;
+                text-align: justify;
+                padding-top: 0.5em;
+                margin-bottom: 2em;
+                display: flex;
+                flex-direction: column;
+                gap: 2em 0;
+                p {
+                    font-size: inherit;
+                    line-height: 1.8em;
+                    letter-spacing: 0.08em;
+                    text-align: justify;
+                }
+                a {
+                    font-size: inherit;
+                }
+                & > ul {
+                    font-size: inherit;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.2em 0;
+                    width: 100%;
+                    li {
+                        width: 100%;
+                        font-size: inherit;
+                        line-height: 1.6em;
+                        letter-spacing: 0.08em;
+                        text-align: justify;
+                    }
+                }
+            }
+        }
+    }
+}

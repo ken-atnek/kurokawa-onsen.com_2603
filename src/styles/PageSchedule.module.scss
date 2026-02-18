@@ -48,10 +48,6 @@
         cursor: pointer;
         display: flex;
         flex-direction: column;
-        @include sp {
-            width: stretch;
-            margin-inline: 8vw;
-        }
         &::after {
             content: "";
             position: absolute;
@@ -149,9 +145,15 @@
 .containerSchedule {
     @include flex-center(column);
     padding: 8rem 4vw;
+    @include sp {
+        padding: 0 0 4vw;
+    }
     h3 {
         font-size: FZ(26);
         font-weight: 700;
+        @include sp {
+            text-align: center;
+        }
     }
     .sidebarH3 {
         font-size: FZ(14);
@@ -161,6 +163,9 @@
         line-height: 2em;
         margin-top: 2em;
         gap: 0.5em 0;
+        @include sp {
+            padding-inline: 4vw;
+        }
     }
     article {
         display: flex;
@@ -168,6 +173,9 @@
         max-width: $articleMaxWidth;
         padding-top: 2.4em;
         padding-bottom: 2em;
+        @include sp {
+            padding: 8vw 0 4vw;
+        }
         &:not(:last-child) {
             border-bottom: 1px solid #707070;
         }
