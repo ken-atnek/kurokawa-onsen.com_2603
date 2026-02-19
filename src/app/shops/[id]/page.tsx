@@ -1,21 +1,21 @@
 /* =======================================
  * 黒川温泉観光協会 店舗詳細ページ
- * URL: src/app/shops/[slug]/page.tsx
+ * URL: src/app/shops/[id]/page.tsx
  * Created: 2026-02-12
- * Last updated: 2026-02-12
+ * Last updated: 2026-02-19
  * ======================================= */
 
 import type { ShopDetail, ShopOnlineProduct } from '@/types/shop';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
+
 import ShopHeader from '@/components/Shops/ShopHeader';
 import ShopHero from '@/components/Shops/ShopHero';
 import ShopPickup from '@/components/Shops/ShopPickup';
 import ShopInfo from '@/components/Shops/ShopInfo';
 import ShopRecommendedProducts from '@/components/Shops/ShopRecommendedProducts';
 import ShopOnlineProducts from '@/components/Shops/ShopOnlineProducts';
-import { getIdFromSlug } from '@/lib/shops/getIdFromSlug';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 /* =======================================
@@ -24,10 +24,21 @@ import { getHoursRow } from '@/lib/shops/getHoursRow';
 export function generateStaticParams() {
   const filePath = path.join(process.cwd(), 'public/db/shops/shopsIndex.json');
 
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
+
   const file = fs.readFileSync(filePath, 'utf-8');
   const data = JSON.parse(file);
 
-  return Array.isArray(data) ? data.map((item) => ({ slug: item.slug })) : [];
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  return data
+    .map((item: { id?: unknown }) => item.id)
+    .filter((id): id is string => typeof id === 'string' && id.length > 0)
+    .map((id) => ({ id }));
 }
 
 /* =======================================
@@ -36,10 +47,9 @@ export function generateStaticParams() {
 export default async function ShopDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const id = getIdFromSlug(slug);
+  const { id } = await params;
 
   const filePath = path.join(
     process.cwd(),
@@ -70,6 +80,7 @@ export default async function ShopDetailPage({
 
   const hoursRow = getHoursRow(detail.info.hours);
   const timeRanges = hoursRow?.timeRanges ?? [];
+
   return (
     <>
       <ShopHeader
@@ -80,21 +91,23 @@ export default async function ShopDetailPage({
         web={detail.info.web}
         mail={detail.info.mail}
         category={detail.category}
-        shopSlug={slug}
+        shopSlug={id}
         hasOnlineList={hasOnline}
         statusFallbackKey={detail.statusFallbackKey}
         closedWeekdays={detail.info.closedWeekdays}
         timeRanges={timeRanges}
       />
+
       <ShopHero src={detail.heroImage} alt={detail.name.join(' ')} />
       <ShopPickup items={detail.pickupItems} />
       <ShopInfo info={detail.info} />
+
       <ShopRecommendedProducts
         items={detail.recommendedProducts}
         isLastSection={!hasOnline}
       />
-      <ShopOnlineProducts items={onlineProducts} shopSlug={slug} />
+
+      <ShopOnlineProducts items={onlineProducts} shopSlug={id} />
     </>
   );
 }
-

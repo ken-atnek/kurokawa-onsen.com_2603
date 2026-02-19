@@ -1,8 +1,8 @@
 /* =======================================
  * 黒川温泉観光協会 店舗オンライン商品 詳細ページ
- * URL:src/app/shops/[slug]/products/[productId]/page.tsx
+ * URL: src/app/shops/[id]/products/[productId]/page.tsx
  * Created: 2026-02-13
- * Last updated: 2026-02-13
+ * Last updated: 2026-02-19
  * ======================================= */
 
 import type { ShopDetail, ShopProductDetail } from '@/types/shop';
@@ -10,11 +10,10 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import ShopProductDetailView from '@/components/Shops/ShopProductDetailView';
-import { getIdFromSlug } from '@/lib/shops/getIdFromSlug';
 
 /* =======================================
  * generateStaticParams（同期）
- * 商品詳細ページ用
+ * 商品詳細ページ用（output: 'export' 対応）
  * ======================================= */
 export function generateStaticParams() {
   const shopsIndexPath = path.join(
@@ -27,53 +26,50 @@ export function generateStaticParams() {
   const shops = JSON.parse(fs.readFileSync(shopsIndexPath, 'utf-8'));
   if (!Array.isArray(shops)) return [];
 
-  const params: { slug: string; productId: string }[] = [];
+  const params: { id: string; productId: string }[] = [];
 
   for (const shop of shops) {
-    const slug = shop?.slug;
-    const shopId = shop?.id;
-
-    if (typeof slug !== 'string' || typeof shopId !== 'string') continue;
+    const id = shop?.id;
+    if (typeof id !== 'string' || id.length === 0) continue;
 
     const productsIndexPath = path.join(
       process.cwd(),
-      `public/db/shops/products/${shopId}/index.json`
+      `public/db/shops/products/${id}/index.json`
     );
 
+    // 商品indexが無い店舗はスキップ（オンライン商品なし）
     if (!fs.existsSync(productsIndexPath)) continue;
 
     const items = JSON.parse(fs.readFileSync(productsIndexPath, 'utf-8'));
-
     if (!Array.isArray(items)) continue;
 
     for (const item of items) {
-      if (typeof item?.id !== 'string') continue;
+      // ✅ index.json のキーが id / productId どちらでも対応
+      const productId = item?.id ?? item?.productId;
 
-      params.push({
-        slug,
-        productId: item.id,
-      });
+      if (typeof productId !== 'string' || productId.length === 0) continue;
+
+      params.push({ id, productId });
     }
   }
 
   return params;
 }
+
 /* =======================================
  * Page
  * ======================================= */
 export default async function ShopProductPage({
   params,
 }: {
-  params: Promise<{ slug: string; productId: string }>;
+  params: Promise<{ id: string; productId: string }>;
 }) {
-  const { slug, productId } = await params;
-
-  const shopId = getIdFromSlug(slug);
+  const { id, productId } = await params;
 
   // 店舗詳細（店名を出す用）
   const shopDetailPath = path.join(
     process.cwd(),
-    `public/db/shops/details/${shopId}.json`
+    `public/db/shops/details/${id}.json`
   );
   if (!fs.existsSync(shopDetailPath)) return notFound();
 
@@ -84,7 +80,7 @@ export default async function ShopProductPage({
   // 商品詳細
   const productPath = path.join(
     process.cwd(),
-    `public/db/shops/products/${shopId}/${productId}.json`
+    `public/db/shops/products/${id}/${productId}.json`
   );
   if (!fs.existsSync(productPath)) return notFound();
 
@@ -96,9 +92,8 @@ export default async function ShopProductPage({
     <ShopProductDetailView
       shopName={shopDetail.name}
       category={shopDetail.category}
-      shopSlug={slug}
+      shopSlug={id}
       product={product}
     />
   );
 }
-

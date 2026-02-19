@@ -9,13 +9,25 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import styles from '@/styles/PageTop.module.scss';
-import type { ShopWithStatus } from '@/types/shop';
 import ShopCard from '@/components/Shops/ShopCard';
 
+import { getShopStatusView } from '@/lib/status';
+import { getHoursRow } from '@/lib/shops/getHoursRow';
+
+import type { ShopDetail, ShopWithStatus } from '@/types/shop';
+
+type ShopIndexBase = {
+  id: string;
+  slug: string;
+  category: string;
+  name: string[];
+  thumb: string;
+  tel: string;
+  leadCopy: string[];
+};
+
 type Props = {
-  shops: ShopWithStatus[];
   pickupCount?: number;
-  initialSeed?: number; // ← 追加
 };
 
 // 乱数生成（seed固定で毎回同じ順序を作る）
@@ -38,26 +50,82 @@ function seededShuffle<T>(list: T[], seed: number): T[] {
   return a;
 }
 
-export default function ContainerTopShopListClient({
-  shops,
-  pickupCount = 3,
-  initialSeed = 1,
-}: Props) {
-  // 初期はサーバーから渡されたseedを使用（SSRと一致させる）
-  const [seed, setSeed] = useState(initialSeed);
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch: ${url}`);
+  return (await res.json()) as T;
+}
 
-  const eligible = useMemo(() => {
-    return shops.filter(
-      (s) =>
-        (s.category === 'food' || s.category === 'souvenir') &&
-        s.status.variant === 'open'
-    );
-  }, [shops]);
+export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
+  const [picked, setPicked] = useState<ShopWithStatus[] | null>(null);
 
-  const picked = useMemo(() => {
-    if (eligible.length === 0) return [];
-    return seededShuffle(eligible, seed).slice(0, pickupCount);
-  }, [eligible, seed, pickupCount]);
+  // TOPの表示対象カテゴリ（必要に応じて変更OK）
+  const allowedCategories = useMemo(() => new Set(['food', 'souvenir']), []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        // 1) index を取得（本番は out/ 直下の /db を拾う）
+        const indexList = await fetchJson<ShopIndexBase[]>(
+          '/db/shops/shopsIndex.json'
+        );
+
+        // 2) まずカテゴリで絞る（detailsを全部取らないため）
+        const candidates = indexList.filter((s) =>
+          allowedCategories.has(s.category)
+        );
+
+        if (candidates.length === 0) {
+          if (!cancelled) setPicked([]);
+          return;
+        }
+
+        // 3) ランダム（クライアントのみで実行＝Hydration安全）
+        const seed = Date.now() % 2147483647;
+        const selected = seededShuffle(candidates, seed).slice(0, pickupCount);
+
+        // 4) 選んだ分だけ details を取得
+        const details = await Promise.all(
+          selected.map(async (idx) => {
+            const detail = await fetchJson<ShopDetail>(
+              `/db/shops/details/${idx.id}.json`
+            );
+
+            const hoursRow = getHoursRow(detail.info.hours);
+            const timeRanges = hoursRow?.timeRanges ?? [];
+
+            const status = getShopStatusView({
+              fallbackKey: detail.statusFallbackKey,
+              closedWeekdays: detail.info.closedWeekdays,
+              timeRanges,
+            });
+
+            return {
+              ...idx,
+              status,
+            } as ShopWithStatus;
+          })
+        );
+
+        // 5) openだけに絞る（今の client 側の条件踏襲）
+        const openOnly = details.filter((s) => s.status.variant === 'open');
+
+        if (!cancelled) setPicked(openOnly);
+      } catch {
+        if (!cancelled) setPicked([]);
+      }
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pickupCount, allowedCategories]);
+
+  if (picked === null) return null; // ローディング表示したければここで
 
   if (picked.length === 0) return null;
 

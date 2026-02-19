@@ -17,7 +17,7 @@ type Props = {
 export default function ShopCard({ shop }: Props) {
   return (
     <li className={styles.boxShopCard}>
-      <Link href={`/shops/${shop.slug}/`}>
+      <Link href={`/shops/${shop.id}/`}>
         <Image
           src={shop.thumb}
           alt={shop.name.join(' ')}

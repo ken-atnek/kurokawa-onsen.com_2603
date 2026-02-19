@@ -1,9 +1,9 @@
 /* =======================================
  * 黒川温泉観光協会 店舗オンライン商品 一覧ページ(view)
  * URL:src/components/Shops/ShopProductsListView.tsx
- * Referenced in: : src/app/shops/[slug]/products/page.tsx
+ * Referenced in: : src/app/shops/[id]/products/page.tsx
  * Created: 2026-02-13
- * Last updated: 2026-02-13
+ * Last updated: 2026-02-19
  * ======================================= */
 'use client';
 
@@ -13,8 +13,9 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import styles from '@/styles/PageShopDetails.module.scss';
 import ShopHeader from '@/components/Shops/ShopHeader';
+
 type Props = {
-  shopSlug: string;
+  shopSlug: string; // ※ 呼び出し側互換のため名前は残す（中身は id を渡す運用）
   detail: ShopDetail;
   items: ShopOnlineProduct[];
 };
@@ -24,6 +25,9 @@ export default function ShopProductsListView({
   detail,
   items,
 }: Props) {
+  // ✅ 中では id として扱う（slug混乱防止）
+  const shopId = shopSlug;
+
   const formatYen = useMemo(() => {
     return (value: number) => new Intl.NumberFormat('ja-JP').format(value);
   }, []);
@@ -38,10 +42,11 @@ export default function ShopProductsListView({
         tel={detail.info.tel}
         web={detail.info.web}
         category={detail.category}
-        shopSlug={shopSlug}
+        shopSlug={shopId}
         hasOnlineList={false}
         statusFallbackKey={detail.statusFallbackKey}
       />
+
       <section className={styles.containerProductList}>
         <article>
           <div className={styles.boxH2}>
@@ -49,6 +54,7 @@ export default function ShopProductsListView({
             <h2>オンライン商品</h2>
             <i className={styles.itemRight}></i>
           </div>
+
           <ul className={styles.listOnline}>
             {items.map((item) => (
               <li key={item.id} className={styles.item}>
@@ -60,13 +66,16 @@ export default function ShopProductsListView({
                     height={340}
                   />
                 </div>
+
                 <h3>{item.title}</h3>
+
                 <p className={styles.itemPrice}>
                   <i>¥</i>
                   {formatYen(item.price)} <span>（税込）</span>
                 </p>
+
                 <Link
-                  href={`/shops/${shopSlug}/products/${item.id}/`}
+                  href={`/shops/${shopId}/products/${item.id}/`}
                   className={styles.buyUrl}
                 >
                   購入する
@@ -74,7 +83,8 @@ export default function ShopProductsListView({
               </li>
             ))}
           </ul>
-          <Link href={`/shops/${shopSlug}/`} className={styles.linkShopDetails}>
+
+          <Link href={`/shops/${shopId}/`} className={styles.linkShopDetails}>
             店舗詳細ページに戻る
           </Link>
         </article>
