@@ -11,9 +11,20 @@ import ExternalLink from '@/components/common/ExternalLink';
 export default function ContainerTopBan() {
   return (
     <section className={styles.containerTopBan}>
-      <ExternalLink href="https://www.kurokawaonsen.or.jp/oyado/">
-        <span>黒川温泉のお宿一覧</span>
-      </ExternalLink>
+      <nav>
+        <ExternalLink
+          href="https://www.kurokawaonsen.or.jp/oyado/"
+          className={styles.itemList}
+        >
+          <span>黒川温泉のお宿一覧</span>
+        </ExternalLink>
+        <ExternalLink
+          href="https://www.kurokawaonsen.or.jp/availability/"
+          className={styles.itemReserve}
+        >
+          <span>宿泊予約の空室状況</span>
+        </ExternalLink>
+      </nav>
     </section>
   );
 }
