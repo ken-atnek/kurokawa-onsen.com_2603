@@ -1,14 +1,11 @@
 /* =======================================
  * 黒川温泉観光協会 加盟店一覧（TOP用ピックアップ / Client）
  * URL:src/components/Top/ContainerTopShopList.client.tsx
- * Referenced in: ContainerTopShopList.server.tsx
- * Created: 2026-02-14
- * Last updated: 2026-02-14
  * ======================================= */
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import styles from '@/styles/PageTop.module.scss';
@@ -18,6 +15,7 @@ import ShopCard from '@/components/Shops/ShopCard';
 type Props = {
   shops: ShopWithStatus[];
   pickupCount?: number;
+  initialSeed?: number; // ← 追加
 };
 
 // 乱数生成（seed固定で毎回同じ順序を作る）
@@ -43,12 +41,10 @@ function seededShuffle<T>(list: T[], seed: number): T[] {
 export default function ContainerTopShopListClient({
   shops,
   pickupCount = 3,
+  initialSeed = 1,
 }: Props) {
-  // マウント時に1回だけ固定seedを作る（これで「リロードするまでランダム固定」になる）
-  const [seed] = useState(() => {
-    // Date.now でもOK。よりばらけさせたいなら Math.random も混ぜてOK
-    return Date.now() % 2147483647;
-  });
+  // 初期はサーバーから渡されたseedを使用（SSRと一致させる）
+  const [seed, setSeed] = useState(initialSeed);
 
   const eligible = useMemo(() => {
     return shops.filter(

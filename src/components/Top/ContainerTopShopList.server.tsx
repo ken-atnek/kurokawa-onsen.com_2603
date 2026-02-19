@@ -27,6 +27,12 @@ export default async function ContainerTopShopListServer() {
       });
     },
   });
+  const initialSeed = Date.now() % 2147483647;
 
-  return <ContainerTopShopListClient shops={shops as ShopWithStatus[]} />;
+  return (
+    <ContainerTopShopListClient
+      shops={shops as ShopWithStatus[]}
+      initialSeed={initialSeed}
+    />
+  );
 }
