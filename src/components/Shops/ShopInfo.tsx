@@ -15,6 +15,7 @@ type Props = {
 };
 
 export default function ShopInfo({ info }: Props) {
+  const safeMapUrl = info.mapUrl?.replace(/^http:/, 'https:');
   return (
     <section className={styles.containerInfo}>
       <article>
@@ -36,7 +37,7 @@ export default function ShopInfo({ info }: Props) {
         </dl>
         <div className={styles.boxMap}>
           <iframe
-            src={info.mapUrl}
+            src={safeMapUrl}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Google Map"
@@ -53,13 +54,19 @@ export default function ShopInfo({ info }: Props) {
 function renderHourRow(row: ShopHourRow) {
   // timeRanges 形式
   if ('timeRanges' in row) {
+    const filtered = row.timeRanges.filter((t) => t.open || t.close || t.note);
+
+    if (filtered.length === 0) return null;
+
     return (
       <div>
-        {row.timeRanges.map((t, i) => (
+        {filtered.map((t, i) => (
           <div key={i}>
-            <span>
-              {t.open}～{t.close}
-            </span>
+            {t.open || t.close ? (
+              <span>
+                {t.open}～{t.close}
+              </span>
+            ) : null}
             {t.note ? <span>（{t.note}）</span> : null}
           </div>
         ))}

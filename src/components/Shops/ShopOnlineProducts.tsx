@@ -15,9 +15,14 @@ import styles from '@/styles/PageShopDetails.module.scss';
 type Props = {
   items: ShopOnlineProduct[];
   shopSlug: string;
+  onlineProductsCount?: number;
 };
 
-export default function ShopOnlineProducts({ items, shopSlug }: Props) {
+export default function ShopOnlineProducts({
+  items,
+  shopSlug,
+  onlineProductsCount,
+}: Props) {
   const displayItems = useMemo(() => {
     if (!Array.isArray(items) || items.length === 0) return [];
 
@@ -40,10 +45,13 @@ export default function ShopOnlineProducts({ items, shopSlug }: Props) {
   }, [items]);
 
   const hasItems = displayItems.length > 0;
-  const hasListUrl = typeof shopSlug === 'string' && shopSlug.length > 0;
+  const hasCount =
+    typeof onlineProductsCount === 'number'
+      ? onlineProductsCount > 0
+      : hasItems;
 
-  // 商品もURLも無い店は表示しない
-  if (!hasItems && !hasListUrl) return null;
+  // onlineProductsCount が 0 の店は表示しない
+  if (!hasCount) return null;
 
   return (
     <section className={styles.containerOnline}>
@@ -83,14 +91,6 @@ export default function ShopOnlineProducts({ items, shopSlug }: Props) {
             ))}
           </ul>
         </article>
-      ) : null}
-      {hasListUrl ? (
-        <Link
-          href={`/shops/${shopSlug}/products/`}
-          className={styles.btnOnlineList}
-        >
-          オンライン商品一覧を見る
-        </Link>
       ) : null}
     </section>
   );
