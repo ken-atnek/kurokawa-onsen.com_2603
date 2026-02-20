@@ -461,41 +461,71 @@
     @include sp {
         padding: 0 4vw 16vw;
     }
-    a {
+    nav {
+        font-size: inherit;
         position: relative;
         width: 100%;
-        max-width: 1086px;
-        aspect-ratio: 1086/260;
-        @include flex-center;
-        font-size: inherit;
-        background: url("/images/top/ban-bg.webp") no-repeat center center /
-            cover;
-        border: 6px solid #1a1a1a;
+        max-width: $articleMaxWidth;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 4rem;
         @include sp {
-            border-width: 4px;
-            aspect-ratio: 329/220;
-            max-width: unset;
+            grid-template-columns: unset;
+            gap: 4vw 0;
         }
-        &::before {
-            content: "";
-            position: absolute;
-            --inline-size: 4px;
-            inset: var(--inline-size) var(--inline-size) var(--inline-size) var(--inline-size);
-            border: 4px solid $main-black;
-            z-index: +1;
+        a {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 523/360;
+            @include flex-center;
+            font-size: inherit;
+            background: url("/images/top/ban-bg.webp") no-repeat center center /
+                cover;
+            border: 6px solid #1a1a1a;
             @include sp {
-                --inline-size: 3px;
-                border-width: 3px;
+                border-width: 4px;
+
+                // aspect-ratio: 329/220;
+                max-width: unset;
             }
-        }
-        span {
-            font-size: FZ(32);
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            color: #fff;
-            text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
-            @include sp {
-                font-size: FZ(26);
+            &::before {
+                content: "";
+                position: absolute;
+                --inline-size: 4px;
+                inset: var(--inline-size) var(--inline-size) var(--inline-size)
+                    var(--inline-size);
+                border: 4px solid $main-black;
+                z-index: +1;
+                @include sp {
+                    --inline-size: 3px;
+                    border-width: 3px;
+                }
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+            }
+            span {
+                font-size: FZ(24);
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                color: #fff;
+                text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
+                z-index: 1;
+                @include sp {
+                    font-size: FZ(26);
+                }
+            }
+            &.itemList {
+                &::after {
+                    background-color: rgba(#495f1b, 0.35);
+                }
+            }
+            &.itemReserve {
+                &::after {
+                    background-color: rgba(#451f22, 0.35);
+                }
             }
         }
     }
