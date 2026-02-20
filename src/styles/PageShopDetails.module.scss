@@ -728,5 +728,9 @@
         font-size: FZ(16);
         font-weight: 500;
         border-radius: 1rem;
+        max-width: $articleMaxWidth;
+        @include sp {
+            max-width: unset;
+        }
     }
 }
