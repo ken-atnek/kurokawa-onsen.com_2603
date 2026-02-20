@@ -70,6 +70,7 @@
             display: flex;
             flex-direction: column;
             gap: 4rem 0;
+            width: 50%;
             img {
                 width: 100%;
                 aspect-ratio: 1;
@@ -87,6 +88,7 @@
             display: flex;
             flex-direction: column;
             min-width: 40rem;
+            max-width: 50%;
             gap: 2rem 0;
             .itemId {
                 font-size: FZ(14);
