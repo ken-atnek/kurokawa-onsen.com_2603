@@ -40,6 +40,7 @@ export default function ShopDetailClient({ id }: Props) {
         leadCopy={detail.leadCopy}
         tel={detail.info.tel}
         web={detail.info.web}
+        mail={detail.info.mail}
         category={detail.category}
         shopSlug={id}
         statusFallbackKey={detail.statusFallbackKey}
