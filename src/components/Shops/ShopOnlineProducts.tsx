@@ -73,7 +73,11 @@ export default function ShopOnlineProducts({
               <li key={item.id}>
                 <div className={styles.itemImage}>
                   <Image
-                    src={item.image}
+                    src={
+                      item.image && item.image.trim() !== ''
+                        ? item.image
+                        : '/images/no-image.webp'
+                    }
                     alt={item.title}
                     width={520}
                     height={340}

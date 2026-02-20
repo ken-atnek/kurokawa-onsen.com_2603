@@ -61,7 +61,7 @@ export default function ShopsList({ grouped }: Props) {
             <h2>{categoryLabels[category] ?? category}</h2>
             <i className={styles.itemRight}></i>
           </div>
-          <p className={styles.notice}>※50音順で掲載しております</p>
+          {/* <p className={styles.notice}>※50音順で掲載しております</p> */}
           <ul>
             {shops.map((shop) => (
               <ShopCard key={shop.id} shop={shop} />

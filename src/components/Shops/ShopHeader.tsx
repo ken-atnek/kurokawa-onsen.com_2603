@@ -18,6 +18,7 @@ type Props = {
   tel: string;
   fax?: string;
   web?: string;
+  mapLinkUrl?: string;
   mail?: string;
   category: ShopDetail['category'];
   shopSlug: string;
@@ -33,6 +34,7 @@ export default function ShopHeader({
   tel,
   fax,
   web,
+  mapLinkUrl,
   mail,
   category,
   shopSlug,
@@ -75,16 +77,29 @@ export default function ShopHeader({
             </p>
           ))}
           <dl className={styles.wrapShopInfo}>
+            <div className={styles.itemMap}>
+              <dt>MAP</dt>
+              <dd>
+                {mapLinkUrl ? (
+                  <ExternalLink href={mapLinkUrl}>
+                    <span>GoogleMap</span>
+                  </ExternalLink>
+                ) : null}
+              </dd>
+            </div>
             <div>
               <dt>TEL</dt>
               <dd>
-                <ExternalLink href={`tel:${tel.replace(/-/g, '')}`}>
-                  {tel}
+                <ExternalLink
+                  href={`tel:${tel.replace(/-/g, '')}`}
+                  className={styles.linkTel}
+                >
+                  <span>{tel}</span>
                 </ExternalLink>
               </dd>
             </div>
             {fax ? (
-              <div>
+              <div className={styles.itemFax}>
                 <dt>FAX</dt>
                 <dd>
                   <span>{fax}</span>
@@ -95,7 +110,10 @@ export default function ShopHeader({
               <div>
                 <dt>MAIL</dt>
                 <dd>
-                  <ExternalLink href={`mailto:${mail}`}>
+                  <ExternalLink
+                    href={`mailto:${mail}`}
+                    className={styles.linkMail}
+                  >
                     <i>{mail}</i>
                   </ExternalLink>
                 </dd>
@@ -105,7 +123,9 @@ export default function ShopHeader({
               <div>
                 <dt>WEB</dt>
                 <dd>
-                  <ExternalLink href={web}>{web}</ExternalLink>
+                  <ExternalLink href={web} className={styles.itemWeb}>
+                    <i>{web}</i>
+                  </ExternalLink>
                 </dd>
               </div>
             ) : null}

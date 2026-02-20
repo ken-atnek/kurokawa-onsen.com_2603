@@ -26,6 +26,7 @@ export default function ShopProductDetailView({
   category,
   product,
 }: Props) {
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const images = Array.isArray(product.images) ? product.images : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -38,7 +39,6 @@ export default function ShopProductDetailView({
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(maxQty, q + 1));
-
   return (
     <>
       <section
@@ -119,6 +119,7 @@ export default function ShopProductDetailView({
               className={styles.itemButton}
               disabled={stock === 0}
               aria-disabled={stock === 0}
+              onClick={() => setIsCartModalOpen(true)}
             >
               カートに入れる
             </button>
@@ -128,6 +129,38 @@ export default function ShopProductDetailView({
           オンライン商品一覧に戻る
         </Link>
       </section>
+      {isCartModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalBox}>
+            <p className={styles.modalText}>
+              商品をカートに追加しました。
+              <br />
+              このままカートに進みますか？
+            </p>
+
+            <nav>
+              <button
+                type="button"
+                className={styles.modalBtnSecondary}
+                onClick={() => setIsCartModalOpen(false)}
+              >
+                お買い物を続ける
+              </button>
+              <Link href="/cart" className={styles.modalBtnPrimary}>
+                カートに進む
+              </Link>
+            </nav>
+
+            <button
+              type="button"
+              onClick={() => setIsCartModalOpen(false)}
+              className={styles.modalClose}
+            >
+              <i>✕</i>
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

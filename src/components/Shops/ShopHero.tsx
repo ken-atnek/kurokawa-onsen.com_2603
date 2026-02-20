@@ -28,6 +28,9 @@ export default function ShopHero({ src, alt }: Props) {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (media.matches) return;
 
+    const isSp = window.matchMedia('(max-width: 768px)').matches;
+    if (isSp) return;
+
     let rafId = 0;
 
     const onScroll = () => {

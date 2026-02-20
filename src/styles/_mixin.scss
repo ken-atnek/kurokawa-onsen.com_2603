@@ -1,5 +1,12 @@
 @use "variable" as *;
 @use "svg" as *;
+
+/* =========================================
+ドロップシャドウ
+----------------------------------------- */
+@mixin drop-shadow {
+    box-shadow: 2px 2px 3px 0 rgb(53 45 32 / 15%);
+}
 @mixin flex-center($direction: row) {
     display: flex;
     flex-direction: $direction;

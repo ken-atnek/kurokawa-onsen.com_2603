@@ -49,6 +49,12 @@ const Footer = () => {
             </div>
           </div>
           <nav>
+            <ExternalLink href="https://www.kurokawaonsen.or.jp/oyado/">
+              黒川温泉のお宿一覧
+            </ExternalLink>
+            <ExternalLink href="https://www.kurokawaonsen.or.jp/availability/">
+              宿泊予約の空室状況
+            </ExternalLink>
             <ScrollLink href="/terms/">ご利用規約</ScrollLink>
             <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
             <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>

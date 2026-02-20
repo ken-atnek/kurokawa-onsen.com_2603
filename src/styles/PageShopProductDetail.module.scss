@@ -20,10 +20,16 @@
     background-color: #eaebec;
     color: $main-white;
     gap: 3rem 0;
+    @include sp {
+        padding: 26vw 4vw 8vw;
+    }
     p {
         position: relative;
         font-size: FZ(18);
         letter-spacing: 0.08em;
+        @include sp {
+            font-size: FZ(16);
+        }
         &::after {
             content: "";
             position: absolute;
@@ -39,8 +45,30 @@
         font-size: FZ(24);
         font-weight: 600;
         letter-spacing: 0.04em;
+        @include sp {
+            font-size: FZ(20);
+            font-weight: 500;
+        }
     }
     &.category-food {
+        background-color: #ae6a6a;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-souvenir {
+        background-color: #6880a2;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-other {
         background-color: #ae6a6a;
         .itemCategory {
             &::before {
@@ -60,17 +88,28 @@
     align-items: center;
     padding: 8rem 4vw 12rem;
     background-color: #eaebec;
+    @include sp {
+        padding: 8vw 4vw;
+    }
     article {
         max-width: $articleMaxWidth;
         display: flex;
         justify-content: space-between;
         gap: 0 5em;
+        @include sp {
+            flex-direction: column;
+            gap: 6vw 0;
+        }
         .boxImage {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 4rem 0;
             width: 50%;
+            @include sp {
+                width: 100%;
+                gap: 4vw 0;
+            }
             img {
                 width: 100%;
                 aspect-ratio: 1;
@@ -80,7 +119,10 @@
                 position: relative;
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 0 4rem;
+                gap: 2rem 4rem;
+                @include sp {
+                    gap: 4vw;
+                }
             }
         }
         .boxDetail {
@@ -90,6 +132,11 @@
             min-width: 40rem;
             max-width: 50%;
             gap: 2rem 0;
+            @include sp {
+                min-width: unset;
+                max-width: unset;
+                width: 100%;
+            }
             .itemId {
                 font-size: FZ(14);
                 letter-spacing: 0.04em;
@@ -184,6 +231,9 @@
                 height: 5.6rem;
                 border-radius: 1rem;
                 margin-top: 4rem;
+                @include sp {
+                    margin-top: 4vw;
+                }
             }
         }
     }
@@ -194,11 +244,110 @@
         @include flex-center;
         max-width: $articleMaxWidth;
         height: 5.6rem;
-        background-color: $main-black;
-        color: $main-white;
+        background-color: $main-white;
+        color: $main-black;
         border-radius: 1rem;
         font-size: FZ(16);
         letter-spacing: 0.04em;
         font-weight: 500;
+        @include sp {
+            grid-column: unset;
+            margin-top: 14vw;
+        }
+    }
+}
+
+/* =================================
+ * モーダル
+ * ------------------------------ */
+.modalOverlay {
+    display: block;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    @include flex-center;
+    padding: 2rem;
+    z-index: 10000;
+    font-size: inherit;
+    background-color: rgba($main-black, 0.4);
+    .modalBox {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        border-radius: 1rem;
+        @include drop-shadow;
+        max-height: 90vh;
+        overflow-y: auto;
+        max-width: 64rem;
+        font-size: inherit;
+        padding: 6rem 4rem 4rem;
+        @include sp {
+            max-width: unset;
+        }
+        .modalClose {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: block;
+            width: 1.4rem;
+            aspect-ratio: 1;
+            align-self: center;
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                margin: auto;
+                width: 100%;
+                height: 2px;
+                background-color: $font-black;
+            }
+            &::before {
+                rotate: -45deg;
+            }
+            &::after {
+                rotate: 45deg;
+            }
+            i {
+                display: none;
+            }
+        }
+        .modalText {
+            font-size: FZ(16);
+            text-align: center;
+            line-height: 1.6em;
+        }
+        nav {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            font-size: inherit;
+            margin-top: 3rem;
+            gap: 0 1em;
+            @include sp {
+                flex-direction: column;
+                gap: 4vw 0;
+            }
+            a,
+            button {
+                font-size: inherit;
+                height: 5.6rem;
+                border-radius: 1rem;
+                min-width: 20rem;
+                @include flex-center;
+                &.modalBtnSecondary {
+                    border: 1px solid;
+                }
+            }
+            .modalBtnPrimary {
+                background-color: #6880a2;
+                color: $main-white;
+            }
+        }
     }
 }
