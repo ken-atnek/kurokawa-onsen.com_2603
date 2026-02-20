@@ -23,6 +23,12 @@ export default function ShopOnlineProducts({
   shopSlug,
   onlineProductsCount,
 }: Props) {
+  console.log('[ShopOnlineProducts] render', {
+    shopSlug,
+    onlineProductsCount,
+    itemsLen: items.length,
+  });
+
   const displayItems = useMemo(() => {
     if (!Array.isArray(items) || items.length === 0) return [];
 
@@ -90,6 +96,12 @@ export default function ShopOnlineProducts({
               </li>
             ))}
           </ul>
+          <Link
+            href={`/shops/${shopSlug}/products/`}
+            className={styles.btnOnlineList}
+          >
+            オンライン商品一覧
+          </Link>
         </article>
       ) : null}
     </section>
