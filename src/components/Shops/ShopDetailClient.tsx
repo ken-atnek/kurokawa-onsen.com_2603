@@ -15,6 +15,7 @@ import ShopInfo from '@/components/Shops/ShopInfo';
 import ShopRecommendedProducts from '@/components/Shops/ShopRecommendedProducts';
 import ShopOnlineProducts from '@/components/Shops/ShopOnlineProducts';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
+import ShopLinkList from '@/components/Shops/ShopLinkList';
 
 type Props = {
   id: string;
@@ -70,6 +71,7 @@ export default function ShopDetailClient({ id }: Props) {
         tel={detail.info.tel}
         web={detail.info.web}
         mail={detail.info.mail}
+        mapLinkUrl={detail.info.mapLinkUrl}
         category={detail.category}
         shopSlug={id}
         statusFallbackKey={detail.statusFallbackKey}
@@ -94,6 +96,7 @@ export default function ShopDetailClient({ id }: Props) {
           onlineProductsCount={onlineProductsCount}
         />
       ) : null}
+      <ShopLinkList />
     </>
   );
 }

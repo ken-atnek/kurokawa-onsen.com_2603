@@ -97,34 +97,61 @@
                             display: flex;
                         }
                     }
+                    &.pcLink {
+                        @include sp {
+                            display: none;
+                        }
+                    }
                 }
             }
-            .itemBan {
+            .boxMobileBan {
                 display: none;
                 @include sp {
-                    position: relative;
-                    margin-top: 6vw;
-                    width: 100%;
-                    aspect-ratio: 1086/260;
-                    @include flex-center;
+                    display: flex;
+                    flex-direction: column;
                     font-size: inherit;
-                    background: url("/images/top/ban-bg.webp") no-repeat center
-                        center / cover;
-                    border: 4px solid #1a1a1a;
-                    &::before {
-                        content: "";
-                        position: absolute;
-                        --inline-size: 2px;
-                        inset: var(--inline-size) var(--inline-size)
-                            var(--inline-size) var(--inline-size);
-                        border: 2px solid $main-black;
-                        z-index: +1;
-                    }
-                    span {
-                        font-size: FZ(18);
-                        font-weight: 500;
-                        letter-spacing: 0.08em;
-                        text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
+                    margin-top: 2vw;
+                    gap: 2vw 0;
+                    a {
+                        position: relative;
+                        width: 100%;
+                        aspect-ratio: 1086/260;
+                        @include flex-center;
+                        font-size: inherit;
+                        background: url("/images/top/ban-bg.webp") no-repeat
+                            center center / cover;
+                        border: 4px solid #1a1a1a;
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            --inline-size: 2px;
+                            inset: var(--inline-size) var(--inline-size)
+                                var(--inline-size) var(--inline-size);
+                            border: 2px solid $main-black;
+                            z-index: +1;
+                        }
+                        &::after {
+                            content: "";
+                            position: absolute;
+                            inset: 0;
+                        }
+                        span {
+                            font-size: FZ(18);
+                            font-weight: 500;
+                            letter-spacing: 0.08em;
+                            text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
+                            z-index: 1;
+                        }
+                        &.itemList {
+                            &::after {
+                                background-color: rgba(#495f1b, 0.35);
+                            }
+                        }
+                        &.itemReserve {
+                            &::after {
+                                background-color: rgba(#451f22, 0.35);
+                            }
+                        }
                     }
                 }
             }
@@ -136,6 +163,7 @@
                     font-size: inherit;
                     margin-top: 6vw;
                     gap: 0 3vw;
+                    margin-bottom: 4vw;
                     i {
                         position: relative;
                         aspect-ratio: 1;
@@ -167,9 +195,9 @@
                     font-size: inherit;
                     display: flex;
                     flex-direction: column;
-                    margin-block: 4vw;
+                    margin-block: 2vw;
                     a {
-                        font-size: FZ(16);
+                        font-size: FZ(12);
                         padding-block: 2vw;
                         letter-spacing: 0.04em;
                     }

@@ -94,14 +94,35 @@ const Header = () => {
               <ScrollLink href="/access/">
                 交通アクセス<span>Access</span>
               </ScrollLink>
+              <ExternalLink
+                href="https://www.kurokawaonsen.or.jp/oyado/"
+                className={styles.pcLink}
+              >
+                黒川温泉のお宿一覧
+              </ExternalLink>
+              <ExternalLink
+                href="https://www.kurokawaonsen.or.jp/availability/"
+                className={styles.pcLink}
+              >
+                宿泊予約の空室状況
+              </ExternalLink>
             </nav>
-            <ExternalLink
-              href="https://www.kurokawaonsen.or.jp/oyado/"
-              className={styles.itemBan}
-              onClick={closeMenu}
-            >
-              <span>黒川温泉のお宿一覧</span>
-            </ExternalLink>
+            <div className={styles.boxMobileBan}>
+              <ExternalLink
+                href="https://www.kurokawaonsen.or.jp/oyado/"
+                className={styles.itemList}
+                onClick={closeMenu}
+              >
+                <span>黒川温泉のお宿一覧</span>
+              </ExternalLink>
+              <ExternalLink
+                href="https://www.kurokawaonsen.or.jp/availability/"
+                className={styles.itemReserve}
+                onClick={closeMenu}
+              >
+                <span>宿泊予約の空室状況</span>
+              </ExternalLink>
+            </div>
             <ExternalLink
               href="https://www.youmore-minamioguni.com/livecamera/"
               className={styles.itemCamera}

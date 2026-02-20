@@ -20,10 +20,16 @@
     background-color: #eaebec;
     color: $main-white;
     gap: 3rem 0;
+    @include sp {
+        padding: 26vw 4vw 8vw;
+    }
     p {
         position: relative;
         font-size: FZ(18);
         letter-spacing: 0.08em;
+        @include sp {
+            font-size: FZ(16);
+        }
         &::after {
             content: "";
             position: absolute;
@@ -39,8 +45,30 @@
         font-size: FZ(24);
         font-weight: 600;
         letter-spacing: 0.04em;
+        @include sp {
+            font-size: FZ(20);
+            font-weight: 500;
+        }
     }
     &.category-food {
+        background-color: #ae6a6a;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-souvenir {
+        background-color: #6880a2;
+        .itemCategory {
+            &::before {
+                width: 17px;
+                @include svg-iconCategoryFood("fff");
+            }
+        }
+    }
+    &.category-other {
         background-color: #ae6a6a;
         .itemCategory {
             &::before {
@@ -60,17 +88,28 @@
     align-items: center;
     padding: 8rem 4vw 12rem;
     background-color: #eaebec;
+    @include sp {
+        padding: 8vw 4vw;
+    }
     article {
         max-width: $articleMaxWidth;
         display: flex;
         justify-content: space-between;
         gap: 0 5em;
+        @include sp {
+            flex-direction: column;
+            gap: 6vw 0;
+        }
         .boxImage {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 4rem 0;
             width: 50%;
+            @include sp {
+                width: 100%;
+                gap: 4vw 0;
+            }
             img {
                 width: 100%;
                 aspect-ratio: 1;
@@ -80,7 +119,10 @@
                 position: relative;
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 0 4rem;
+                gap: 2rem 4rem;
+                @include sp {
+                    gap: 4vw;
+                }
             }
         }
         .boxDetail {
@@ -90,6 +132,11 @@
             min-width: 40rem;
             max-width: 50%;
             gap: 2rem 0;
+            @include sp {
+                min-width: unset;
+                max-width: unset;
+                width: 100%;
+            }
             .itemId {
                 font-size: FZ(14);
                 letter-spacing: 0.04em;
@@ -184,6 +231,9 @@
                 height: 5.6rem;
                 border-radius: 1rem;
                 margin-top: 4rem;
+                @include sp {
+                    margin-top: 4vw;
+                }
             }
         }
     }
@@ -194,11 +244,15 @@
         @include flex-center;
         max-width: $articleMaxWidth;
         height: 5.6rem;
-        background-color: $main-black;
-        color: $main-white;
+        background-color: $main-white;
+        color: $main-black;
         border-radius: 1rem;
         font-size: FZ(16);
         letter-spacing: 0.04em;
         font-weight: 500;
+        @include sp {
+            grid-column: unset;
+            margin-top: 14vw;
+        }
     }
 }

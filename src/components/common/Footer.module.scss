@@ -39,8 +39,8 @@
             a {
                 font-size: FZ(14);
                 @include sp {
-                    font-size: FZ(16);
-                    padding-block: 2vw;
+                    font-size: FZ(12);
+                    padding-block: 1vw;
                     font-weight: 400;
                 }
             }
