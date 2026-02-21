@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ShopsList from '@/components/Shops/ShopsList';
 import { getShopStatusView } from '@/lib/status';
@@ -75,6 +75,28 @@ export default function ShopsListClient() {
           acc[key].push(s);
           return acc;
         }, {});
+
+        // シャッフル関数（Fisher–Yates）
+        const shuffle = <T,>(array: T[]): T[] => {
+          const a = [...array];
+
+          for (let i = a.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+
+          return a;
+        };
+
+        // 営業中を前にしてランダム整列
+        Object.keys(nextGrouped).forEach((key) => {
+          const list = nextGrouped[key];
+
+          const open = list.filter((s) => s.status.variant === 'open');
+          const others = list.filter((s) => s.status.variant !== 'open');
+
+          nextGrouped[key] = [...shuffle(open), ...shuffle(others)];
+        });
 
         if (!cancelled) setGrouped(nextGrouped);
       } catch {

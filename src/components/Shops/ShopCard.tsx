@@ -60,7 +60,7 @@ export default function ShopCard({ shop }: Props) {
       </div>
       {shop.leadCopy?.[0] && <p>{shop.leadCopy[0]}</p>}
       <div className={styles.itemTel}>
-        <span>{shop.tel}</span>
+        {shop.tel && <span>{shop.tel}</span>}
       </div>
     </li>
   );
