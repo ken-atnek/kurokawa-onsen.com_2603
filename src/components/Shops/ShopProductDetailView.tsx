@@ -13,6 +13,21 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
+type AddCartResponse = {
+  ok: boolean;
+  cart?: {
+    count: number;
+    total?: number;
+  };
+  item?: {
+    product_id: number;
+    product_class_id: number;
+    quantity: number;
+  };
+  error?: string;
+  message?: string;
+};
+
 type Props = {
   shopName: string[];
   shopSlug: string;
@@ -26,7 +41,9 @@ export default function ShopProductDetailView({
   category,
   product,
 }: Props) {
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const images = Array.isArray(product.images) ? product.images : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -39,6 +56,78 @@ export default function ShopProductDetailView({
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(maxQty, q + 1));
+
+  const openModal = (message: string) => {
+    setModalMessage(message);
+    setIsCartModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsCartModalOpen(false);
+    setModalMessage(null);
+  };
+  const notifyCartUpdate = () => {
+    window.dispatchEvent(new CustomEvent('cartCountChanged'));
+  };
+
+  const normalizeQuantity = (v: number) => {
+    if (Number.isNaN(v) || v < 1) return 1;
+    return Math.min(Math.floor(v), maxQty);
+  };
+
+  const handleAddToCart = async () => {
+    const productId = product.ecId;
+    if (!productId) {
+      openModal('EC商品IDが未設定のため、カートに追加できませんでした。');
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      const q = normalizeQuantity(quantity);
+      const res = await fetch('/online-shop/custom-api/cart/add', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: Number(productId),
+          product_class_id: product.ecClassId ? Number(product.ecClassId) : undefined,
+          quantity: Number(q),
+        }),
+        cache: 'no-store',
+      });
+
+      const text = await res.text();
+      let data: AddCartResponse | null = null;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        openModal(`カート追加に失敗しました (${res.status})`);
+        return;
+      }
+
+      if (!res.ok || !data?.ok) {
+        openModal(
+          data?.message
+            ? data.message
+            : data?.error
+              ? data.error
+              : `カート追加に失敗しました (${res.status})`
+        );
+        return;
+      }
+
+      openModal('カートに追加しました');
+      notifyCartUpdate();
+    } catch (err) {
+      console.error(err);
+      openModal('通信に失敗しました。ネットワークをご確認ください。');
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const cartHref = '/online-shop/cart';
   return (
     <>
       <section
@@ -117,11 +206,11 @@ export default function ShopProductDetailView({
             <button
               type="button"
               className={styles.itemButton}
-              disabled={stock === 0}
-              aria-disabled={stock === 0}
-              onClick={() => setIsCartModalOpen(true)}
+              disabled={stock === 0 || isAddingToCart}
+              aria-disabled={stock === 0 || isAddingToCart}
+              onClick={handleAddToCart}
             >
-              カートに入れる
+              {isAddingToCart ? '追加中...' : 'カートに入れる'}
             </button>
           </div>
         </article>
@@ -129,31 +218,58 @@ export default function ShopProductDetailView({
           オンライン商品一覧に戻る
         </Link>
       </section>
-      {isCartModalOpen && (
+      {isCartModalOpen && modalMessage && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalBox}>
             <p className={styles.modalText}>
-              商品をカートに追加しました。
-              <br />
-              このままカートに進みますか？
+              {modalMessage === 'カートに追加しました' ? (
+                <>
+                  商品をカートに追加しました。
+                  <br />
+                  このままカートに進みますか？
+                </>
+              ) : (
+                modalMessage
+              )}
             </p>
 
-            <nav>
-              <button
-                type="button"
-                className={styles.modalBtnSecondary}
-                onClick={() => setIsCartModalOpen(false)}
-              >
-                お買い物を続ける
-              </button>
-              <Link href="/cart" className={styles.modalBtnPrimary}>
-                カートに進む
-              </Link>
-            </nav>
+            {modalMessage === 'カートに追加しました' ? (
+              <nav>
+                <button
+                  type="button"
+                  className={styles.modalBtnSecondary}
+                  onClick={closeModal}
+                >
+                  お買い物を続ける
+                </button>
+                <Link
+                  href={cartHref}
+                  prefetch={false}
+                  className={styles.modalBtnPrimary}
+                  onClick={(e) => {
+                    // Next ルーターに捕まると /online-shop/* を「存在しないページ」として 404 にし得るため、確実にハード遷移させる
+                    e.preventDefault();
+                    window.location.href = cartHref;
+                  }}
+                >
+                  カートに進む
+                </Link>
+              </nav>
+            ) : (
+              <nav>
+                <button
+                  type="button"
+                  className={styles.modalBtnSecondary}
+                  onClick={closeModal}
+                >
+                  閉じる
+                </button>
+              </nav>
+            )}
 
             <button
               type="button"
-              onClick={() => setIsCartModalOpen(false)}
+              onClick={closeModal}
               className={styles.modalClose}
             >
               <i>✕</i>
