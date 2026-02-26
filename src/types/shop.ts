@@ -93,6 +93,10 @@ export type ShopDetail = {
 
 export type ShopProductDetail = {
   id: string;
+  /** EC-CUBE の商品ID（product_id） */
+  ecId?: number;
+  /** EC-CUBE の規格ID（product_class_id）。未指定ならEC側でデフォルト規格を解決 */
+  ecClassId?: number;
   shopId: string;
   title: string;
   price: number;

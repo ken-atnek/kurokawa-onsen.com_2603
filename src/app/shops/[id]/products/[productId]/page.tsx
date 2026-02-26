@@ -5,11 +5,9 @@
  * Last updated: 2026-02-19
  * ======================================= */
 
-import type { ShopDetail, ShopProductDetail } from '@/types/shop';
-import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
-import ShopProductDetailView from '@/components/Shops/ShopProductDetailView';
+import ShopProductDetailClient from '@/components/Shops/ShopProductDetailClient';
 
 /* =======================================
  * generateStaticParams（同期）
@@ -66,34 +64,5 @@ export default async function ShopProductPage({
 }) {
   const { id, productId } = await params;
 
-  // 店舗詳細（店名を出す用）
-  const shopDetailPath = path.join(
-    process.cwd(),
-    `public/db/shops/details/${id}.json`
-  );
-  if (!fs.existsSync(shopDetailPath)) return notFound();
-
-  const shopDetail: ShopDetail = JSON.parse(
-    fs.readFileSync(shopDetailPath, 'utf-8')
-  );
-
-  // 商品詳細
-  const productPath = path.join(
-    process.cwd(),
-    `public/db/shops/products/${id}/${productId}.json`
-  );
-  if (!fs.existsSync(productPath)) return notFound();
-
-  const product: ShopProductDetail = JSON.parse(
-    fs.readFileSync(productPath, 'utf-8')
-  );
-
-  return (
-    <ShopProductDetailView
-      shopName={shopDetail.name}
-      category={shopDetail.category}
-      shopSlug={id}
-      product={product}
-    />
-  );
+  return <ShopProductDetailClient id={id} productId={productId} />;
 }
