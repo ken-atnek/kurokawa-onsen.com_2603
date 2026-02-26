@@ -3,7 +3,7 @@
  * URL:src/components/Top/ContainerTopNews.tsx
  * Referenced in: : /app/page.tsx
  * Created: 2026-02-10
- * Last updated: 2026-02-10
+ * Last updated: 2026-02-26
  * ======================================= */
 
 import styles from '@/styles/PageTop.module.scss';
@@ -17,23 +17,23 @@ export default function ContainerTopNews() {
         <ul>
           <li>
             <Link href="#">
-              <span className={styles.itemDate}>2025.12.16</span>
-              <p>褐-aka-さんの情報を掲載しました。</p>
-              <i></i>
+              <span className={styles.itemDate}>2026.2.20</span>
+              <p>ホームページをリニューアルしました。</p>
+              {/* <i></i> */}
             </Link>
           </li>
           <li>
             <Link href="#">
               <span className={styles.itemDate}>2025.12.16</span>
               <p>褐-aka-さんの情報を掲載しました。</p>
-              <i></i>
+              {/* <i></i> */}
             </Link>
           </li>
           <li>
             <Link href="#">
               <span className={styles.itemDate}>2025.12.16</span>
-              <p>褐-aka-さんの情報を掲載しました。</p>
-              <i></i>
+              <p>予祝さんの情報を掲載しました。</p>
+              {/* <i></i> */}
             </Link>
           </li>
         </ul>
