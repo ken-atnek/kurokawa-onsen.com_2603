@@ -16,10 +16,12 @@ export default function ContainerLaw() {
 
         <dl>
           <dt>販売業者名</dt>
-          <dd>黒川温泉観光協会</dd>
+          <dd>
+            「お問い合わせ先メールアドレス」へご請求をいただければ、遅滞なく開示いたします。
+          </dd>
 
           <dt>販売責任者</dt>
-          <dd>音成　貴道</dd>
+          <dd>北里　竜紀</dd>
 
           <dt>郵便番号</dt>
           <dd>869-2402</dd>
