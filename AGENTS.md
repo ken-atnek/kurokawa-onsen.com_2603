@@ -241,6 +241,7 @@ export default async function Page({
 - `git checkout` `git switch` `git branch` `git worktree` を勝手に実行しないこと
 - commit / push は明示依頼があるときだけ行うこと
 - Git操作を伴う提案をする場合は、先に内容を説明すること
+- コードチェック時に `build` は実行しないこと（ビルド確認はユーザー側で行う）
 
 ---
 

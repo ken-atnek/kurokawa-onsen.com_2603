@@ -1,9 +1,9 @@
 /* =======================================
  * 黒川温泉観光協会 店舗オンライン商品 詳細ページ(view)
- * URL:src/components/Shops/ShopProductDetailView.tsx
- * Referenced in: : /shops/[slug]/products/[productId]
+ * URL: src/components/Shops/ShopProductDetailView.tsx
+ * Referenced in: src/components/Shops/ShopProductDetailClient.tsx
  * Created: 2026-02-13
- * Last updated: 2026-02-13
+ * Last updated: 2026-05-04
  * ======================================= */
 'use client';
 import styles from '@/styles/PageShopProductDetail.module.scss';
@@ -133,7 +133,14 @@ export default function ShopProductDetailView({
       <section
         className={clsx(styles.containerHeader, styles[`category-${category}`])}
       >
-        <p>{shopName}</p>
+        <p>
+          {shopName.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i !== shopName.length - 1 && <br />}
+            </span>
+          ))}
+        </p>
         <h2>{product.title}</h2>
       </section>
       <section className={styles.containerDetails}>
@@ -214,7 +221,7 @@ export default function ShopProductDetailView({
             </button>
           </div>
         </article>
-        <Link href={`/shops/${shopSlug}/products/`} className={styles.linkList}>
+        <Link href={`/shops/products?id=${shopSlug}`} className={styles.linkList}>
           オンライン商品一覧に戻る
         </Link>
       </section>

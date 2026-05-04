@@ -6,7 +6,7 @@
 1. `AGENTS.md`
 2. `docs/ROOTS_SPEC.md`
 3. `docs/PAGE_STRUCTURE.md`
-4. `docs/TSX_COMMENT_RULES.md`（`tsx` 編集時）
+4. `docs/rules/tsx-comment-rules.md`（`tsx` 編集時）
 5. `docs/rules/project-setup.md`
 6. `docs/rules/coding-style.md`
 7. `docs/rules/nextjs-export.md`

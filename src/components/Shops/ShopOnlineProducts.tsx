@@ -1,7 +1,7 @@
 /* =======================================
  * 黒川温泉観光協会 店舗詳細ページ（オンライン商品）
  * URL: src/components/Shops/ShopOnlineProducts.tsx
- * Referenced in: src/app/shops/[slug]/page.tsx
+ * Referenced in: src/components/Shops/ShopDetailClient.tsx
  * Created: 2026-02-12
  * Last updated: 2026-02-12
  * ======================================= */
@@ -23,12 +23,6 @@ export default function ShopOnlineProducts({
   shopSlug,
   onlineProductsCount,
 }: Props) {
-  console.log('[ShopOnlineProducts] render', {
-    shopSlug,
-    onlineProductsCount,
-    itemsLen: items.length,
-  });
-
   const displayItems = useMemo(() => {
     if (!Array.isArray(items) || items.length === 0) return [];
 
@@ -92,7 +86,7 @@ export default function ShopOnlineProducts({
                   </div>
                 ) : null}
                 <Link
-                  href={`/shops/${shopSlug}/products/${item.id}/`}
+                  href={`/shops/product-detail?id=${shopSlug}&productId=${item.id}`}
                   className={styles.buyUrl}
                 >
                   購入する
@@ -101,7 +95,7 @@ export default function ShopOnlineProducts({
             ))}
           </ul>
           <Link
-            href={`/shops/${shopSlug}/products/`}
+            href={`/shops/products?id=${shopSlug}`}
             className={styles.btnOnlineList}
           >
             オンライン商品一覧

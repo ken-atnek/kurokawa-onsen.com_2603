@@ -1,6 +1,7 @@
 /* =======================================
  * 黒川温泉観光協会 店舗詳細ページ（クライアント）
  * URL: src/components/Shops/ShopDetailClient.tsx
+ * Referenced in: src/app/shops/[id]/page.tsx, src/app/shops/detail/page.tsx
  * Created: 2026-02-19
  * Last updated: 2026-02-19
  * ======================================= */
@@ -26,8 +27,9 @@ export default function ShopDetailClient({ id }: Props) {
   const [onlineItems, setOnlineItems] = useState<ShopOnlineProduct[]>([]);
   useEffect(() => {
     fetch(`/db/shops/details/${id}.json`, { cache: 'no-store' })
-      .then((res) => res.json())
-      .then(setDetail);
+      .then((res) => (res.ok ? res.json() : null))
+      .then(setDetail)
+      .catch(() => setDetail(null));
   }, [id]);
 
   useEffect(() => {
@@ -56,12 +58,6 @@ export default function ShopDetailClient({ id }: Props) {
   const timeRanges = hoursRow?.timeRanges ?? [];
   const onlineProductsCount = detail.onlineProductsCount ?? 0;
   const hasOnlineProducts = onlineProductsCount > 0;
-  console.log('=== ShopDetail Debug ===');
-  console.log('id:', id);
-  console.log('detail.id:', detail.id);
-  console.log('onlineProductsCount:', onlineProductsCount);
-  console.log('typeof:', typeof onlineProductsCount);
-  console.log('hasOnlineProducts:', (onlineProductsCount ?? 0) > 0);
 
   return (
     <>
