@@ -34,7 +34,7 @@
                 bottom: 1em;
                 right: 1em;
                 background-color: #0089ff;
-                font-size: FZ(16);
+                font-size: fz(16);
                 color: #fff;
                 @include Serif;
                 padding: 1em 2em;
@@ -64,7 +64,7 @@
             }
             & > p {
                 grid-column: span 2;
-                font-size: FZ(16);
+                font-size: fz(16);
                 @include sp {
                     margin-bottom: 4vw;
                 }
@@ -73,7 +73,7 @@
                 position: relative;
                 background-color: $main-black;
                 color: #fff;
-                font-size: FZ(16);
+                font-size: fz(16);
                 border-radius: 0.4rem;
                 padding: 1.4em 1.6em;
                 display: flex;
@@ -109,10 +109,10 @@
         max-width: $articleMaxWidth;
         h3 {
             @include Serif;
-            font-size: FZ(24);
+            font-size: fz(24);
         }
         .sidebarH3 {
-            font-size: FZ(16);
+            font-size: fz(16);
             line-height: 2em;
             text-align: justify;
             letter-spacing: 0.04em;
@@ -141,7 +141,7 @@
             }
             h4 {
                 position: relative;
-                font-size: FZ(16);
+                font-size: fz(16);
                 font-weight: 700;
                 padding-left: 1.4em;
                 @include sp {
@@ -210,7 +210,7 @@
                     width: 16em;
                     @include Serif;
                     height: 5rem;
-                    font-size: FZ(16);
+                    font-size: fz(16);
                     display: grid;
                     place-items: center;
                     border: 1px solid $main-black;
@@ -221,7 +221,7 @@
                         height: 10vw;
                         padding-left: 4vw;
                         place-items: center start;
-                        font-size: FZ(14);
+                        font-size: fz(14);
                     }
                     &::after {
                         content: "";
@@ -248,7 +248,7 @@
                 }
                 .itemPoint {
                     position: relative;
-                    font-size: FZ(14);
+                    font-size: fz(14);
                     &:not(.item02) {
                         background-color: #d9d9d9;
                         display: grid;
@@ -503,7 +503,7 @@
             }
             .itemPoint {
                 position: relative;
-                font-size: FZ(14);
+                font-size: fz(14);
                 display: grid;
                 .place {
                     font-size: inherit;
@@ -521,7 +521,7 @@
                     display: flex;
                     align-items: center;
                     flex-direction: column;
-                    font-size: FZ(12);
+                    font-size: fz(12);
                     padding-inline: 1.2em;
                     @include sp {
                         height: 15vw;
@@ -580,7 +580,7 @@
                         &::before {
                             position: absolute;
                             content: attr(data-number);
-                            font-size: FZ(12);
+                            font-size: fz(12);
                             width: 1.5em;
                             aspect-ratio: 1;
                             background-color: #21649d;
@@ -646,10 +646,10 @@
                 margin-top: 4vw;
             }
             .head {
-                font-size: FZ(16);
+                font-size: fz(16);
                 line-height: 2em;
                 @include sp {
-                    font-size: FZ(14);
+                    font-size: fz(14);
                     line-height: 1.6em;
                     text-align: justify;
                 }
@@ -665,14 +665,14 @@
                 }
                 a {
                     border: 1px solid $main-black;
-                    font-size: FZ(12);
+                    font-size: fz(12);
                     padding: 0.5em;
                     border-radius: 100vmax;
                     display: flex;
                     align-items: center;
                     gap: 0 0.3em;
                     @include sp {
-                        font-size: FZ(14);
+                        font-size: fz(14);
                     }
                     i {
                         width: 1.5em;
@@ -686,7 +686,7 @@
                 }
             }
             .notice {
-                font-size: FZ(12);
+                font-size: fz(12);
                 text-align: justify;
                 i {
                     color: #21649d;

@@ -37,9 +37,9 @@
                 gap: 0;
             }
             a {
-                font-size: FZ(14);
+                font-size: fz(14);
                 @include sp {
-                    font-size: FZ(12);
+                    font-size: fz(12);
                     padding-block: 1vw;
                     font-weight: 400;
                 }
@@ -68,7 +68,7 @@
                 }
             }
             .copyRight {
-                font-size: FZ(12);
+                font-size: fz(12);
                 @include sp {
                     order: 1;
                     color: #605c5c;

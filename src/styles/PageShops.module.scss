@@ -38,11 +38,11 @@
             border: 1px solid;
             height: 5.6rem;
             @include flex-center;
-            font-size: FZ(16);
+            font-size: fz(16);
             letter-spacing: 0.04em;
             border-radius: 1rem;
             @include sp {
-                font-size: FZ(18);
+                font-size: fz(18);
             }
             &::after {
                 content: "";
@@ -70,7 +70,7 @@
         .notice {
             display: inline-block;
             align-self: flex-end;
-            font-size: FZ(12);
+            font-size: fz(12);
             color: #6a6a6a;
             translate: 0 -1em;
             @include sp {

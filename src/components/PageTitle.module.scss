@@ -17,17 +17,17 @@
     }
     h2 {
         margin-top: 20rem;
-        font-size: FZ(34);
+        font-size: fz(34);
         font-weight: 500;
         letter-spacing: 0.08em;
         @include sp {
             margin-top: 18vw;
-            font-size: FZ(30);
+            font-size: fz(30);
         }
     }
     .sidebarH2 {
         @include Marcellus;
-        font-size: FZ(14);
+        font-size: fz(14);
         letter-spacing: 0.08em;
         text-transform: uppercase;
     }

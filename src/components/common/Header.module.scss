@@ -68,13 +68,13 @@
                 display: flex;
                 flex-direction: column;
                 a {
-                    font-size: FZ(14);
+                    font-size: fz(14);
                     font-weight: 600;
                     padding-block: 0.3em;
                     @include sp {
                         display: flex;
                         align-items: center;
-                        font-size: FZ(18);
+                        font-size: fz(18);
                         border-bottom: 1px solid #605c5c;
                         font-weight: 400;
                         padding-block: 4vw;
@@ -87,7 +87,7 @@
                             @include Marcellus;
                             color: #605c5c;
                             text-transform: uppercase;
-                            font-size: FZ(12);
+                            font-size: fz(12);
                             letter-spacing: 0.08em;
                         }
                     }
@@ -136,7 +136,7 @@
                             inset: 0;
                         }
                         span {
-                            font-size: FZ(18);
+                            font-size: fz(18);
                             font-weight: 500;
                             letter-spacing: 0.08em;
                             text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
@@ -181,7 +181,7 @@
                     }
                     span {
                         display: inline-block;
-                        font-size: FZ(18);
+                        font-size: fz(18);
                         letter-spacing: 0.04em;
                         line-height: 1.6em;
                         text-align: center;
@@ -197,7 +197,7 @@
                     flex-direction: column;
                     margin-block: 2vw;
                     a {
-                        font-size: FZ(12);
+                        font-size: fz(12);
                         padding-block: 2vw;
                         letter-spacing: 0.04em;
                     }
@@ -215,7 +215,7 @@
                     padding-left: 6vw;
                     span {
                         position: relative;
-                        font-size: FZ(16);
+                        font-size: fz(16);
                         &::before {
                             content: "";
                             position: absolute;
@@ -290,7 +290,7 @@
                 }
                 span {
                     display: inline-block;
-                    font-size: FZ(12);
+                    font-size: fz(12);
                     font-weight: 600;
                     letter-spacing: 0.04em;
                     line-height: 1.6em;

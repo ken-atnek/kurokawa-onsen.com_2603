@@ -11,7 +11,7 @@
 @mixin itemH3 {
     margin-block: 3em;
     position: relative;
-    font-size: FZ(20);
+    font-size: fz(20);
     font-weight: 600;
     letter-spacing: 0.04em;
     writing-mode: vertical-rl; // 縦書き
@@ -139,7 +139,7 @@
             calc(100% - 17.446px) calc(100% - 17.525px)
         );
         p {
-            font-size: FZ(16);
+            font-size: fz(16);
             border-right: 1px solid;
             padding-right: 1em;
             margin-right: 1em;
@@ -190,7 +190,7 @@
         background-color: $main-black;
         color: $main-white;
         border-radius: 1rem;
-        font-size: FZ(16);
+        font-size: fz(16);
         letter-spacing: 0.04em;
         font-weight: 500;
     }
@@ -262,13 +262,13 @@
             min-width: unset;
         }
         p {
-            font-size: FZ(16);
+            font-size: fz(16);
             max-width: 31em;
             letter-spacing: 0.04em;
             line-height: 2.4em;
             @include sp {
                 max-width: unset;
-                font-size: FZ(18);
+                font-size: fz(18);
                 line-height: 2em;
             }
         }
@@ -310,7 +310,7 @@
                 }
             }
             p {
-                font-size: FZ(16);
+                font-size: fz(16);
                 font-weight: 500;
                 letter-spacing: 0.04em;
                 line-height: 1.6em;
@@ -417,11 +417,11 @@
                     gap: 0 8vw;
                 }
                 span {
-                    font-size: FZ(14);
+                    font-size: fz(14);
                     letter-spacing: 0.04em;
                 }
                 p {
-                    font-size: FZ(16);
+                    font-size: fz(16);
                     font-weight: 500;
                     letter-spacing: 0.04em;
                     @include sp {
@@ -508,14 +508,14 @@
                 inset: 0;
             }
             span {
-                font-size: FZ(24);
+                font-size: fz(24);
                 font-weight: 600;
                 letter-spacing: 0.08em;
                 color: #fff;
                 text-shadow: 2px 2px 0 rgb(0 0 0 / 50%);
                 z-index: 1;
                 @include sp {
-                    font-size: FZ(26);
+                    font-size: fz(26);
                 }
             }
             &.itemList {
@@ -607,7 +607,7 @@
                 }
                 dt,
                 dd {
-                    font-size: FZ(16);
+                    font-size: fz(16);
                     font-weight: 500;
                     padding-block: 3.2rem;
                     border-bottom: 1px solid;

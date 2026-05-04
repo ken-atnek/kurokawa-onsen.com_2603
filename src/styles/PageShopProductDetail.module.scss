@@ -25,10 +25,10 @@
     }
     p {
         position: relative;
-        font-size: FZ(18);
+        font-size: fz(18);
         letter-spacing: 0.08em;
         @include sp {
-            font-size: FZ(16);
+            font-size: fz(16);
         }
         &::after {
             content: "";
@@ -42,11 +42,11 @@
         }
     }
     h2 {
-        font-size: FZ(24);
+        font-size: fz(24);
         font-weight: 600;
         letter-spacing: 0.04em;
         @include sp {
-            font-size: FZ(20);
+            font-size: fz(20);
             font-weight: 500;
         }
     }
@@ -138,17 +138,17 @@
                 width: 100%;
             }
             .itemId {
-                font-size: FZ(14);
+                font-size: fz(14);
                 letter-spacing: 0.04em;
             }
             h3 {
-                font-size: FZ(24);
+                font-size: fz(24);
                 font-weight: 500;
                 letter-spacing: 0.04em;
             }
             .itemPrice {
                 color: #a5945a;
-                font-size: FZ(18);
+                font-size: fz(18);
                 margin-bottom: 0.8rem;
                 i {
                     margin-right: 0.2em;
@@ -158,7 +158,7 @@
                 }
             }
             .itemComment {
-                font-size: FZ(16);
+                font-size: fz(16);
                 & > * {
                     font-size: inherit;
                     letter-spacing: 0.04em;
@@ -173,7 +173,7 @@
                 margin-top: 1rem;
                 gap: 2rem 0;
                 h4 {
-                    font-size: FZ(16);
+                    font-size: fz(16);
                 }
                 & > div {
                     background-color: $main-white;
@@ -185,7 +185,7 @@
                     gap: 0 3rem;
                     span {
                         color: #585858;
-                        font-size: FZ(24);
+                        font-size: fz(24);
                         font-weight: 500;
                     }
                     button {
@@ -224,7 +224,7 @@
                 }
             }
             .soldOut {
-                font-size: FZ(16);
+                font-size: fz(16);
             }
             .itemButton {
                 border: 1px solid;
@@ -247,7 +247,7 @@
         background-color: $main-white;
         color: $main-black;
         border-radius: 1rem;
-        font-size: FZ(16);
+        font-size: fz(16);
         letter-spacing: 0.04em;
         font-weight: 500;
         @include sp {
@@ -318,7 +318,7 @@
             }
         }
         .modalText {
-            font-size: FZ(16);
+            font-size: fz(16);
             text-align: center;
             line-height: 1.6em;
         }
