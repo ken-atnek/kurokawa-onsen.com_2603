@@ -1,7 +1,7 @@
 /* =======================================
  * 黒川温泉観光協会 店舗詳細ページ(HEADER)
- * URL:src/components/Shops/ShopHeader.tsx
- * Referenced in: : src/app/shops/[slug]/page.tsx
+ * URL: src/components/Shops/ShopHeader.tsx
+ * Referenced in: src/components/Shops/ShopDetailClient.tsx, src/components/Shops/ShopProductsListView.tsx
  * Created: 2026-02-12
  * Last updated: 2026-02-12
  * ======================================= */
@@ -132,7 +132,7 @@ export default function ShopHeader({
           </dl>
           {hasOnlineList ? (
             <Link
-              href={`/shops/${shopSlug}/products/`}
+              href={`/shops/products?id=${shopSlug}`}
               className={styles.btnOnlineList}
             >
               オンライン商品一覧
