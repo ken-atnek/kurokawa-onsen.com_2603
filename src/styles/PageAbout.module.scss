@@ -38,7 +38,7 @@
         align-self: flex-start;
         p {
             display: inline-block;
-            font-size: FZ(16);
+            font-size: fz(16);
             @include Serif;
             line-height: 2.5em;
             letter-spacing: 0.04em;
@@ -118,16 +118,16 @@
         }
         h3 {
             position: relative;
-            font-size: FZ(30);
+            font-size: fz(30);
             font-weight: 600;
             text-align: center;
             margin-bottom: 1em;
             @include sp {
-                font-size: FZ(24);
+                font-size: fz(24);
             }
         }
         p {
-            font-size: FZ(16);
+            font-size: fz(16);
             font-weight: 600;
             letter-spacing: 0.04em;
             line-height: 2.25em;
@@ -147,7 +147,7 @@
     padding: 8rem 4vw;
     @include Serif;
     h3 {
-        font-size: FZ(36);
+        font-size: fz(36);
         font-weight: 600;
     }
     ul {
@@ -234,7 +234,7 @@
             }
             .year {
                 position: relative;
-                font-size: FZ(40);
+                font-size: fz(40);
                 font-weight: 600;
                 &::before {
                     content: "";
@@ -254,7 +254,7 @@
                 }
             }
             h4 {
-                font-size: FZ(20);
+                font-size: fz(20);
                 margin-block: 1em;
                 @include sp {
                     font-weight: 600;
@@ -264,11 +264,11 @@
             .boxText {
                 font-size: 1em;
                 p {
-                    font-size: FZ(16);
+                    font-size: fz(16);
                     line-height: 2em;
                     text-align: justify;
                     @include sp {
-                        font-size: FZ(16);
+                        font-size: fz(16);
                         line-height: 1.6em;
                     }
                 }

@@ -3,6 +3,8 @@
 このプロジェクトは **静的HTML（Next export） + クライアントでJSON取得** を基本方針とする。  
 目的は **「共有サーバー/FTP運用でも安定」「DB更新を即反映」「ビルド頻度を下げる」** こと。
 
+詳細ルールは `docs/rules/` を参照すること（本ファイルは全体方針の要約）。
+
 ---
 
 # 技術スタック
@@ -196,10 +198,17 @@ export default async function Page({
 - 詳細ページは Client Component で JSON を fetch して描画する
 - 表示コンポーネント（Header / Info / Products など）はできるだけ使い回す
 - 表示条件は **DBの値** を基準にする
+- クエリ `id` が無い場合は描画しない（`null`返却など）で安全に処理する
 
 例：
 
 - `onlineProductsCount === 0` の時はオンライン商品セクションを表示しない
+
+## fetchエラー時の扱い（ec-spice準拠の最小運用）
+
+- 管理画面連動のコンテンツJSONは `fetch(..., { cache: 'no-store' })` を使う
+- 失敗時は握りつぶさず、`isError` 等で画面にエラー表示できる状態を持つ
+- 必要なら `?t=timestamp` を付けてキャッシュ影響を避ける
 
 ---
 
@@ -235,13 +244,11 @@ export default async function Page({
 
 ---
 
-# チェックリスト
+# 詳細ルール参照
 
-- [ ] `output: 'export'`
-- [ ] `trailingSlash: true`
-- [ ] `images: { unoptimized: true }`
-- [ ] データは `public/db` をクライアント fetch
-- [ ] ID増減は固定ページ方式で吸収
-- [ ] オプション値（countなど）は `undefined` 安全に扱う（`?? 0`）
-- [ ] Mixed Content（http → https）対策を入れる
-- [ ] URLは `https` 前提で扱う
+- チェック項目: `docs/rules/checklist.md`
+- コーディング規約: `docs/rules/coding-style.md`
+- データ取得: `docs/rules/fetch-pattern.md`
+- export運用: `docs/rules/nextjs-export.md`
+- プロジェクト前提: `docs/rules/project-setup.md`
+- UI実装: `docs/rules/ui-interactions.md`

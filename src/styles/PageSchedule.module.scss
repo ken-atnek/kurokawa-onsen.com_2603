@@ -35,7 +35,7 @@
     }
     h4 {
         grid-column: span 2;
-        font-size: FZ(18);
+        font-size: fz(18);
         font-weight: 700;
         text-indent: 0.5em;
         @include sp {
@@ -58,7 +58,7 @@
             opacity: 0.8;
         }
         span {
-            font-size: FZ(14);
+            font-size: fz(14);
             margin-top: 0.5em;
             align-self: flex-start;
         }
@@ -117,20 +117,20 @@
                     gap: 1vw 0;
                 }
                 h5 {
-                    font-size: FZ(20);
+                    font-size: fz(20);
                     font-weight: 700;
                     line-height: 1.6em;
                     @include sp {
-                        font-size: FZ(18);
+                        font-size: fz(18);
                     }
                 }
                 p {
-                    font-size: FZ(14);
+                    font-size: fz(14);
                     line-height: 2em;
                     letter-spacing: 0.04em;
                     text-align: justify;
                     @include sp {
-                        font-size: FZ(16);
+                        font-size: fz(16);
                         line-height: 1.6em;
                     }
                 }
@@ -149,14 +149,14 @@
         padding: 0 0 4vw;
     }
     h3 {
-        font-size: FZ(26);
+        font-size: fz(26);
         font-weight: 700;
         @include sp {
             text-align: center;
         }
     }
     .sidebarH3 {
-        font-size: FZ(14);
+        font-size: fz(14);
         display: flex;
         flex-direction: column;
         text-align: justify;

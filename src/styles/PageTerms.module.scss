@@ -23,7 +23,7 @@
         flex-direction: column;
         max-width: 84rem;
         .headTitle {
-            font-size: FZ(24);
+            font-size: fz(24);
             font-weight: 500;
             margin-bottom: 3rem;
         }
@@ -35,7 +35,7 @@
             counter-reset: number 0;
             width: 100%;
             dt {
-                font-size: FZ(18);
+                font-size: fz(18);
                 border-bottom: 2px solid #eaeaea;
                 font-weight: 500;
                 padding-bottom: 0.5em;
@@ -46,7 +46,7 @@
                 }
             }
             dd {
-                font-size: FZ(16);
+                font-size: fz(16);
                 line-height: 1.8em;
                 letter-spacing: 0.08em;
                 text-align: justify;
