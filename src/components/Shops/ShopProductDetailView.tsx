@@ -11,7 +11,7 @@ import type { ShopProductDetail } from '@/types/shop';
 import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type AddCartResponse = {
   ok: boolean;
@@ -35,24 +35,106 @@ type Props = {
   product: ShopProductDetail;
 };
 
+type ProductStandardOption = {
+  id: number;
+  label: string;
+};
+
+type ProductStandardItem = {
+  ecClassId?: number;
+  classCategoryId1?: number;
+  classCategoryId2?: number;
+  price?: number;
+  stock?: number;
+};
+
+type ProductStandard = {
+  className?: {
+    label1?: string;
+    label2?: string;
+  };
+  classCategory?: {
+    options1?: ProductStandardOption[];
+    options2?: ProductStandardOption[];
+  };
+  items?: ProductStandardItem[];
+};
+
 export default function ShopProductDetailView({
   shopName,
   shopSlug,
   category,
   product,
 }: Props) {
+  const productWithStandard = product as ShopProductDetail & {
+    standard?: ProductStandard | [];
+  };
+  const standardData =
+    productWithStandard.standard &&
+    !Array.isArray(productWithStandard.standard) &&
+    Array.isArray(productWithStandard.standard.items)
+      ? productWithStandard.standard
+      : null;
+  const standardItems = standardData?.items ?? [];
+  const hasStandardItems = standardItems.length > 0;
+  const options1 = standardData?.classCategory?.options1 ?? [];
+  const options2 = standardData?.classCategory?.options2 ?? [];
+  const hasOption2 = options2.length > 0;
+  const firstVariant = hasStandardItems ? standardItems[0] : null;
+
   const [modalMessage, setModalMessage] = useState<string | null>(null);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const images = Array.isArray(product.images) ? product.images : [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedOption1Id, setSelectedOption1Id] = useState<number | null>(
+    firstVariant?.classCategoryId1 ?? null
+  );
+  const [selectedOption2Id, setSelectedOption2Id] = useState<number | null>(
+    firstVariant?.classCategoryId2 ?? null
+  );
   const [quantity, setQuantity] = useState(1);
-  const stock = product.stock ?? 0;
+  const selectedVariant = hasStandardItems
+    ? standardItems.find((item) => {
+        const option1Matched =
+          selectedOption1Id == null || item.classCategoryId1 === selectedOption1Id;
+        const option2Matched = hasOption2
+          ? selectedOption2Id != null && item.classCategoryId2 === selectedOption2Id
+          : true;
+        return option1Matched && option2Matched;
+      }) ?? null
+    : null;
+  const displayPrice =
+    hasStandardItems && selectedVariant?.price != null
+      ? selectedVariant.price
+      : product.price;
+  const stock =
+    hasStandardItems && selectedVariant?.stock != null
+      ? selectedVariant.stock
+      : (product.stock ?? 0);
   const maxQty = Math.max(1, stock);
   const activeSrc = images[activeIndex] ?? images[0] ?? '';
+
+  useEffect(() => {
+    if (!hasStandardItems) {
+      setSelectedOption1Id(null);
+      setSelectedOption2Id(null);
+      setQuantity(1);
+      return;
+    }
+
+    setSelectedOption1Id(firstVariant?.classCategoryId1 ?? null);
+    setSelectedOption2Id(firstVariant?.classCategoryId2 ?? null);
+    setQuantity(1);
+  }, [hasStandardItems, firstVariant?.classCategoryId1, firstVariant?.classCategoryId2]);
+
+  useEffect(() => {
+    setQuantity((q) => Math.min(Math.max(q, 1), maxQty));
+  }, [maxQty]);
+
   const priceText = useMemo(() => {
-    return new Intl.NumberFormat('ja-JP').format(product.price);
-  }, [product.price]);
+    return new Intl.NumberFormat('ja-JP').format(displayPrice);
+  }, [displayPrice]);
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(maxQty, q + 1));
@@ -77,6 +159,10 @@ export default function ShopProductDetailView({
 
   const handleAddToCart = async () => {
     const productId = product.ecId;
+    const productClassId =
+      hasStandardItems && selectedVariant?.ecClassId != null
+        ? selectedVariant.ecClassId
+        : product.ecClassId;
     if (!productId) {
       openModal('EC商品IDが未設定のため、カートに追加できませんでした。');
       return;
@@ -91,7 +177,7 @@ export default function ShopProductDetailView({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_id: Number(productId),
-          product_class_id: product.ecClassId ? Number(product.ecClassId) : undefined,
+          product_class_id: productClassId ? Number(productClassId) : undefined,
           quantity: Number(q),
         }),
         cache: 'no-store',
@@ -184,6 +270,60 @@ export default function ShopProductDetailView({
                 line === '' ? <br key={`br-${i}`} /> : <p key={i}>{line}</p>
               )}
             </div>
+            {hasStandardItems && (
+              <>
+                {options1.length > 0 && (
+                  <div className={styles.wrapInput}>
+                    <h4>{standardData?.className?.label1 || '規格1'}</h4>
+                    <div>
+                      <select
+                        value={selectedOption1Id ?? ''}
+                        onChange={(e) => {
+                          const nextId = Number(e.target.value);
+                          setSelectedOption1Id(nextId);
+                          const nextItem =
+                            standardItems.find(
+                              (item) =>
+                                item.classCategoryId1 === nextId &&
+                                (hasOption2 ? item.classCategoryId2 != null : true)
+                            ) ?? null;
+                          if (hasOption2) {
+                            setSelectedOption2Id(nextItem?.classCategoryId2 ?? null);
+                          }
+                          setQuantity(1);
+                        }}
+                      >
+                        {options1.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+                {hasOption2 && (
+                  <div className={styles.wrapInput}>
+                    <h4>{standardData?.className?.label2 || '規格2'}</h4>
+                    <div>
+                      <select
+                        value={selectedOption2Id ?? ''}
+                        onChange={(e) => {
+                          setSelectedOption2Id(Number(e.target.value));
+                          setQuantity(1);
+                        }}
+                      >
+                        {options2.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
             {stock > 0 ? (
               <div className={styles.wrapInput}>
                 <h4>購入数量</h4>
