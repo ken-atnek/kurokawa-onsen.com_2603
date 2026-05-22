@@ -91,16 +91,45 @@ export type ShopDetail = {
  * オンライン商品：詳細
  * ======================================= */
 
+export type ProductStandardOption = {
+  id: number;
+  label: string;
+};
+
+export type ProductStandardItem = {
+  variantId?: number;
+  ecClassId?: number | null;
+  classCategoryId1?: number | null;
+  classCategoryId2?: number | null;
+  price?: number;
+  stock?: number;
+  stockUnlimited?: boolean;
+};
+
+export type ProductStandard = {
+  className?: {
+    label1?: string | null;
+    label2?: string | null;
+  };
+  classCategory?: {
+    options1?: ProductStandardOption[];
+    options2?: ProductStandardOption[];
+  };
+  items?: ProductStandardItem[];
+};
+
 export type ShopProductDetail = {
   id: string;
   /** EC-CUBE の商品ID（product_id） */
   ecId?: number;
-  /** EC-CUBE の規格ID（product_class_id）。未指定ならEC側でデフォルト規格を解決 */
-  ecClassId?: number;
+  /** EC-CUBE の規格ID（product_class_id）。規格なし商品で使用 */
+  ecClassId?: number | null;
   shopId: string;
   title: string;
   price: number;
   stock?: number;
+  stockUnlimited?: boolean;
+  standard?: [] | ProductStandard;
   images: string[];
   comment: string[];
   ecUrl: string;
