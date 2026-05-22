@@ -71,6 +71,7 @@
                     font-size: fz(14);
                     font-weight: 600;
                     padding-block: 0.3em;
+                    align-self: flex-start;
                     @include sp {
                         display: flex;
                         align-items: center;
