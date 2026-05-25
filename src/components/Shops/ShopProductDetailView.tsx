@@ -3,11 +3,16 @@
  * URL: src/components/Shops/ShopProductDetailView.tsx
  * Referenced in: src/components/Shops/ShopProductDetailClient.tsx
  * Created: 2026-02-13
- * Last updated: 2026-05-04
+ * Last updated: 2026-05-22
  * ======================================= */
 'use client';
 import styles from '@/styles/PageShopProductDetail.module.scss';
-import type { ShopProductDetail } from '@/types/shop';
+import type {
+  ShopProductDetail,
+  ProductStandard,
+  ProductStandardItem,
+  ProductStandardOption,
+} from '@/types/shop';
 import Image from 'next/image';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -35,52 +40,25 @@ type Props = {
   product: ShopProductDetail;
 };
 
-type ProductStandardOption = {
-  id: number;
-  label: string;
-};
-
-type ProductStandardItem = {
-  ecClassId?: number;
-  classCategoryId1?: number;
-  classCategoryId2?: number;
-  price?: number;
-  stock?: number;
-};
-
-type ProductStandard = {
-  className?: {
-    label1?: string;
-    label2?: string;
-  };
-  classCategory?: {
-    options1?: ProductStandardOption[];
-    options2?: ProductStandardOption[];
-  };
-  items?: ProductStandardItem[];
-};
-
 export default function ShopProductDetailView({
   shopName,
   shopSlug,
   category,
   product,
 }: Props) {
-  const productWithStandard = product as ShopProductDetail & {
-    standard?: ProductStandard | [];
-  };
-  const standardData =
-    productWithStandard.standard &&
-    !Array.isArray(productWithStandard.standard) &&
-    Array.isArray(productWithStandard.standard.items)
-      ? productWithStandard.standard
-      : null;
-  const standardItems = standardData?.items ?? [];
-  const hasStandardItems = standardItems.length > 0;
-  const options1 = standardData?.classCategory?.options1 ?? [];
-  const options2 = standardData?.classCategory?.options2 ?? [];
-  const hasOption2 = options2.length > 0;
-  const firstVariant = hasStandardItems ? standardItems[0] : null;
+  // 規格あり判定
+  const standardData: ProductStandard | null = (() => {
+    const s = product.standard;
+    if (!s || Array.isArray(s)) return null;
+    if (!Array.isArray(s.items) || s.items.length === 0) return null;
+    return s;
+  })();
+  const hasStandard = standardData !== null;
+  const standardItems: ProductStandardItem[] = standardData?.items ?? [];
+  const options1: ProductStandardOption[] = standardData?.classCategory?.options1 ?? [];
+  const allOptions2: ProductStandardOption[] = standardData?.classCategory?.options2 ?? [];
+  const hasOption2 = allOptions2.length > 0;
+  const firstVariant: ProductStandardItem | null = standardItems[0] ?? null;
 
   const [modalMessage, setModalMessage] = useState<string | null>(null);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
@@ -94,47 +72,77 @@ export default function ShopProductDetailView({
     firstVariant?.classCategoryId2 ?? null
   );
   const [quantity, setQuantity] = useState(1);
-  const selectedVariant = hasStandardItems
+
+  // 規格2: 規格1選択後に存在する組み合わせのみに絞り込んだ選択肢
+  const filteredOptions2: ProductStandardOption[] = (() => {
+    if (!hasOption2 || selectedOption1Id == null) return allOptions2;
+    const validIds = new Set(
+      standardItems
+        .filter((item) => item.classCategoryId1 === selectedOption1Id)
+        .map((item) => item.classCategoryId2)
+        .filter((id): id is number => id != null)
+    );
+    return allOptions2.filter((opt) => validIds.has(opt.id));
+  })();
+
+  // 選択済み規格 item
+  const selectedVariant: ProductStandardItem | null = hasStandard
     ? standardItems.find((item) => {
-        const option1Matched =
-          selectedOption1Id == null || item.classCategoryId1 === selectedOption1Id;
-        const option2Matched = hasOption2
-          ? selectedOption2Id != null && item.classCategoryId2 === selectedOption2Id
+        const match1 = item.classCategoryId1 === selectedOption1Id;
+        const match2 = hasOption2
+          ? item.classCategoryId2 === selectedOption2Id
           : true;
-        return option1Matched && option2Matched;
+        return match1 && match2;
       }) ?? null
     : null;
-  const displayPrice =
-    hasStandardItems && selectedVariant?.price != null
-      ? selectedVariant.price
-      : product.price;
-  const stock =
-    hasStandardItems && selectedVariant?.stock != null
-      ? selectedVariant.stock
-      : (product.stock ?? 0);
-  const maxQty = Math.max(1, stock);
+
+  // 在庫
+  const resolvedStockUnlimited = hasStandard
+    ? selectedVariant?.stockUnlimited === true
+    : product.stockUnlimited === true;
+  const resolvedStock = hasStandard
+    ? (selectedVariant?.stock ?? 0)
+    : (product.stock ?? 0);
+  const isOutOfStock = !resolvedStockUnlimited && resolvedStock <= 0;
+  const maxQty = resolvedStockUnlimited ? 999 : Math.max(1, resolvedStock);
+
   const activeSrc = images[activeIndex] ?? images[0] ?? '';
 
   useEffect(() => {
-    if (!hasStandardItems) {
+    if (!hasStandard) {
       setSelectedOption1Id(null);
       setSelectedOption2Id(null);
       setQuantity(1);
       return;
     }
-
     setSelectedOption1Id(firstVariant?.classCategoryId1 ?? null);
     setSelectedOption2Id(firstVariant?.classCategoryId2 ?? null);
     setQuantity(1);
-  }, [hasStandardItems, firstVariant?.classCategoryId1, firstVariant?.classCategoryId2]);
+  }, [hasStandard, firstVariant?.classCategoryId1, firstVariant?.classCategoryId2]);
 
   useEffect(() => {
     setQuantity((q) => Math.min(Math.max(q, 1), maxQty));
   }, [maxQty]);
 
+  // 価格表示テキスト
+  // 規格あり・selectedVariant なし時のみ価格帯表示（¥min〜¥max 形式）
+  const isPriceRange = hasStandard && selectedVariant?.price == null;
   const priceText = useMemo(() => {
-    return new Intl.NumberFormat('ja-JP').format(displayPrice);
-  }, [displayPrice]);
+    const fmt = new Intl.NumberFormat('ja-JP');
+    if (hasStandard) {
+      if (selectedVariant?.price != null) return fmt.format(selectedVariant.price);
+      const prices = standardItems
+        .map((item) => item.price)
+        .filter((p): p is number => p != null);
+      if (prices.length === 0) return '—';
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      return min === max
+        ? fmt.format(min)
+        : `¥${fmt.format(min)}〜¥${fmt.format(max)}`;
+    }
+    return fmt.format(product.price);
+  }, [hasStandard, selectedVariant?.price, standardItems, product.price]);
 
   const dec = () => setQuantity((q) => Math.max(1, q - 1));
   const inc = () => setQuantity((q) => Math.min(maxQty, q + 1));
@@ -148,6 +156,7 @@ export default function ShopProductDetailView({
     setIsCartModalOpen(false);
     setModalMessage(null);
   };
+
   const notifyCartUpdate = () => {
     window.dispatchEvent(new CustomEvent('cartCountChanged'));
   };
@@ -157,13 +166,25 @@ export default function ShopProductDetailView({
     return Math.min(Math.floor(v), maxQty);
   };
 
+  // カート追加に使う product_class_id
+  const productClassId =
+    hasStandard && selectedVariant?.ecClassId != null
+      ? selectedVariant.ecClassId
+      : product.ecClassId;
+
+  // カートボタン disabled 条件
+  const isVariantUnresolved =
+    hasStandard && (selectedVariant == null || selectedVariant.ecClassId == null);
+  const isCartDisabled =
+    isAddingToCart ||
+    !product.ecId ||
+    productClassId == null ||
+    isVariantUnresolved ||
+    isOutOfStock ||
+    quantity < 1;
+
   const handleAddToCart = async () => {
-    const productId = product.ecId;
-    const productClassId =
-      hasStandardItems && selectedVariant?.ecClassId != null
-        ? selectedVariant.ecClassId
-        : product.ecClassId;
-    if (!productId) {
+    if (!product.ecId) {
       openModal('EC商品IDが未設定のため、カートに追加できませんでした。');
       return;
     }
@@ -176,7 +197,7 @@ export default function ShopProductDetailView({
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          product_id: Number(productId),
+          product_id: Number(product.ecId),
           product_class_id: productClassId ? Number(productClassId) : undefined,
           quantity: Number(q),
         }),
@@ -262,15 +283,23 @@ export default function ShopProductDetailView({
             <p className={styles.itemId}>{product.id}</p>
             <h3>{product.title}</h3>
             <p className={styles.itemPrice}>
-              <i>¥</i>
-              {priceText} <span>（税込）</span>
+              {isPriceRange ? (
+                <>
+                  {priceText} <span>（税込）</span>
+                </>
+              ) : (
+                <>
+                  <i>¥</i>
+                  {priceText} <span>（税込）</span>
+                </>
+              )}
             </p>
             <div className={styles.itemComment}>
               {product.comment.map((line, i) =>
                 line === '' ? <br key={`br-${i}`} /> : <p key={i}>{line}</p>
               )}
             </div>
-            {hasStandardItems && (
+            {hasStandard && (
               <>
                 {options1.length > 0 && (
                   <div className={styles.wrapInput}>
@@ -281,15 +310,15 @@ export default function ShopProductDetailView({
                         onChange={(e) => {
                           const nextId = Number(e.target.value);
                           setSelectedOption1Id(nextId);
-                          const nextItem =
-                            standardItems.find(
-                              (item) =>
-                                item.classCategoryId1 === nextId &&
-                                (hasOption2 ? item.classCategoryId2 != null : true)
-                            ) ?? null;
-                          if (hasOption2) {
+                          if (hasOption2 && selectedOption2Id == null) {
+                            // 規格2未選択: 規格1変更後の最初の item を自動選択し規格2もセット
+                            const nextItem =
+                              standardItems.find(
+                                (item) => item.classCategoryId1 === nextId
+                              ) ?? null;
                             setSelectedOption2Id(nextItem?.classCategoryId2 ?? null);
                           }
+                          // 規格2選択済みの場合は規格1のみ変更（selectedVariant は自動再計算）
                           setQuantity(1);
                         }}
                       >
@@ -313,7 +342,7 @@ export default function ShopProductDetailView({
                           setQuantity(1);
                         }}
                       >
-                        {options2.map((option) => (
+                        {filteredOptions2.map((option) => (
                           <option key={option.id} value={option.id}>
                             {option.label}
                           </option>
@@ -324,7 +353,7 @@ export default function ShopProductDetailView({
                 )}
               </>
             )}
-            {stock > 0 ? (
+            {!isOutOfStock ? (
               <div className={styles.wrapInput}>
                 <h4>購入数量</h4>
                 <div>
@@ -342,8 +371,8 @@ export default function ShopProductDetailView({
                     onClick={inc}
                     aria-label="増やす"
                     className={styles.itemPlus}
-                    disabled={stock > 0 ? quantity >= maxQty : true}
-                    aria-disabled={stock > 0 ? quantity >= maxQty : true}
+                    disabled={quantity >= maxQty}
+                    aria-disabled={quantity >= maxQty}
                   ></button>
                 </div>
               </div>
@@ -353,8 +382,8 @@ export default function ShopProductDetailView({
             <button
               type="button"
               className={styles.itemButton}
-              disabled={stock === 0 || isAddingToCart}
-              aria-disabled={stock === 0 || isAddingToCart}
+              disabled={isCartDisabled}
+              aria-disabled={isCartDisabled}
               onClick={handleAddToCart}
             >
               {isAddingToCart ? '追加中...' : 'カートに入れる'}
