@@ -55,8 +55,10 @@ export default function ShopProductDetailView({
   })();
   const hasStandard = standardData !== null;
   const standardItems: ProductStandardItem[] = standardData?.items ?? [];
-  const options1: ProductStandardOption[] = standardData?.classCategory?.options1 ?? [];
-  const allOptions2: ProductStandardOption[] = standardData?.classCategory?.options2 ?? [];
+  const options1: ProductStandardOption[] =
+    standardData?.classCategory?.options1 ?? [];
+  const allOptions2: ProductStandardOption[] =
+    standardData?.classCategory?.options2 ?? [];
   const hasOption2 = allOptions2.length > 0;
   const firstVariant: ProductStandardItem | null = standardItems[0] ?? null;
 
@@ -87,13 +89,13 @@ export default function ShopProductDetailView({
 
   // 選択済み規格 item
   const selectedVariant: ProductStandardItem | null = hasStandard
-    ? standardItems.find((item) => {
+    ? (standardItems.find((item) => {
         const match1 = item.classCategoryId1 === selectedOption1Id;
         const match2 = hasOption2
           ? item.classCategoryId2 === selectedOption2Id
           : true;
         return match1 && match2;
-      }) ?? null
+      }) ?? null)
     : null;
 
   // 在庫
@@ -118,7 +120,11 @@ export default function ShopProductDetailView({
     setSelectedOption1Id(firstVariant?.classCategoryId1 ?? null);
     setSelectedOption2Id(firstVariant?.classCategoryId2 ?? null);
     setQuantity(1);
-  }, [hasStandard, firstVariant?.classCategoryId1, firstVariant?.classCategoryId2]);
+  }, [
+    hasStandard,
+    firstVariant?.classCategoryId1,
+    firstVariant?.classCategoryId2,
+  ]);
 
   useEffect(() => {
     setQuantity((q) => Math.min(Math.max(q, 1), maxQty));
@@ -130,7 +136,8 @@ export default function ShopProductDetailView({
   const priceText = useMemo(() => {
     const fmt = new Intl.NumberFormat('ja-JP');
     if (hasStandard) {
-      if (selectedVariant?.price != null) return fmt.format(selectedVariant.price);
+      if (selectedVariant?.price != null)
+        return fmt.format(selectedVariant.price);
       const prices = standardItems
         .map((item) => item.price)
         .filter((p): p is number => p != null);
@@ -174,7 +181,8 @@ export default function ShopProductDetailView({
 
   // カートボタン disabled 条件
   const isVariantUnresolved =
-    hasStandard && (selectedVariant == null || selectedVariant.ecClassId == null);
+    hasStandard &&
+    (selectedVariant == null || selectedVariant.ecClassId == null);
   const isCartDisabled =
     isAddingToCart ||
     !product.ecId ||
@@ -304,7 +312,7 @@ export default function ShopProductDetailView({
                 {options1.length > 0 && (
                   <div className={styles.wrapInput}>
                     <h4>{standardData?.className?.label1 || '規格1'}</h4>
-                    <div>
+                    <div className={styles.itemOptions}>
                       <select
                         value={selectedOption1Id ?? ''}
                         onChange={(e) => {
@@ -316,7 +324,9 @@ export default function ShopProductDetailView({
                               standardItems.find(
                                 (item) => item.classCategoryId1 === nextId
                               ) ?? null;
-                            setSelectedOption2Id(nextItem?.classCategoryId2 ?? null);
+                            setSelectedOption2Id(
+                              nextItem?.classCategoryId2 ?? null
+                            );
                           }
                           // 規格2選択済みの場合は規格1のみ変更（selectedVariant は自動再計算）
                           setQuantity(1);
@@ -334,7 +344,7 @@ export default function ShopProductDetailView({
                 {hasOption2 && (
                   <div className={styles.wrapInput}>
                     <h4>{standardData?.className?.label2 || '規格2'}</h4>
-                    <div>
+                    <div className={styles.itemOptions}>
                       <select
                         value={selectedOption2Id ?? ''}
                         onChange={(e) => {
@@ -390,7 +400,10 @@ export default function ShopProductDetailView({
             </button>
           </div>
         </article>
-        <Link href={`/shops/products?id=${shopSlug}`} className={styles.linkList}>
+        <Link
+          href={`/shops/products?id=${shopSlug}`}
+          className={styles.linkList}
+        >
           オンライン商品一覧に戻る
         </Link>
       </section>
