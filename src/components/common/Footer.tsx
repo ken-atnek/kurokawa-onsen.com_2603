@@ -58,12 +58,12 @@ const Footer = () => {
             <ScrollLink href="/terms/">ご利用規約</ScrollLink>
             <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
             <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>
-            <ExternalLink
+            {/* <ExternalLink
               className={styles.linkContact}
               href="mailto:info@kurokawa-onsen.com"
             >
               <span>お問い合わせ</span>
-            </ExternalLink>
+            </ExternalLink> */}
           </nav>
         </section>
       </footer>

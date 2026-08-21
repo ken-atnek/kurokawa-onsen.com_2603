@@ -137,13 +137,13 @@ const Header = () => {
               <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
               <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>
             </nav>
-            <ExternalLink
+            {/* <ExternalLink
               className={styles.linkContact}
               href="mailto:info@kurokawa-onsen.com"
               onClick={closeMenu}
             >
               <span>お問い合わせ</span>
-            </ExternalLink>
+            </ExternalLink> */}
           </div>
           <h1 className={isVisible ? styles.isVisible : styles.isHidden}>
             <ScrollLink href="/">
