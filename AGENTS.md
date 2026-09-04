@@ -247,9 +247,22 @@ export default async function Page({
 
 # 詳細ルール参照
 
+- ページ構成: `docs/PAGE_STRUCTURE.md`
+- プロジェクト前提: `docs/rules/project-setup.md`
 - チェック項目: `docs/rules/checklist.md`
 - コーディング規約: `docs/rules/coding-style.md`
+- TSXコメント: `docs/rules/tsx-comment-rules.md`
+- SCSSコメント: `docs/rules/scss-comment-rules.md`
 - データ取得: `docs/rules/fetch-pattern.md`
 - export運用: `docs/rules/nextjs-export.md`
-- プロジェクト前提: `docs/rules/project-setup.md`
 - UI実装: `docs/rules/ui-interactions.md`
+- コンポーネント依頼: `docs/rules/component-request-patterns.md`
+- 外部プレイブック参照: `docs/rules/external-playbooks.md`
+- 失敗と対策: `docs/rules/lessons.md`
+- SEO初期設定: `docs/seo/SEO_SETUP.md`
+- SEO監査テンプレート: `docs/seo/SEO_AUDIT_REQUEST_TEMPLATE.md`
+- SEO修正トラッカー: `docs/seo/SEO_FIX_TRACKER_TEMPLATE.md`
+- 外部レビュー依頼: `docs/review/CLAUDE_REVIEW_REQUEST.md`
+- 外部レビュー指摘管理: `docs/review/REVIEW_FIX_TRACKER.md`
+- 外部レビューフロー: `docs/workflows/claude-review-flow.md`
+- レビュー反映フロー: `docs/workflows/claude-to-codex-review-fix-flow.md`
