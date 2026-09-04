@@ -6,19 +6,43 @@
  * Last updated: 2026-02-12
  * ======================================= */
 
-import type { ShopInfo, ShopHourRow } from '@/types/shop';
+import type {
+  ShopInfo,
+  ShopHourRow,
+  ShopReservationBasic,
+} from '@/types/shop';
+import clsx from 'clsx';
 import styles from '@/styles/PageShopDetails.module.scss';
 import ExternalLink from '@/components/common/ExternalLink';
+import Image from 'next/image';
+import ShopReservationCalendar from '@/components/Shops/ShopReservationCalendar';
 
 type Props = {
+  shopId: string;
   info: ShopInfo;
+  category: string;
+  hasReservation: boolean;
+  reservationBasic: ShopReservationBasic | null;
 };
 
-export default function ShopInfo({ info }: Props) {
+export default function ShopInfo({
+  shopId,
+  info,
+  category,
+  hasReservation,
+  reservationBasic,
+}: Props) {
   const safeMapUrl = info.mapUrl?.replace(/^http:/, 'https:');
+  const isFoodShop = category === 'food';
+
   return (
     <section className={styles.containerInfo}>
-      <article>
+      <article
+        className={clsx(
+          styles.boxInfoContent,
+          hasReservation ? styles.isReservationShop : styles.isDefaultShop
+        )}
+      >
         <dl className={styles.listInfo}>
           {info.hours.map((row, i) => (
             <div key={i}>
@@ -46,7 +70,26 @@ export default function ShopInfo({ info }: Props) {
             <ExternalLink href={info.mapLinkUrl}>GoogleMap</ExternalLink>
           ) : null}
         </div>
+        {hasReservation && reservationBasic ? (
+          <ShopReservationCalendar
+            shopId={shopId}
+            reservationBasic={reservationBasic}
+          />
+        ) : null}
       </article>
+      {isFoodShop ? (
+        <ExternalLink
+          href="https://www.kurokawaonsen.or.jp/"
+          className={styles.linkStayPlan}
+        >
+          <Image
+            src="/images/common/link-stay-plan.webp"
+            alt="素泊まりプラン"
+            width={600}
+            height={80}
+          />
+        </ExternalLink>
+      ) : null}
     </section>
   );
 }

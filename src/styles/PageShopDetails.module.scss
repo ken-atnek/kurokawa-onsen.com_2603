@@ -379,17 +379,296 @@
  * 営業時間・MAP
  * ------------------------------ */
 .containerInfo {
-    @include flex-center;
+    @include flex-center(column);
     padding: 8rem 4vw;
     background-color: #eaebec;
     @include sp {
         padding: 4vw;
     }
-    article {
+    .boxInfoContent {
         display: flex;
         max-width: $articleMaxWidth;
         gap: 0 6rem;
         justify-content: space-between;
+        &.isReservationShop {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 4rem 6rem;
+            align-items: start;
+            @include sp {
+                display: flex;
+                flex-direction: column;
+                gap: 6vw 0;
+            }
+            .boxMap {
+                height: 100%;
+            }
+            .boxReservationCalendar {
+                grid-column: 2;
+                grid-row: 1 / span 2;
+            }
+            .boxReservationCalendar {
+                width: 100%;
+                background-color: #fff;
+                padding: 4rem;
+                font-size: inherit;
+                .boxH2 {
+                    @include itemH2;
+                    h2 {
+                        font-size: fz(24);
+                    }
+                }
+                .reservationGuestSelect {
+                    display: grid;
+                    grid-template-columns: auto 1fr;
+                    align-items: center;
+                    gap: 0 3rem;
+                    margin-top: 3rem;
+                    padding-bottom: 2.4rem;
+                    border-bottom: 1px solid $border-color;
+                    font-size: fz(16);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                    h3 {
+                        font-size: fz(16);
+                    }
+                }
+                .reservationMonthHead {
+                    position: relative;
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 2.4rem;
+                    font-size: inherit;
+                    span {
+                        font-size: fz(20);
+                        letter-spacing: 0.08em;
+                        @include Serif;
+                        display: flex;
+                        align-items: center;
+                    }
+                    button {
+                        position: relative;
+                        cursor: pointer;
+                        width: 2.4rem;
+                        height: 3.2rem;
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 50%;
+                            translate: -50% -50%;
+                            left: 50%;
+                            width: 2.6rem;
+                            @include svg-icon-arrow-bottom("403726");
+                        }
+                        &.btnPrevMonth {
+                            &::before {
+                                rotate: 90deg;
+                            }
+                        }
+                        &.btnNextMonth {
+                            &::before {
+                                scale: -1 1;
+                                rotate: -90deg;
+                            }
+                        }
+                        &.isDisabledMonthButton {
+                            opacity: 0.25;
+                        }
+                        &:disabled {
+                            cursor: default;
+                            pointer-events: none;
+                            opacity: 0.25;
+                        }
+                    }
+                }
+                .reservationWeekdays {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    margin-top: 2.4rem;
+                    text-align: center;
+                    font-size: inherit;
+                    span {
+                        font-size: fz(16);
+                        font-weight: 500;
+                        &[data-weekend="sun"] {
+                            color: #b32121;
+                        }
+                        &[data-weekend="sat"] {
+                            color: #2874c9;
+                        }
+                    }
+                }
+                .reservationMonthGrid {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    margin-top: 1rem;
+                    border-top: 1px solid #ddd;
+                    border-left: 1px solid #ddd;
+                    font-size: inherit;
+                    li {
+                        min-height: 8rem;
+                        border-right: 1px solid #ddd;
+                        border-bottom: 1px solid #ddd;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+
+                        // justify-content: center;
+                        padding-top: 0.8rem;
+                        gap: 0.6rem;
+                        font-size: inherit;
+                        .reservationDay {
+                            font-size: fz(20);
+
+                            // @include Serif;
+                            &[data-weekend="sun"] {
+                                color: #b32121;
+                            }
+                            &[data-weekend="sat"] {
+                                color: #2874c9;
+                            }
+                        }
+                    }
+                }
+                .reservationStatus {
+                    position: relative;
+                    width: 2.4rem;
+                    @include flex-center;
+                    &[data-status="full"] {
+                        .reservationStatusIcon {
+                            &::before {
+                                content: "満";
+                                color: #fc2727;
+                                font-size: fz(20);
+                                font-weight: 600;
+                                line-height: 1.2;
+                            }
+                        }
+                    }
+                    &[data-status="closed"] {
+                        .reservationStatusIcon {
+                            &::before {
+                                content: "-";
+                                position: absolute;
+                                left: 50%;
+                                translate: -50%;
+                                color: #777;
+                                font-size: fz(20);
+                                font-weight: 600;
+                                line-height: 1.2;
+                            }
+                        }
+                    }
+                    &[data-status="holiday"] {
+                        .reservationStatusIcon {
+                            &::before {
+                                content: "休";
+                                color: #777;
+                                font-size: fz(20);
+                                font-weight: 600;
+                                line-height: 1.2;
+                            }
+                        }
+                    }
+                    &[data-status="open"] {
+                        .reservationStatusIcon {
+                            position: relative;
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                left: 50%;
+                                translate: -50%;
+                                width: 2.4rem;
+                                @include svg-iconStatusCircle(000);
+                            }
+                        }
+                    }
+                    &[data-status="limited"] {
+                        .reservationStatusIcon {
+                            position: relative;
+                            &::before {
+                                content: "";
+                                position: absolute;
+                                left: 50%;
+                                translate: -50%;
+                                width: 2.4rem;
+                                @include svg-iconStatusTriangle(000);
+                            }
+                        }
+                    }
+                }
+                .reservationStatusIcon {
+                    display: block;
+                    width: 1.6rem;
+                    aspect-ratio: 1;
+                    font-size: inherit;
+                    pointer-events: none;
+                    &[data-status="closed"],
+                    &[data-status="full"] {
+                        @include flex-center;
+                        &::before {
+                            content: "満";
+                            color: #777;
+                            font-size: fz(18);
+                            font-weight: 600;
+                            line-height: 1;
+                        }
+                    }
+                    &[data-status="holiday"] {
+                        @include flex-center;
+                        &::before {
+                            content: "休";
+                            color: #777;
+                            font-size: fz(18);
+                            font-weight: 600;
+                            line-height: 1;
+                        }
+                    }
+                    &[data-status="open"] {
+                        position: relative;
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            left: 50%;
+                            translate: -50%;
+                            width: 1.8rem;
+                            @include svg-iconStatusCircle(000);
+                        }
+                    }
+                    &[data-status="limited"] {
+                        position: relative;
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            left: 50%;
+                            translate: -50%;
+                            width: 1.8rem;
+                            @include svg-iconStatusTriangle(000);
+                        }
+                    }
+                }
+                .reservationLegend {
+                    margin-top: 1.4rem;
+                    @include flex-center;
+                    font-size: fz(16);
+                    font-weight: 600;
+                    letter-spacing: 0.04em;
+                    gap: 0 2rem;
+                    margin-bottom: 1rem;
+                    span {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0 0.4em;
+                    }
+                }
+                .reservationNote {
+                    margin-top: 0.4rem;
+                    font-size: fz(13);
+                    letter-spacing: 0.04em;
+                }
+            }
+        }
         @include sp {
             flex-direction: column;
             justify-content: unset;
@@ -491,6 +770,14 @@
                 padding: 0.5em 2em;
                 letter-spacing: 0.04em;
             }
+        }
+    }
+    .linkStayPlan {
+        margin-top: 5rem;
+        max-width: 60rem;
+        img {
+            width: 100%;
+            object-fit: contain;
         }
     }
 }
