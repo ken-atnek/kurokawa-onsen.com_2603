@@ -66,6 +66,64 @@ export type ShopRecommendedProduct = {
   description: string;
 };
 
+export type ShopReservationMenu = {
+  id: string;
+  name: string;
+  price: number;
+  taxIncluded?: boolean;
+  image: string;
+  description: string;
+  enabled: boolean;
+};
+
+export type ShopReservationMenus = {
+  shopId: string;
+  updatedAt?: string;
+  allowSeatOnly?: boolean;
+  menus: ShopReservationMenu[];
+};
+
+export type ShopReservationBasic = {
+  shopId: string;
+  reservationEnabled: boolean;
+  menuSelection: {
+    enabled: boolean;
+    required: boolean;
+  };
+  acceptancePeriod: {
+    startDaysBefore: number | null;
+    endDaysBefore: number;
+  };
+  guestRange: {
+    min: number;
+    max: number;
+  };
+  regularHolidays: number[];
+  updatedAt?: string;
+};
+
+export type ShopReservationStatus =
+  | 'open'
+  | 'limited'
+  | 'full'
+  | 'holiday';
+
+export type ShopReservationGuestStatuses = Record<string, ShopReservationStatus>;
+
+export type ShopReservationDay = {
+  date: string;
+  guests: ShopReservationGuestStatuses;
+  reason?: string;
+};
+
+export type ShopReservationMonth = {
+  shopId: string;
+  year: number;
+  month: number;
+  updatedAt?: string;
+  days: ShopReservationDay[];
+};
+
 export type ShopOnlineProduct = {
   id: string;
   title: string;

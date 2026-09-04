@@ -48,7 +48,7 @@
 
 `reservationEnabled === true` の場合だけ予約カレンダーを表示する。
 
-実装側では、`ShopDetailClient` で `basic.json` を取得し、`reservationEnabled` から `hasReservation` を作る。
+実装側では、`useShopDetailData` で `basic.json` を取得し、`ShopDetailClient` 側で `reservationEnabled` から `hasReservation` を作る。
 
 ```txt
 hasReservation = reservationBasic?.reservationEnabled === true
