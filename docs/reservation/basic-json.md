@@ -98,6 +98,45 @@
 - `endDaysBefore: 3`：3日前まで受付
 - `endDaysBefore: 7`：1週間前まで受付
 
+例：
+
+```json
+"acceptancePeriod": {
+  "startDaysBefore": 30,
+  "endDaysBefore": 1
+}
+```
+
+30日前から受付し、1日前まで受付する。
+
+表側では、この受付期間外の日付は表示用ステータス `closed` として扱う。
+
+受付期間の判定は、閲覧日を基準に行う。
+
+例：閲覧日が `2026-09-04` の場合
+
+```json
+"acceptancePeriod": {
+  "startDaysBefore": 30,
+  "endDaysBefore": 1
+}
+```
+
+この場合の受付可能期間：
+
+```txt
+2026-09-05 〜 2026-10-04
+```
+
+以下の日付は、月別JSON上で `open` や `limited` でも、表側では表示用ステータス `closed` にする。
+
+- `2026-09-04` 以前
+- `2026-10-05` 以降
+
+表示用ステータス `closed` は月別JSONには保存しない。
+
+`closed` の日は予約フォームへのリンクを出さず、カレンダー上は `満` として表示する。
+
 ### `guestRange`
 
 予約可能人数の範囲。
