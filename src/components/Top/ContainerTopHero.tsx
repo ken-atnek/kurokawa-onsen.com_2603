@@ -6,9 +6,46 @@
  * Last updated: 2026-02-09
  * ======================================= */
 
+'use client';
+
+import { useEffect, useState } from 'react';
 import styles from '@/styles/PageTop.module.scss';
 
+type WeatherResponse = {
+  current?: {
+    temperature_2m?: number;
+  };
+};
+
+const WEATHER_API_URL =
+  'https://api.open-meteo.com/v1/jma?latitude=33.0778&longitude=131.1438&current=temperature_2m&timezone=Asia%2FTokyo';
+
 export default function ContainerTopHero() {
+  const [temperature, setTemperature] = useState<string>('--');
+
+  useEffect(() => {
+    const fetchTemperature = async () => {
+      try {
+        const response = await fetch(WEATHER_API_URL, { cache: 'no-store' });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as WeatherResponse;
+        const currentTemperature = data.current?.temperature_2m;
+
+        if (typeof currentTemperature === 'number') {
+          setTemperature(currentTemperature.toFixed(1));
+        }
+      } catch {
+        // 気温取得に失敗した場合は初期表示のままにする
+      }
+    };
+
+    void fetchTemperature();
+  }, []);
+
   return (
     <section className={styles.containerTopHero}>
       <div className={styles.boxImage}>
@@ -25,7 +62,7 @@ export default function ContainerTopHero() {
       </div>
       <div className={styles.boxWeather}>
         <p>今日の黒川</p>
-        <span>2.3</span>
+        <span>{temperature}</span>
       </div>
     </section>
   );
