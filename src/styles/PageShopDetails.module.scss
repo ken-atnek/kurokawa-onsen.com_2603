@@ -392,10 +392,13 @@
         justify-content: space-between;
         &.isReservationShop {
             display: grid;
-            grid-template-columns: auto 1fr;
+            grid-template-columns: 1fr auto;
             grid-template-rows: auto 1fr;
             gap: 4rem 6rem;
             align-items: start;
+            .listInfo {
+                width: 100%;
+            }
             @include sp {
                 display: flex;
                 flex-direction: column;
@@ -405,14 +408,13 @@
                 height: 100%;
             }
             .boxReservationCalendar {
-                grid-column: 2;
-                grid-row: 1 / span 2;
-            }
-            .boxReservationCalendar {
                 width: 100%;
                 background-color: #fff;
                 padding: 4rem;
                 font-size: inherit;
+                grid-column: 2;
+                grid-row: 1 / span 2;
+                max-width: 48rem;
                 .boxH2 {
                     @include itemH2;
                     h2 {
@@ -541,131 +543,42 @@
                     &:is(button) {
                         cursor: pointer;
                     }
-                    &[data-status="full"] {
-                        .reservationStatusIcon {
-                            &::before {
-                                content: "満";
-                                color: #fc2727;
-                                font-size: fz(20);
-                                font-weight: 600;
-                                line-height: 1.2;
-                            }
-                        }
-                    }
-                    &[data-status="closed"] {
-                        .reservationStatusIcon {
-                            &::before {
-                                content: "-";
-                                position: absolute;
-                                left: 50%;
-                                translate: -50%;
-                                color: #777;
-                                font-size: fz(20);
-                                font-weight: 600;
-                                line-height: 1.2;
-                            }
-                        }
-                    }
-                    &[data-status="holiday"] {
-                        .reservationStatusIcon {
-                            &::before {
-                                content: "休";
-                                color: #777;
-                                font-size: fz(20);
-                                font-weight: 600;
-                                line-height: 1.2;
-                            }
-                        }
-                    }
-                    &[data-status="open"] {
-                        .reservationStatusIcon {
-                            position: relative;
-                            &::before {
-                                content: "";
-                                position: absolute;
-                                left: 50%;
-                                translate: -50%;
-                                width: 2.4rem;
-                                @include svg-iconStatusCircle(000);
-                            }
-                        }
-                    }
-                    &[data-status="limited"] {
-                        .reservationStatusIcon {
-                            position: relative;
-                            &::before {
-                                content: "";
-                                position: absolute;
-                                left: 50%;
-                                translate: -50%;
-                                width: 2.4rem;
-                                @include svg-iconStatusTriangle(000);
-                            }
-                        }
-                    }
-                }
-                .reservationStatusIcon {
-                    display: block;
-                    width: 1.6rem;
-                    aspect-ratio: 1;
-                    font-size: inherit;
-                    pointer-events: none;
-                    &[data-status="closed"],
-                    &[data-status="full"] {
-                        @include flex-center;
-                        &::before {
-                            content: "満";
-                            color: #777;
-                            font-size: fz(18);
-                            font-weight: 600;
-                            line-height: 1;
-                        }
-                    }
-                    &[data-status="holiday"] {
-                        @include flex-center;
-                        &::before {
-                            content: "休";
-                            color: #777;
-                            font-size: fz(18);
-                            font-weight: 600;
-                            line-height: 1;
-                        }
-                    }
-                    &[data-status="open"] {
-                        position: relative;
-                        &::before {
-                            content: "";
-                            position: absolute;
-                            left: 50%;
-                            translate: -50%;
-                            width: 1.8rem;
-                            @include svg-iconStatusCircle(000);
-                        }
-                    }
-                    &[data-status="limited"] {
-                        position: relative;
-                        &::before {
-                            content: "";
-                            position: absolute;
-                            left: 50%;
-                            translate: -50%;
-                            width: 1.8rem;
-                            @include svg-iconStatusTriangle(000);
-                        }
-                    }
+                    @include iconStatus;
                 }
                 .reservationLegend {
                     margin-top: 1.4rem;
-                    @include flex-center;
-                    font-size: fz(16);
-                    font-weight: 600;
-                    letter-spacing: 0.04em;
-                    gap: 0 2rem;
                     margin-bottom: 1rem;
+                    display: flex;
+                    gap: 0 2rem;
+                    font-size: inherit;
                     span {
-                        display: inline-flex;
+                        @include iconStatus;
+                        font-size: fz(14);
+                        font-weight: 600;
+                        display: flex;
                         align-items: center;
-                        gap: 0 0.4em;
+                        letter-spacing: 0.04em;
+                        gap: 0 0.2em;
+                        &[data-status="open"] {
+                            .reservationStatusIcon {
+                                &::before {
+                                    width: 1.8rem;
+                                }
+                            }
+                        }
+                        &[data-status="limited"] {
+                            .reservationStatusIcon {
+                                &::before {
+                                    width: 1.8rem;
+                                }
+                            }
+                        }
+                        .reservationStatusIcon {
+                            &::before {
+                                top: 50%;
+                                translate: -50% -50%;
+                            }
+                        }
                     }
                 }
                 .reservationNote {

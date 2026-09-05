@@ -3,6 +3,7 @@
  * URL: src/components/Shops/ShopReservationCalendar.tsx
  * Referenced in: src/components/Shops/ShopInfo.tsx
  * Created: 2026-09-04
+ * Last updated: 2026-09-05
  * ======================================= */
 'use client';
 
@@ -12,8 +13,19 @@ import type {
   ShopReservationBasic,
   ShopReservationDay,
   ShopReservationMonth,
-  ShopReservationStatus,
 } from '@/types/shop';
+import {
+  addMonths,
+  createGuestOptions,
+  formatMonthKey,
+  getReservationStatus,
+  getReservationStatusLabel,
+  getWeekendType,
+  getWeekdayIndex,
+  isReservableStatus,
+  RESERVATION_WEEKDAYS,
+  type ReservationDisplayStatus,
+} from '@/lib/shops/reservation';
 import styles from '@/styles/PageShopDetails.module.scss';
 import SelectBox from '@/components/common/SelectBox';
 import ShopReservationNoticeLink from '@/components/Shops/ShopReservationNoticeLink';
@@ -23,10 +35,6 @@ type Props = {
   tel: string;
   reservationBasic: ShopReservationBasic;
 };
-
-type ReservationDisplayStatus = ShopReservationStatus | 'closed';
-
-const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
 export default function ShopReservationCalendar({
   shopId,
@@ -154,7 +162,7 @@ export default function ShopReservationCalendar({
       </div>
 
       <div className={styles.reservationWeekdays}>
-        {WEEKDAYS.map((weekday, i) => (
+        {RESERVATION_WEEKDAYS.map((weekday, i) => (
           <span key={weekday} data-weekend={getWeekendType(i)}>
             {weekday}
           </span>
@@ -186,34 +194,30 @@ export default function ShopReservationCalendar({
       </ul>
 
       <div className={styles.reservationLegend}>
-        <span>
+        <span data-status="open">
           <i
             className={styles.reservationStatusIcon}
-            data-status="open"
             aria-hidden="true"
           ></i>
           ご予約可
         </span>
-        <span>
+        <span data-status="limited">
           <i
             className={styles.reservationStatusIcon}
-            data-status="limited"
             aria-hidden="true"
           ></i>
           一部満席
         </span>
-        <span>
+        <span data-status="full">
           <i
             className={styles.reservationStatusIcon}
-            data-status="full"
             aria-hidden="true"
           ></i>
           満席
         </span>
-        <span>
+        <span data-status="holiday">
           <i
             className={styles.reservationStatusIcon}
-            data-status="holiday"
             aria-hidden="true"
           ></i>
           休業日
@@ -227,24 +231,6 @@ export default function ShopReservationCalendar({
       </p>
     </div>
   );
-}
-
-function addMonths(date: Date, amount: number) {
-  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
-}
-
-function formatMonthKey(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-
-  return `${year}-${String(month).padStart(2, '0')}`;
-}
-
-function createGuestOptions(guestRange: ShopReservationBasic['guestRange']) {
-  const min = Math.max(1, guestRange.min);
-  const max = Math.max(min, guestRange.max);
-
-  return Array.from({ length: max - min + 1 }, (_, i) => min + i);
 }
 
 type GuestSelectBoxProps = {
@@ -289,18 +275,10 @@ function renderStatus(
   today: Date,
   acceptancePeriod: ShopReservationBasic['acceptancePeriod']
 ) {
-  const jsonStatus: ReservationDisplayStatus =
-    day.guests[String(guests) as keyof ShopReservationDay['guests']];
-  const status: ReservationDisplayStatus = isClosedDate(
-    day.date,
-    today,
-    acceptancePeriod
-  )
-    ? 'closed'
-    : jsonStatus ?? 'closed';
-  const label = getStatusLabel(status);
+  const status = getReservationStatus(day, guests, today, acceptancePeriod);
+  const label = getReservationStatusLabel(status);
 
-  if (status === 'open' || status === 'limited') {
+  if (isReservableStatus(status)) {
     return (
       <ShopReservationNoticeLink
         href={`/shops/reserve?id=${shopId}&date=${day.date}&guests=${guests}`}
@@ -323,48 +301,4 @@ function renderStatus(
       <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
     </span>
   );
-}
-
-function getStatusLabel(status: ReservationDisplayStatus) {
-  if (status === 'open') return 'ご予約可';
-  if (status === 'limited') return '一部満席';
-  if (status === 'holiday') return '休業日';
-  return '満席';
-}
-
-function isClosedDate(
-  date: string,
-  today: Date,
-  acceptancePeriod: ShopReservationBasic['acceptancePeriod']
-) {
-  const targetDate = new Date(`${date}T00:00:00`);
-  const todayStart = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-  const startDate = addDays(todayStart, acceptancePeriod.endDaysBefore);
-  const endDate =
-    acceptancePeriod.startDaysBefore === null
-      ? null
-      : addDays(todayStart, acceptancePeriod.startDaysBefore);
-
-  if (targetDate.getTime() < startDate.getTime()) return true;
-  if (endDate && targetDate.getTime() > endDate.getTime()) return true;
-
-  return false;
-}
-
-function addDays(date: Date, amount: number) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + amount);
-}
-
-function getWeekdayIndex(date: string) {
-  return new Date(`${date}T00:00:00`).getDay();
-}
-
-function getWeekendType(weekdayIndex: number) {
-  if (weekdayIndex === 0) return 'sun';
-  if (weekdayIndex === 6) return 'sat';
-  return undefined;
 }

@@ -77,7 +77,10 @@ hasReservation: false → isDefaultShop
 
 ## TOPページの月またぎ表示
 
-TOPページの空席状況は、検索した予約日を起点に14日分を表示する。
+TOPページの空席状況は、検索した予約日を起点に表示する。
+
+- PC：14日分
+- SP：7日分
 
 検索日が月末付近の場合は月をまたぐため、表示期間に含まれる月別空席JSONを複数取得して結合する。
 
@@ -86,6 +89,21 @@ TOPページの空席状況は、検索した予約日を起点に14日分を表
 ```txt
 /db/shops/reservations/{shopId}/2026-09.json
 /db/shops/reservations/{shopId}/2026-10.json
+```
+
+実装ファイル：
+
+```txt
+src/components/Top/ContainerTopReservationAvailability.tsx
+src/styles/components/TopReservationAvailability.module.scss
+```
+
+TOPページでは `shopsIndex.json` から `category: "food"` の店舗を取得し、各店舗の `basic.json` が存在して `reservationEnabled === true` の店舗だけ表示する。
+
+空席ステータス、受付期間外判定、日付キー生成などは店舗詳細カレンダーと共通化する。
+
+```txt
+src/lib/shops/reservation.ts
 ```
 
 ## 関連UI仕様
