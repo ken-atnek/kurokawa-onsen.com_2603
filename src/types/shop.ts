@@ -86,10 +86,7 @@ export type ShopReservationMenus = {
 export type ShopReservationBasic = {
   shopId: string;
   reservationEnabled: boolean;
-  menuSelection: {
-    enabled: boolean;
-    required: boolean;
-  };
+  menuSelectionType: 0 | 1 | 2;
   acceptancePeriod: {
     startDaysBefore: number | null;
     endDaysBefore: number;

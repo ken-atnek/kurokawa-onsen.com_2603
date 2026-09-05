@@ -376,7 +376,7 @@
 }
 
 /* =================================
- * 営業時間・MAP
+ * 営業時間・MAP・カレンダー
  * ------------------------------ */
 .containerInfo {
     @include flex-center(column);
@@ -534,7 +534,13 @@
                 .reservationStatus {
                     position: relative;
                     width: 2.4rem;
+                    aspect-ratio: 1;
                     @include flex-center;
+                    padding: 0;
+                    cursor: default;
+                    &:is(button) {
+                        cursor: pointer;
+                    }
                     &[data-status="full"] {
                         .reservationStatusIcon {
                             &::before {
