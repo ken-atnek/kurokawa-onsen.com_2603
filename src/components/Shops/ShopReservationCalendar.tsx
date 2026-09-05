@@ -7,7 +7,6 @@
 'use client';
 
 import clsx from 'clsx';
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type {
   ShopReservationBasic,
@@ -17,9 +16,11 @@ import type {
 } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
 import SelectBox from '@/components/common/SelectBox';
+import ShopReservationNoticeLink from '@/components/Shops/ShopReservationNoticeLink';
 
 type Props = {
   shopId: string;
+  tel: string;
   reservationBasic: ShopReservationBasic;
 };
 
@@ -29,6 +30,7 @@ const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
 export default function ShopReservationCalendar({
   shopId,
+  tel,
   reservationBasic,
 }: Props) {
   const today = useMemo(() => new Date(), []);
@@ -175,6 +177,7 @@ export default function ShopReservationCalendar({
               day,
               selectedGuests,
               shopId,
+              tel,
               today,
               reservationBasic.acceptancePeriod
             )}
@@ -282,6 +285,7 @@ function renderStatus(
   day: ShopReservationDay,
   guests: number,
   shopId: string,
+  tel: string,
   today: Date,
   acceptancePeriod: ShopReservationBasic['acceptancePeriod']
 ) {
@@ -298,14 +302,15 @@ function renderStatus(
 
   if (status === 'open' || status === 'limited') {
     return (
-      <Link
+      <ShopReservationNoticeLink
         href={`/shops/reserve?id=${shopId}&date=${day.date}&guests=${guests}`}
+        tel={tel}
         className={styles.reservationStatus}
-        data-status={status}
-        aria-label={`${day.date} ${guests}名 ${label} 予約する`}
+        status={status}
+        ariaLabel={`${day.date} ${guests}名 ${label} 予約する`}
       >
         <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
-      </Link>
+      </ShopReservationNoticeLink>
     );
   }
 

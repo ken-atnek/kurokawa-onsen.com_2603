@@ -73,6 +73,7 @@ export default function ShopInfo({
         {hasReservation && reservationBasic ? (
           <ShopReservationCalendar
             shopId={shopId}
+            tel={info.tel}
             reservationBasic={reservationBasic}
           />
         ) : null}
