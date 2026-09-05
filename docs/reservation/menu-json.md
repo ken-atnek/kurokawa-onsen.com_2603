@@ -52,7 +52,7 @@
 - `true`：席のみ予約を許可する
 - `false`：メニュー選択が必要
 
-最終的な必須判定は `basic.json` の `menuSelection.required` と合わせて判断する。
+最終的な必須判定は `basic.json` の `menuSelectionType` と合わせて判断する。
 
 ### `menus`
 

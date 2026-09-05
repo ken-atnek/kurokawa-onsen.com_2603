@@ -24,10 +24,7 @@
 {
   "shopId": "029",
   "reservationEnabled": true,
-  "menuSelection": {
-    "enabled": true,
-    "required": false
-  },
+  "menuSelectionType": 1,
   "acceptancePeriod": {
     "startDaysBefore": null,
     "endDaysBefore": 0
@@ -58,21 +55,26 @@
 
 `false` の場合、表側では予約カレンダーや予約導線を表示しない。
 
-### `menuSelection`
+### `menuSelectionType`
 
 予約フォームで食事メニュー選択を使用するか。
 
 ```json
-"menuSelection": {
-  "enabled": true,
-  "required": false
-}
+"menuSelectionType": 1
 ```
 
-- `enabled`：メニュー選択欄を表示するか
-- `required`：メニュー選択を必須にするか
+- `0`：利用しない
+- `1`：利用する
+- `2`：利用する（必須入力）
 
 メニュー情報は別ファイルの `menus.json` で管理する。
+
+表側では、次のように判定する。
+
+```txt
+menuSelectionType !== 0 → メニュー選択欄を表示
+menuSelectionType === 2 → メニュー選択を必須にする
+```
 
 ### `acceptancePeriod`
 
