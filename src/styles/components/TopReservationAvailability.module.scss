@@ -1,0 +1,293 @@
+@use "../variable" as *;
+@use "../mixin" as *;
+@use "../svg" as *;
+
+/* =======================================
+ * 黒川温泉観光協会 TOP 飲食店予約空席状況 スタイル
+ * URL: /src/styles/components/TopReservationAvailability.module.scss
+ * Referenced in: /src/components/Top/ContainerTopReservationAvailability.tsx
+ * Created: 2026-09-05
+ * Last updated: 2026-09-05
+ * ======================================= */
+.containerTopReservationAvailability {
+    padding: 6rem 4vw 8rem;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: inherit;
+
+    // 入力タグ初期化
+    input,
+    select,
+    textarea {
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        appearance: none;
+    }
+    .boxHead {
+        @include itemH2;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem 0;
+        h2 {
+            font-size: fz(24);
+            width: 14em;
+        }
+        p {
+            font-size: fz(16);
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+    }
+    .boxSearch {
+        display: grid;
+        grid-template-columns: 28rem 20rem 24rem;
+        align-items: end;
+        margin-top: 3rem;
+        gap: 0 3rem;
+        font-size: inherit;
+        .wrapDate,
+        .itemGuests {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem 0;
+            font-size: inherit;
+            h3 {
+                font-size: fz(14);
+                font-weight: 600;
+                letter-spacing: 0.04em;
+            }
+        }
+        .wrapDate {
+            label {
+                font-size: inherit;
+                input {
+                    width: 100%;
+                    height: 5.2rem;
+                    padding: 0 1.4rem;
+                    border-radius: 8px;
+                    color: $main-black;
+                    font-size: fz(16);
+                    letter-spacing: 0.04em;
+                    background: #fff;
+                    border: 1px solid $select-line;
+                }
+            }
+        }
+        .btnSearch {
+            @include btnSub(5.2rem);
+            font-size: fz(16);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+    }
+    .boxAvailability {
+        position: relative;
+        width: min(108rem, 100%);
+        margin-top: 5rem;
+        padding: 2rem;
+        background-color: #fff;
+        border: 1px solid $border-color;
+        font-size: inherit;
+        .boxTableHead {
+            display: grid;
+            grid-template-columns: 16rem 1fr 16rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 0 2rem;
+            font-size: inherit;
+            h3 {
+                text-align: center;
+                font-size: fz(24);
+                font-weight: 500;
+                letter-spacing: 0.08em;
+                @include Serif;
+                span {
+                    margin-left: 0.8em;
+                    font-size: fz(16);
+                    font-family: inherit;
+                }
+            }
+            button {
+                position: relative;
+                height: 4rem;
+                border: 1px solid $border-color;
+                background-color: $main-white;
+                color: #777;
+                font-size: fz(14);
+                letter-spacing: 0.04em;
+                display: flex;
+                align-items: center;
+                padding-inline: 2em;
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    translate: 0 -50%;
+                    width: 1.6rem;
+                    @include svg-icon-arrow-bottom("777");
+                }
+                &.btnPrev {
+                    justify-content: flex-end;
+                    &::before {
+                        left: 1rem;
+                        rotate: 90deg;
+                    }
+                }
+                &.btnNext {
+                    justify-content: flex-start;
+                    &::before {
+                        right: 1rem;
+                        rotate: -90deg;
+                        scale: -1 1;
+                    }
+                }
+                &:disabled {
+                    cursor: default;
+                    opacity: 0.35;
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+    .blockSchedule {
+        --reservation-days: 14;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 22rem repeat(
+                var(--reservation-days),
+                minmax(5.2rem, 1fr)
+            );
+        font-size: inherit;
+        .gridHeadCell,
+        .gridShopCell,
+        .gridCell {
+            border-right: 1px solid $border-color;
+            border-bottom: 1px solid $border-color;
+            font-size: inherit;
+        }
+        .boxWeek {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: subgrid;
+            font-size: inherit;
+            border-top: 1px solid $border-color;
+            border-left: 1px solid $border-color;
+            .gridHeadCell {
+                min-height: 7rem;
+                color: $main-black;
+                font-size: fz(14);
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                @include flex-center(column);
+                &[data-weekend="sat"] {
+                    color: #2b82db;
+                }
+                &[data-weekend="sun"] {
+                    color: #e60033;
+                }
+                span,
+                small {
+                    display: block;
+                    font-size: inherit;
+                }
+            }
+        }
+        .boxShop {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: subgrid;
+            font-size: inherit;
+            .gridShopCell {
+                padding: 1.4rem;
+                text-align: left;
+                font-size: inherit;
+                border-left: 1px solid $border-color;
+                span {
+                    display: block;
+                    margin-bottom: 0.8rem;
+                    font-size: fz(16);
+                    font-weight: 500;
+                    letter-spacing: 0.04em;
+                }
+                a {
+                    display: block;
+                }
+                img {
+                    width: 100%;
+                    aspect-ratio: 180/70;
+                    object-fit: cover;
+                }
+            }
+            .gridCell {
+                min-height: 9.4rem;
+                display: flex;
+                align-items: stretch;
+                justify-content: stretch;
+                .btnStatus {
+                    width: 100%;
+                    height: 100%;
+                    @include flex-center;
+                    .statusIcon {
+                        position: relative;
+                        width: 2.4rem;
+                        aspect-ratio: 1;
+                        display: block;
+                        @include iconStatus;
+                        .reservationStatusIcon {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .listLegend {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 0 3rem;
+        font-size: inherit;
+        justify-content: center;
+        span {
+            @include iconStatus;
+            font-size: fz(16);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.04em;
+            gap: 0 0.2em;
+            &[data-status="open"] {
+                .reservationStatusIcon {
+                    &::before {
+                        width: 1.8rem;
+                    }
+                }
+            }
+            &[data-status="limited"] {
+                .reservationStatusIcon {
+                    &::before {
+                        width: 1.8rem;
+                    }
+                }
+            }
+            .reservationStatusIcon {
+                &::before {
+                    top: 50%;
+                    translate: -50% -50%;
+                }
+            }
+        }
+    }
+    .itemNote {
+        text-align: center;
+        font-size: fz(14);
+        letter-spacing: 0.04em;
+        line-height: 1.6em;
+    }
+}
