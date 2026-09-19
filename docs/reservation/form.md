@@ -80,10 +80,8 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 
 ### お客様情報
 
-- 姓
-- 名
-- ふりがな（姓）
-- ふりがな（名）
+- 氏名（姓名間に空白を入力）
+- ふりがな（姓名間に空白を入力）
 - 電話番号
 - メールアドレス
 - メールアドレス確認（フロント側確認用。APIへは送信しない）
@@ -104,7 +102,9 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 
 「この情報で予約する」を押すと、予約送信PHPにPOSTする。
 
-frontend対応後、正式Web予約APIへの送信は `POST` + `Content-Type: application/json` のUTF-8 JSON objectとする。
+No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載は画面実装用の同期要約であり、差分がある場合は確定仕様書を優先する。
+
+現行frontendは、正式Web予約APIへ `POST` + `Content-Type: application/json` のUTF-8 JSON objectを送信する。
 
 ```json
 {
@@ -112,10 +112,8 @@ frontend対応後、正式Web予約APIへの送信は `POST` + `Content-Type: ap
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
-  "last_name": "黒川",
-  "first_name": "太郎",
-  "last_kana": "くろかわ",
-  "first_kana": "たろう",
+  "name": "黒川 太郎",
+  "kana": "くろかわ たろう",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
   "note": "アレルギーはありません",
@@ -126,17 +124,18 @@ frontend対応後、正式Web予約APIへの送信は `POST` + `Content-Type: ap
 - `shop_id` は文字列で送信する。数値型では送信しない。
 - `guests` はJSON numberの整数で送信する。文字列や小数では送信しない。
 - `menu_selections` は必ず `guests` と同じ長さの配列で送信する。各要素は `menu-001` 形式または `null`。
+- `name` / `kana`は必須。送信前validationはserver-side contractと同じ順序とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから3文字以上101文字以下を判定する。姓名区切りを1つ以上必須とし、各要素は非空、3要素以上は許可する。最終判定はserver-sideの共通関数`normalizeReservationCustomerIdentityValue()`を正とする。
 - `privacy_agreed` はbooleanの `true` のみ送信可。文字列や数値では送信しない。
-- `shopName`、`reservationDate`、`selectedMenus`、`customerName`、`customerKana`、`request` は正式API payloadでは使用しない。
+- `shopName`、`reservationDate`、`selectedMenus`、`customerName`、`customerKana`、`request` は旧FormData fieldであり、正式API payloadでは使用しない。旧APIの`last_name` / `first_name` / `last_kana` / `first_kana`も送信しない。
 
-frontend対応後は正式response JSONをparseし、`success`を判別キーとして処理する。`success=true`では必須の`reservationId`（JSON number）を取得・保持して完了画面へ進み、`success=false`では必須の`errorCode` / `message`を取得してエラー処理を行う。完了画面への予約番号表示は任意とする。fetch失敗、壊れたresponse、HTTP statusと`success`の不整合、正式schema外のresponseはnetwork / unexpected server responseとして扱う。
+現行frontendは正式response JSONをparseし、`success`を判別キーとして処理する。`success=true`では必須の`reservationId`（JSON number）を取得・保持して完了画面へ進み、`success=false`では必須の`errorCode` / `message`を取得してエラー処理を行う。完了画面への予約番号表示は任意とする。fetch失敗、壊れたresponse、HTTP statusと`success`の不整合、正式schema外のresponseはnetwork / unexpected server responseとして扱う。
 
 ### 送信完了画面
 
-frontend対応後、正式responseの`success=true`を確認した後に送信完了画面へ切り替える。`res.ok`のみでは成功判定しない。
+正式responseの`success=true`と有効な`reservationId`を確認した後に送信完了画面へ切り替える。`res.ok`のみでは成功判定しない。
 
 - ご予約ありがとうございます
-- 予約内容の確認メールを送信した旨
+- `ご予約を受け付けました。ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信します。`
 - 必要に応じて店舗から連絡する旨
 - TOPページへ戻る
 
@@ -157,7 +156,7 @@ frontend対応後、正式responseの`success=true`を確認した後に送信�
 
 確認画面から正式JSON requestを送信し、No.12 responseを処理するfrontend対応は今後実装する。
 
-backendの正式Web予約APIは、以下の既存PHPへStep2-C3-Bとして実装済みであり、CLOSED / FROZENとする。
+backendの正式Web予約APIは、以下の既存PHPへStep2-C3-Bとして接続済みであり、氏名2項目化後の`name` / `kana` contractも実装済みとする。
 
 ```txt
 /api/reservation/send.php
@@ -175,8 +174,8 @@ Step2-C3-B実装前の暫定メール送信先（履歴）：
 ken.atnek@gmail.com
 ```
 
-現在の `send.php` は、DB登録・自動席割当・transaction orchestrationへ接続する正式Web予約APIとして実装・レビュー済み。正式request方式は `POST` + `Content-Type: application/json` のUTF-8 JSON objectで確定している。
+現在の `send.php` は、DB登録・自動席割当・transaction orchestrationへ接続済み。正式request方式は `POST` + `Content-Type: application/json` のUTF-8 JSON object、氏名fieldは`name` / `kana`で確定しているが、コードは今後新contractへ変更する。
 
-現行frontendはFormData送信のため正式backendとは互換性がなく、backend単独では本番反映しない。frontendのJSON対応後、frontend / backendを同時に本番反映する。
+現行frontendは正式JSON payloadへ対応済み。本番反映時はfrontend / backendを同時に反映する。
 
-availability JSON更新、json regeneration queue、正式メール、rate limitはLATERとする。
+availability JSON更新とjson regeneration queue、正式4宛先メールの同期送信は接続済み。rate limit、本番反映、実環境疎通確認はLATERとする。

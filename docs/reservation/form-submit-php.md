@@ -4,7 +4,7 @@
 
 予約フォームから送信された内容をPHPで受け取り、正式Web予約APIとしてDB登録・自動席割当・transaction orchestrationを行う。
 
-`send.php` のStep2-C3-B実装・レビュー・最終補正は完了しており、Step2-C3-BはCLOSED / FROZENとする。
+`send.php` のStep2-C3-BによるDB登録・自動席割当・transaction orchestration接続、2026-09-19改定の氏名2項目contract、正式4宛先メールまで実装済みとする。実環境疎通確認は未実施。
 
 ## 設置場所
 
@@ -54,7 +54,9 @@ request
 
 ## 正式Web予約API request contract
 
-No.6 Web予約API正式payload contractはCLOSED / FROZEN。Step2-C3-Bで、`POST` + `Content-Type: application/json` のUTF-8 JSON objectを受け取る正式Web予約APIとして実装済み。
+No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載はfrontend連携用の同期要約であり、差分がある場合は確定仕様書を優先する。
+
+No.6 Web予約API正式payload contractは2026-09-19に改定した。`POST` + `Content-Type: application/json` のUTF-8 JSON objectを使用する。
 
 ```json
 {
@@ -62,10 +64,8 @@ No.6 Web予約API正式payload contractはCLOSED / FROZEN。Step2-C3-Bで、`POS
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
-  "last_name": "黒川",
-  "first_name": "太郎",
-  "last_kana": "くろかわ",
-  "first_kana": "たろう",
+  "name": "黒川 太郎",
+  "kana": "くろかわ たろう",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
   "note": "アレルギーはありません",
@@ -73,12 +73,13 @@ No.6 Web予約API正式payload contractはCLOSED / FROZEN。Step2-C3-Bで、`POS
 }
 ```
 
-- 許可キーは `shop_id` / `date` / `guests` / `menu_selections` / `last_name` / `first_name` / `last_kana` / `first_kana` / `tel` / `email` / `note` / `privacy_agreed` のみ。
+- 許可キーは `shop_id` / `date` / `guests` / `menu_selections` / `name` / `kana` / `tel` / `email` / `note` / `privacy_agreed` のみ。旧氏名4fieldは受け付けない。
 - 未知フィールドは400でrejectする。
 - `reservation_id` / `reservation_route` / `status` / `cancelled_at` / `seat_id` / `assigned_seat_ids` / `relocations` / `shop_memo` / `accommodation_name` / `created_at` / `updated_at` はサーバー制御フィールドとして受け付けない。
 - Web routeではサーバー側で `reservation_route=1`、`status=1`、`cancelled_at=NULL` を固定する。
 - `shop_id` は文字列、`guests` はJSON numberの整数、`privacy_agreed` はboolean `true` のみ。
 - `menu_selections` は `guests` と同じ長さの配列とし、要素は `menu-\d{3,}` 形式または `null`。
+- `name` / `kana`は必須。cms-panel側DDL仕様書「氏名・ふりがなの保存仕様」を正とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから3文字以上101文字以下を判定する。姓名区切りを1つ以上必須とし、各要素は非空、3要素以上は許可する。server-sideでは共通関数`normalizeReservationCustomerIdentityValue()`を使用する。
 - `note` は任意・nullable。未送信、`null`、空文字、Unicode空白のみは `customer_note = null` として扱う。
 
 ## Step2-C3-B実装前の暫定必須項目（履歴）
@@ -152,20 +153,14 @@ email
 - DB COMMIT成功を予約成立の境界とする。COMMIT失敗は`500 INTERNAL_ERROR`。COMMIT後のavailability JSON更新、queue登録、メール送信、メールログ記録が失敗しても予約成立を覆さず、成功responseを維持する。
 - SQL、例外詳細、internal reason、seat ID、file path、DB接続情報等はpublic responseへ出さない。
 
-## 将来的な送信先
+## 正式メール送信先（実装済み・実環境確認待ち）
 
-最終的には、以下へメール送信する。
+- 予約者：予約者向けテンプレート
+- 該当店舗：内部通知テンプレート。店舗メール未登録はスキップログ
+- 黒川温泉観光協会：`$infoMaster`、内部通知テンプレート
+- サーバー管理者：`$sendAddressList[0]`、予約者向けと同じ件名・本文
 
-- 管理者
-- 該当店舗
-- 開発者
-- お客様控え
-
-開発者宛は、ひとまず以下を使用する。
-
-```txt
-ken.atnek@gmail.com
-```
+COMMIT後・成功response前に既存`sendMail_Common()`で最大4通を同期送信し、宛先ごとに`reservation_mail_logs`へ記録する。送信・ログ失敗は予約成功を覆さない。本文・件名・表示条件の正本はcms-panel側の確定仕様書12.3とする。
 
 ## Step2-C3-Bで実装済みの処理
 
@@ -179,10 +174,12 @@ Step2-C3-Bの正式Web予約APIでは、以下を実装済み。
 5. payloadをC3-A内部形式へ変換
 6. executeReservationRegistration()
 7. COMMIT / ROLLBACK
-8. No.12 response返却
+8. availability JSON更新（失敗時queue登録）
+9. 正式4宛先メール同期送信・宛先別ログ記録
+10. No.12 response返却
 ```
 
-COMMIT後のavailability JSON更新、json regeneration queue、正式メール、rate limitはLATERとし、Step2-C3-Bの実装範囲には含めない。
+COMMIT後のavailability JSON更新とjson regeneration queue、氏名2項目化、正式メール、frontend JSON送信・response判定は接続済み。rate limit、本番反映、実環境疎通確認はLATERとする。
 
 DB登録を先に行い、予約番号を発行してからメール本文へ含める。
 

@@ -33,7 +33,96 @@ type CustomerInputKey =
 
 type FormStep = 'input' | 'confirm' | 'complete';
 
+type ReservationApiErrorCode =
+  | 'INVALID_REQUEST'
+  | 'VALIDATION_ERROR'
+  | 'RESERVATION_UNAVAILABLE'
+  | 'MENU_INVALID'
+  | 'FULL'
+  | 'METHOD_NOT_ALLOWED'
+  | 'UNSUPPORTED_MEDIA_TYPE'
+  | 'RATE_LIMITED'
+  | 'INTERNAL_ERROR';
+
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+const RESERVATION_API_ERROR_CODES = new Set<ReservationApiErrorCode>([
+  'INVALID_REQUEST',
+  'VALIDATION_ERROR',
+  'RESERVATION_UNAVAILABLE',
+  'MENU_INVALID',
+  'FULL',
+  'METHOD_NOT_ALLOWED',
+  'UNSUPPORTED_MEDIA_TYPE',
+  'RATE_LIMITED',
+  'INTERNAL_ERROR',
+]);
+
+function hasExactObjectKeys(
+  value: unknown,
+  expectedKeys: string[]
+): value is Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  const actualKeys = Object.keys(value).sort();
+  const sortedExpectedKeys = [...expectedKeys].sort();
+  return (
+    actualKeys.length === sortedExpectedKeys.length &&
+    actualKeys.every((key, index) => key === sortedExpectedKeys[index])
+  );
+}
+
+function isReservationApiSuccessResponse(
+  value: unknown
+): value is { success: true; reservationId: number } {
+  return (
+    hasExactObjectKeys(value, ['success', 'reservationId']) &&
+    value.success === true &&
+    typeof value.reservationId === 'number' &&
+    Number.isSafeInteger(value.reservationId) &&
+    value.reservationId > 0
+  );
+}
+
+function isReservationApiErrorResponse(value: unknown): value is {
+  success: false;
+  errorCode: ReservationApiErrorCode;
+  message: string;
+} {
+  return (
+    hasExactObjectKeys(value, ['success', 'errorCode', 'message']) &&
+    value.success === false &&
+    typeof value.errorCode === 'string' &&
+    RESERVATION_API_ERROR_CODES.has(
+      value.errorCode as ReservationApiErrorCode
+    ) &&
+    typeof value.message === 'string' &&
+    value.message !== ''
+  );
+}
+
+function normalizeCustomerIdentityInput(value: string) {
+  if (/[\u0000-\u001f\u007f-\u009f]/.test(value)) return null;
+
+  const normalized = value
+    .replace(
+      /[\s\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
+      ' '
+    )
+    .trim();
+  const length = Array.from(normalized).length;
+
+  if (
+    length < 3 ||
+    length > 101 ||
+    !/^[^ ]+ [^ ]+(?: [^ ]+)*$/.test(normalized)
+  ) {
+    return null;
+  }
+
+  return normalized;
+}
 
 export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const { shopDetail, reservationBasic, menuItems, status } =
@@ -56,6 +145,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const [formStep, setFormStep] = useState<FormStep>('input');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [, setReservationId] = useState<number | null>(null);
 
   const timeRanges =
     getHoursRow(shopDetail?.info.hours ?? [])?.timeRanges ?? [];
@@ -127,6 +217,15 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
       return;
     }
 
+    const normalizedName = normalizeCustomerIdentityInput(customerInput.name);
+    const normalizedKana = normalizeCustomerIdentityInput(customerInput.kana);
+    if (normalizedName === null || normalizedKana === null) {
+      setErrorMessage(
+        'お名前・ふりがなは、姓と名の間に空白を入れてください。'
+      );
+      return;
+    }
+
     if (customerInput.email !== customerInput.emailConfirm) {
       setErrorMessage('メールアドレスが一致していません。');
       return;
@@ -142,6 +241,11 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
       return;
     }
 
+    setCustomerInput((current) => ({
+      ...current,
+      name: normalizedName,
+      kana: normalizedKana,
+    }));
     setErrorMessage('');
     setFormStep('confirm');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -156,21 +260,20 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const submitReservation = async () => {
     if (isSending) return;
 
-    const body = new FormData();
-
-    body.append('shopId', id);
-    body.append('shopName', shopDetail.name.join(''));
-    body.append('reservationDate', formatReservationDate(date));
-    body.append('guests', `${guests}名`);
-    body.append(
-      'selectedMenus',
-      selectedCourseRows.map((row) => `${row.label}：${row.value}`).join('\n')
-    );
-    body.append('customerName', customerInput.name);
-    body.append('customerKana', customerInput.kana);
-    body.append('tel', customerInput.tel);
-    body.append('email', customerInput.email);
-    body.append('request', customerInput.request);
+    const body = {
+      shop_id: id,
+      date,
+      guests,
+      menu_selections: courseByGuest.map((value) =>
+        seatOnly || value === '' ? null : value
+      ),
+      name: customerInput.name,
+      kana: customerInput.kana,
+      tel: customerInput.tel,
+      email: customerInput.email,
+      note: customerInput.request || null,
+      privacy_agreed: agreed,
+    };
 
     setIsSending(true);
     setErrorMessage('');
@@ -178,15 +281,26 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
     try {
       const res = await fetch('/api/reservation/send.php', {
         method: 'POST',
-        body,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       });
+      const responseBody: unknown = await res.json();
 
-      if (!res.ok) {
-        throw new Error('Failed to send reservation.');
+      if (res.status === 200 && isReservationApiSuccessResponse(responseBody)) {
+        setReservationId(responseBody.reservationId);
+        setFormStep('complete');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
 
-      setFormStep('complete');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!res.ok && isReservationApiErrorResponse(responseBody)) {
+        setErrorMessage(responseBody.message);
+        return;
+      }
+
+      throw new Error('Unexpected reservation response.');
     } catch {
       setErrorMessage('送信に失敗しました。時間をおいて再度お試しください。');
     } finally {
@@ -237,8 +351,8 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
             <div className={styles.boxComplete}>
               <div className={styles.boxCompleteText}>
                 <p>ご予約ありがとうございます</p>
-                <span>
-                  ご入力いただいたメールアドレス宛に、予約内容の確認メールをお送りしました。
+                <span>1
+                  ご予約を受け付けました。<br />ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信します。
                   <br />
                   内容をご確認ください。
                   <br />
@@ -477,6 +591,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     value={customerInput.name}
                     placeholder="黒川 太郎"
                     autoComplete="name"
+                    maxLength={101}
                     onChange={(value) => updateCustomerInput('name', value)}
                   />
                   <FormInput
@@ -484,6 +599,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     required
                     value={customerInput.kana}
                     placeholder="くろかわ たろう"
+                    maxLength={101}
                     onChange={(value) => updateCustomerInput('kana', value)}
                   />
                   <FormInput
@@ -568,6 +684,7 @@ type FormInputProps = {
   value: string;
   placeholder: string;
   autoComplete?: string;
+  maxLength?: number;
   required?: boolean;
   onChange: (value: string) => void;
 };
@@ -577,6 +694,7 @@ function FormInput({
   value,
   placeholder,
   autoComplete,
+  maxLength,
   required,
   onChange,
 }: FormInputProps) {
@@ -587,12 +705,13 @@ function FormInput({
         <i>{required ? '必須' : '任意'}</i>
       </span>
       <input
-      type="text"
-      value={value}
-      placeholder={placeholder}
-      autoComplete={autoComplete}
-      onChange={(e) => onChange(e.target.value)}
-    />
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </label>
   );
 }
