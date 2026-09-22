@@ -464,7 +464,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
           {formStep === 'input' ? (
             <>
               <ExternalLink
-                href="https://www.kurokawaonsen.or.jp/"
+                href={`https://kurokawaonsen.or.jp/availability/room.php?selYMD=${encodeURIComponent(date)}&ref=kyokai`}
                 className={styles.linkStayPlan}
               >
                 <Image

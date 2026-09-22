@@ -106,20 +106,34 @@ TOPページでは `shopsIndex.json` から `category: "food"` の店舗を取�
 src/lib/shops/reservation.ts
 ```
 
-## 宿泊予約サイトへの導線（未確定）
+## 宿泊予約サイトへの導線
 
-飲食店予約と宿泊予約サイトを連携する導線として、宿泊できる宿一覧ページへのリンク表示を検討する。
+飲食店予約と宿泊予約サイトを連携する導線として、素泊まりプラン用の宿泊予約ページへのリンクを表示する。
 
-想定表示箇所：
+表示箇所：
 
 - 店舗詳細ページ
 - 予約フォーム
 
-リンクには、予約日付と協会サイト経由であることを判別できるパラメータを付与する想定。
+リンク先URL：
 
-宿泊予約サイト側では、協会サイト経由の場合に素泊まり用プランのみへ絞り込んで表示する想定。
+```txt
+https://kurokawaonsen.or.jp/availability/room.php
+```
 
-正式なURL、パラメータ名、リンク文言、表示デザインは未確定。
+予約フォームでは、選択中の飲食店予約日を `selYMD` に付与する。
+
+```txt
+https://kurokawaonsen.or.jp/availability/room.php?selYMD=2026-09-27&ref=kyokai
+```
+
+店舗詳細ページは日付未選択のため、協会サイト経由の識別用パラメータのみ付与する。
+
+```txt
+https://kurokawaonsen.or.jp/availability/room.php?ref=kyokai
+```
+
+宿泊予約サイト側では、`ref=kyokai` の場合に素泊まり用プランのみへ絞り込んで表示する。
 
 ## 関連UI仕様
 

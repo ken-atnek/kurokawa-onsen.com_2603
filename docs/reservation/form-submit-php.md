@@ -4,7 +4,7 @@
 
 予約フォームから送信された内容をPHPで受け取り、正式Web予約APIとしてDB登録・自動席割当・transaction orchestrationを行う。
 
-`send.php` のStep2-C3-BによるDB登録・自動席割当・transaction orchestration接続、2026-09-19改定の氏名2項目contract、正式4宛先メールまで実装済みとする。実環境疎通確認は未実施。
+`send.php` のStep2-C3-BによるDB登録・自動席割当・transaction orchestration接続、2026-09-19改定の氏名2項目contract、正式4宛先メールまで実装済みとする。デモ環境でフロントからのWeb予約、DB登録・自動割当席保存、通知メール受信を確認済み。本番環境での疎通確認は未実施。
 
 ## 設置場所
 
@@ -153,7 +153,7 @@ email
 - DB COMMIT成功を予約成立の境界とする。COMMIT失敗は`500 INTERNAL_ERROR`。COMMIT後のavailability JSON更新、queue登録、メール送信、メールログ記録が失敗しても予約成立を覆さず、成功responseを維持する。
 - SQL、例外詳細、internal reason、seat ID、file path、DB接続情報等はpublic responseへ出さない。
 
-## 正式メール送信先（実装済み・実環境確認待ち）
+## 正式メール送信先（実装済み・デモで通知メール受信確認済み）
 
 - 予約者：予約者向けテンプレート
 - 該当店舗：内部通知テンプレート。店舗メール未登録はスキップログ
@@ -179,7 +179,9 @@ Step2-C3-Bの正式Web予約APIでは、以下を実装済み。
 10. No.12 response返却
 ```
 
-COMMIT後のavailability JSON更新とjson regeneration queue、氏名2項目化、正式メール、frontend JSON送信・response判定は接続済み。rate limit、本番反映、実環境疎通確認はLATERとする。
+COMMIT後のavailability JSON更新とjson regeneration queue、氏名2項目化、正式メール、frontend JSON送信・response判定は接続済み。デモでWeb予約・DB保存・通知メール受信を確認したが、4宛先別の受信・メールログ内容とavailability JSON更新結果・失敗時queueは未確認。rate limit・冪等性はLATER、本番反映・本番疎通は未実施とする。
+
+本番反映前に、cms-panel側`set_db.php`の一時的な認証情報直書き（WR-C-1）が処置済みであることを確認する。
 
 DB登録を先に行い、予約番号を発行してからメール本文へ含める。
 

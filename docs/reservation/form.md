@@ -152,9 +152,9 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
 
 ## 現時点の範囲
 
-現在は表側フォームの表示までを対象とする。
+表側フォームから正式JSON予約APIへの送信・正式response判定まで実装済み。デモ環境でWeb予約、DB登録・自動割当席保存、通知メール受信を確認した。本番反映・本番疎通は未実施。
 
-確認画面から正式JSON requestを送信し、No.12 responseを処理するfrontend対応は今後実装する。
+確認画面から正式JSON requestを送信し、No.12 responseを処理するfrontend対応は実装済み。
 
 backendの正式Web予約APIは、以下の既存PHPへStep2-C3-Bとして接続済みであり、氏名2項目化後の`name` / `kana` contractも実装済みとする。
 
@@ -174,8 +174,8 @@ Step2-C3-B実装前の暫定メール送信先（履歴）：
 ken.atnek@gmail.com
 ```
 
-現在の `send.php` は、DB登録・自動席割当・transaction orchestrationへ接続済み。正式request方式は `POST` + `Content-Type: application/json` のUTF-8 JSON object、氏名fieldは`name` / `kana`で確定しているが、コードは今後新contractへ変更する。
+現在の `send.php` は、DB登録・自動席割当・transaction orchestrationへ接続済み。正式request方式は `POST` + `Content-Type: application/json` のUTF-8 JSON object、氏名fieldは`name` / `kana`で実装済み。
 
-現行frontendは正式JSON payloadへ対応済み。本番反映時はfrontend / backendを同時に反映する。
+現行frontendは正式JSON payloadへ対応済み。本番反映時はfrontend / backendを同時に反映する。本番反映前に、cms-panel側`set_db.php`の一時的な認証情報直書き（WR-C-1）が処置済みであることを確認する。
 
-availability JSON更新とjson regeneration queue、正式4宛先メールの同期送信は接続済み。rate limit、本番反映、実環境疎通確認はLATERとする。
+availability JSON更新とjson regeneration queue、正式4宛先メールの同期送信は接続済み。デモで通知メール受信を確認したが、4宛先別の受信・メールログ内容、availability JSON更新結果・失敗時queueは未確認。rate limit・冪等性はLATER、本番反映・本番疎通は未実施とする。
