@@ -351,12 +351,16 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
             <div className={styles.boxComplete}>
               <div className={styles.boxCompleteText}>
                 <p>ご予約ありがとうございます</p>
-                <span>1
-                  ご予約を受け付けました。<br />ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信します。
+                <span>
+                  ご予約を受け付けました。
                   <br />
-                  内容をご確認ください。
+                  ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信しております。
                   <br />
-                  ご予約内容について確認が必要な場合は、店舗よりご連絡いたします。
+                  ご予約内容をご確認ください。
+                  <br />
+                  ご予約いただいた内容について確認が必要な場合
+                  <br />
+                  店舗よりご連絡させていただく場合がございます。
                 </span>
               </div>
               <Link href="/" className={styles.btnSubmit}>
