@@ -1,6 +1,7 @@
 /* =======================================
  * 黒川温泉観光協会 加盟店一覧（TOP用ピックアップ / Client）
  * URL:src/components/Top/ContainerTopShopList.client.tsx
+ * Last updated: 2026-10-01
  * ======================================= */
 
 'use client';
@@ -82,13 +83,9 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
           return;
         }
 
-        // 3) ランダム（クライアントのみで実行＝Hydration安全）
-        const seed = Date.now() % 2147483647;
-        const selected = seededShuffle(candidates, seed).slice(0, pickupCount);
-
-        // 4) 選んだ分だけ details を取得
+        // 3) 対象店舗の details を取得して営業状態を計算
         const details = await Promise.all(
-          selected.map(async (idx) => {
+          candidates.map(async (idx) => {
             const detail = await fetchJson<ShopDetail>(
               `/db/shops/details/${idx.id}.json`
             );
@@ -105,14 +102,19 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
             return {
               ...idx,
               status,
+              mealPeriods: detail.mealPeriods ?? [],
             } as ShopWithStatus;
           })
         );
 
-        // 5) openだけに絞る（今の client 側の条件踏襲）
+        // 4) openだけに絞る
         const openOnly = details.filter((s) => s.status.variant === 'open');
 
-        if (!cancelled) setPicked(openOnly);
+        // 5) 営業中の店舗からランダムで表示件数分を選ぶ
+        const seed = Date.now() % 2147483647;
+        const selected = seededShuffle(openOnly, seed).slice(0, pickupCount);
+
+        if (!cancelled) setPicked(selected);
       } catch {
         if (!cancelled) setPicked([]);
       }

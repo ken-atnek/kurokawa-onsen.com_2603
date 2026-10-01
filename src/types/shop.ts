@@ -2,6 +2,7 @@ import type { ShopStatusView } from '@/lib/status';
 
 export type ShopWithStatus = ShopIndexItem & {
   status: ShopStatusView;
+  mealPeriods?: ShopMealPeriod[];
 };
 
 export type ShopIndexItem = {
@@ -20,6 +21,8 @@ export type ShopIndexItem = {
  * ======================================= */
 
 export type ShopStatusKey = 'open' | 'closed' | 'other';
+
+export type ShopMealPeriod = 'morning' | 'lunch' | 'dinner';
 
 export type ShopTimeRange = {
   open: string;
@@ -132,6 +135,7 @@ export type ShopDetail = {
   id: string;
   slug: string;
   category: string;
+  mealPeriods?: ShopMealPeriod[];
   name: string[];
   statusFallbackKey: ShopStatusKey;
   heroImage: string;

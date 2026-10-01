@@ -2,7 +2,7 @@
  * 黒川温泉観光協会 店舗カード
  * URL:src/components/Shops/ShopCard.tsx
  * Created: 2026-02-14
- * Last updated: 2026-02-14
+ * Last updated: 2026-10-01
  * ======================================= */
 
 import Link from 'next/link';
@@ -10,6 +10,7 @@ import Image from 'next/image';
 import clsx from 'clsx';
 import type { ShopWithStatus } from '@/types/shop';
 import styles from './ShopCard.module.scss';
+import ShopMealPeriodTags from '@/components/Shops/ShopMealPeriodTags';
 type Props = {
   shop: ShopWithStatus;
 };
@@ -58,7 +59,14 @@ export default function ShopCard({ shop }: Props) {
           ))}
         </h3>
       </div>
-      {shop.leadCopy?.[0] && <p>{shop.leadCopy[0]}</p>}
+      <div className={styles.boxDetails}>
+        {shop.leadCopy?.[0] && <p>{shop.leadCopy[0]}</p>}
+        {shop.category === 'food' && shop.mealPeriods?.length ? (
+          <div className={styles.itemMealPeriods}>
+            <ShopMealPeriodTags mealPeriods={shop.mealPeriods} />
+          </div>
+        ) : null}
+      </div>
       <div className={styles.itemTel}>
         {shop.tel && <span>{shop.tel}</span>}
       </div>

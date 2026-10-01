@@ -169,7 +169,7 @@
         @include itemTitle;
         --c: #1a1a1a;
     }
-    ul {
+    & > ul {
         position: relative;
         margin-top: 5rem;
         display: grid;
