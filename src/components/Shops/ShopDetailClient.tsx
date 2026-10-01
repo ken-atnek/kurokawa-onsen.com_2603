@@ -3,7 +3,7 @@
  * URL: src/components/Shops/ShopDetailClient.tsx
  * Referenced in: src/app/shops/[id]/page.tsx, src/app/shops/detail/page.tsx
  * Created: 2026-02-19
- * Last updated: 2026-02-19
+ * Last updated: 2026-10-01
  * ======================================= */
 'use client';
 import ShopHeader from '@/components/Shops/ShopHeader';
@@ -50,6 +50,7 @@ export default function ShopDetailClient({ id }: Props) {
         closedWeekdays={detail.info.closedWeekdays}
         timeRanges={timeRanges}
         hasOnlineList={hasOnlineProducts}
+        mealPeriods={detail.mealPeriods}
       />
 
       <ShopHero src={detail.heroImage} alt={detail.name.join(' ')} />

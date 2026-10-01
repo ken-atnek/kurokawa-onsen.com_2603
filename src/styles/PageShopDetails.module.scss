@@ -199,9 +199,23 @@
                     }
                 }
             }
+            .boxHeaderActions {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 1.8rem;
+                gap: 1.6rem;
+                @include sp {
+                    grid-column: span 2;
+                    align-items: flex-start;
+                    flex-direction: column;
+                    margin-top: 4vw;
+                    gap: 4vw;
+                }
+            }
             .btnOnlineList {
                 position: relative;
-                margin-top: 1.8rem;
+                margin-left: auto;
                 align-self: flex-end;
                 width: 20rem;
                 height: 3.6rem;
@@ -210,7 +224,7 @@
                 font-size: fz(14);
                 border-radius: 4px;
                 @include sp {
-                    grid-column: span 2;
+                    width: 100%;
                     height: 3em;
                 }
             }

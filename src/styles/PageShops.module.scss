@@ -79,7 +79,128 @@
                 margin-top: 4vw;
             }
         }
-        ul {
+        .boxMealFilter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            gap: 1.2rem 1.6rem;
+            font-size: inherit;
+            @include sp {
+                margin-top: 8vw;
+                gap: 4vw;
+            }
+            .filterTitle {
+                display: flex;
+                align-items: center;
+                gap: 0.7rem;
+                color: #7d5555;
+                font-size: fz(14);
+                svg {
+                    width: 2.2rem;
+                    fill: #eaebec;
+                    stroke: currentcolor;
+                    stroke-linecap: round;
+                    stroke-width: 1.5;
+                }
+                span {
+                    color: $main-black;
+                    font-size: inherit;
+                }
+            }
+            .filterOptions {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1.2rem;
+                font-size: inherit;
+                @include sp {
+                    justify-content: center;
+                    gap: 3vw;
+                }
+            }
+            .filterOption {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                cursor: pointer;
+                font-size: inherit;
+                input {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    opacity: 0;
+                    &:checked + .itemCheckbox {
+                        border-color: #3d7ca9;
+                        background-color: #3d7ca9;
+                        &::after {
+                            opacity: 1;
+                        }
+                    }
+                    &:focus-visible + .itemCheckbox {
+                        outline: 2px solid $main-black;
+                        outline-offset: 2px;
+                    }
+                }
+            }
+            .itemCheckbox {
+                position: relative;
+                display: block;
+                width: 2.4rem;
+                aspect-ratio: 1;
+                border: 1px solid #8a8a8a;
+                background-color: $main-white;
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 0.35rem;
+                    left: 0.75rem;
+                    width: 0.6rem;
+                    height: 1.1rem;
+                    border-right: 2px solid $main-white;
+                    border-bottom: 2px solid $main-white;
+                    rotate: 45deg;
+                    opacity: 0;
+                }
+            }
+            .filterLabel {
+                min-height: 2.5rem;
+                padding: 0.5rem;
+                display: grid;
+                place-items: center;
+                color: $main-white;
+                font-size: fz(14);
+                letter-spacing: 0.04em;
+                border-radius: 2px;
+                &.filterLabel-morning {
+                    background-color: #70a55a;
+                }
+                &.filterLabel-lunch {
+                    background-color: #c88449;
+                }
+                &.filterLabel-dinner {
+                    background-color: #5a68a5;
+                }
+            }
+            .btnFilterReset {
+                min-width: 11rem;
+                min-height: 2.5rem;
+                padding: 0.4rem 1.5rem;
+                color: $main-white;
+                background-color: #737373;
+                border-radius: 2rem;
+                font-size: fz(14);
+                letter-spacing: 0.04em;
+                cursor: pointer;
+                &:disabled {
+                    cursor: default;
+                    opacity: 0.55;
+                }
+            }
+        }
+        > ul {
             position: relative;
             margin-top: 5rem;
             display: grid;

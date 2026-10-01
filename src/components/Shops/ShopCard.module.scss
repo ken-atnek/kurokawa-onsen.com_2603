@@ -110,10 +110,21 @@
         line-clamp: 2; /* 行数を制限 */
         overflow: hidden;
     }
+    .boxDetails {
+        font-size: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .itemMealPeriods {
+            margin-top: 0.8rem;
+            font-size: inherit;
+        }
+    }
+
     .itemTel {
-        margin-top: 1.5rem;
+        margin-top: 1rem;
         border-top: 1px solid;
-        padding-top: 1.4rem;
+        padding-top: 1rem;
         font-size: inherit;
         span {
             font-size: fz(16);

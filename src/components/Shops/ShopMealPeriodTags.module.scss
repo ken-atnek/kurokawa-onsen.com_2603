@@ -1,0 +1,34 @@
+@use "../../styles/variable" as *;
+
+/* =======================================
+ * 黒川温泉観光協会 飲食店提供時間帯ラベル スタイル
+ * URL: /src/components/Shops/ShopMealPeriodTags.module.scss
+ * Referenced in: /src/components/Shops/ShopMealPeriodTags.tsx
+ * Created: 2026-10-01
+ * Last updated: 2026-10-01
+ * ======================================= */
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: inherit;
+}
+.item {
+    min-height: 2.5rem;
+    padding: 0.5rem;
+    color: $main-white;
+    font-size: fz(14);
+    letter-spacing: 0.04em;
+    border-radius: 2px;
+    display: grid;
+    place-items: center;
+    &.item-morning {
+        background-color: #70a55a;
+    }
+    &.item-lunch {
+        background-color: #c88449;
+    }
+    &.item-dinner {
+        background-color: #5a68a5;
+    }
+}

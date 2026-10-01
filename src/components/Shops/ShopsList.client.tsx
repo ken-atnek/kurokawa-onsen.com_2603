@@ -2,7 +2,7 @@
  * 黒川温泉観光協会 加盟店一覧ページ(クライアント)
  * URL:src/components/Shops/ShopsList.client.tsx
  * Created: 2026-02-14
- * Last updated: 2026-02-19
+ * Last updated: 2026-10-01
  * ======================================= */
 
 'use client';
@@ -59,10 +59,18 @@ export default function ShopsListClient() {
                 timeRanges,
               });
 
-              return { ...shop, status } as ShopWithStatus;
+              return {
+                ...shop,
+                status,
+                mealPeriods: detail.mealPeriods ?? [],
+              } as ShopWithStatus;
             } catch {
               // details無い場合も落とさない（従来の挙動維持）
-              return { ...shop, status: defaultStatus } as ShopWithStatus;
+              return {
+                ...shop,
+                status: defaultStatus,
+                mealPeriods: [],
+              } as ShopWithStatus;
             }
           })
         );

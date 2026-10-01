@@ -3,7 +3,7 @@
  * URL: src/components/Shops/ShopHeader.tsx
  * Referenced in: src/components/Shops/ShopDetailClient.tsx, src/components/Shops/ShopProductsListView.tsx
  * Created: 2026-02-12
- * Last updated: 2026-02-12
+ * Last updated: 2026-10-01
  * ======================================= */
 'use client';
 import clsx from 'clsx';
@@ -12,6 +12,7 @@ import type { ShopDetail, ShopTimeRange } from '@/types/shop';
 import styles from '@/styles/PageShopDetails.module.scss';
 import ExternalLink from '@/components/common/ExternalLink';
 import Link from 'next/link';
+import ShopMealPeriodTags from '@/components/Shops/ShopMealPeriodTags';
 type Props = {
   name: ShopDetail['name'];
   leadCopy: ShopDetail['leadCopy'];
@@ -26,6 +27,7 @@ type Props = {
   statusFallbackKey: ShopDetail['statusFallbackKey'];
   closedWeekdays?: ShopDetail['info']['closedWeekdays'];
   timeRanges?: ShopTimeRange[];
+  mealPeriods?: ShopDetail['mealPeriods'];
 };
 
 export default function ShopHeader({
@@ -42,12 +44,15 @@ export default function ShopHeader({
   statusFallbackKey,
   closedWeekdays,
   timeRanges,
+  mealPeriods,
 }: Props) {
   const status = getShopStatusView({
     fallbackKey: statusFallbackKey,
     closedWeekdays,
     timeRanges,
   });
+  const hasMealPeriods = category === 'food' && Boolean(mealPeriods?.length);
+
   return (
     <section
       className={clsx(styles.containerHeader, styles[`category-${category}`])}
@@ -130,13 +135,20 @@ export default function ShopHeader({
               </div>
             ) : null}
           </dl>
-          {hasOnlineList ? (
-            <Link
-              href={`/shops/products?id=${shopSlug}`}
-              className={styles.btnOnlineList}
-            >
-              オンライン商品一覧
-            </Link>
+          {hasMealPeriods || hasOnlineList ? (
+            <div className={styles.boxHeaderActions}>
+              {hasMealPeriods ? (
+                <ShopMealPeriodTags mealPeriods={mealPeriods} />
+              ) : null}
+              {hasOnlineList ? (
+                <Link
+                  href={`/shops/products?id=${shopSlug}`}
+                  className={styles.btnOnlineList}
+                >
+                  オンライン商品一覧
+                </Link>
+              ) : null}
+            </div>
           ) : null}
         </div>
       </article>
