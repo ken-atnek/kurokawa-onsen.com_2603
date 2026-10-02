@@ -25,6 +25,8 @@ $fields = [
     'selectedMenus' => '選択メニュー',
     'customerName' => 'お名前',
     'customerKana' => 'ふりがな',
+    'nationality' => '国籍',
+    'nationalityCode' => '国籍コード',
     'tel' => '電話番号',
     'email' => 'メールアドレス',
     'request' => 'ご要望・アレルギー等',
@@ -36,6 +38,8 @@ $required = [
     'guests',
     'customerName',
     'customerKana',
+    'nationality',
+    'nationalityCode',
     'tel',
     'email',
 ];
@@ -70,6 +74,15 @@ if (!filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
     echo json_encode([
         'success' => false,
         'message' => 'Invalid email address.',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if (!preg_match('/^[A-Z]{2}$/', $input['nationalityCode'])) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid nationality code.',
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -118,7 +131,12 @@ $customerBodyLines = [
 ];
 
 foreach ($fields as $key => $label) {
-    if ($key === 'customerName' || $key === 'customerKana' || $key === 'email') {
+    if (
+        $key === 'customerName'
+        || $key === 'customerKana'
+        || $key === 'nationalityCode'
+        || $key === 'email'
+    ) {
         continue;
     }
 

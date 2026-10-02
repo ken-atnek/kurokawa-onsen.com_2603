@@ -45,6 +45,8 @@ guests
 selectedMenus
 customerName
 customerKana
+nationality
+nationalityCode
 tel
 email
 request
@@ -58,9 +60,22 @@ reservationDate
 guests
 customerName
 customerKana
+nationality
+nationalityCode
 tel
 email
 ```
+
+## 国籍項目
+
+```txt
+nationality：表示用の国・地域名（例：日本、Japan）
+nationalityCode：ISO 3166-1 alpha-2の国コード（例：JP）
+```
+
+- 管理者向けメールには、国・地域名と国コードを表示する
+- お客様向けメールには、国・地域名のみ表示する
+- `nationalityCode` は英大文字2文字か確認する
 
 ## レスポンス
 

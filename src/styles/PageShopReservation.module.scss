@@ -354,6 +354,7 @@
         letter-spacing: 0.04em;
     }
     .itemInput,
+    .itemSelect,
     .itemTextarea {
         display: grid;
         grid-template-columns: 20rem 1fr;
@@ -412,6 +413,31 @@
             min-height: 10rem;
             field-sizing: content;
             padding: 1.2rem;
+        }
+    }
+    .itemSelect {
+        .selectWrapper {
+            position: relative;
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: 1.4rem;
+                width: 1rem;
+                translate: 0 -50%;
+                pointer-events: none;
+                @include svg-icon-arrow-bottom("403726");
+            }
+        }
+        select {
+            width: 100%;
+            height: 4rem;
+            padding: 0 4rem 0 1.2rem;
+            border: 1px solid #ddd;
+            background-color: $main-white;
+            color: $main-black;
+            font-size: 1.6rem;
+            letter-spacing: 0.04em;
         }
     }
     .itemTextarea {

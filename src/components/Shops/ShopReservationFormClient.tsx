@@ -13,6 +13,10 @@ import { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import ShopHeader from '@/components/Shops/ShopHeader';
 import SelectBox from '@/components/common/SelectBox';
+import {
+  getNationalityLabel,
+  getNationalityOptionGroups,
+} from '@/data/nationalities';
 import { useShopReservationFormData } from '@/hooks/shops/useShopReservationFormData';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 import styles from '@/styles/PageShopReservation.module.scss';
@@ -26,6 +30,7 @@ type Props = {
 type CustomerInputKey =
   | 'name'
   | 'kana'
+  | 'nationality'
   | 'tel'
   | 'email'
   | 'emailConfirm'
@@ -34,6 +39,7 @@ type CustomerInputKey =
 type FormStep = 'input' | 'confirm' | 'complete';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+const NATIONALITY_OPTION_GROUPS = getNationalityOptionGroups('ja');
 
 export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const { shopDetail, reservationBasic, menuItems, status } =
@@ -47,6 +53,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   >({
     name: '',
     kana: '',
+    nationality: 'JP',
     tel: '',
     email: '',
     emailConfirm: '',
@@ -168,6 +175,11 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
     );
     body.append('customerName', customerInput.name);
     body.append('customerKana', customerInput.kana);
+    body.append('nationalityCode', customerInput.nationality);
+    body.append(
+      'nationality',
+      getNationalityLabel(customerInput.nationality, 'ja')
+    );
     body.append('tel', customerInput.tel);
     body.append('email', customerInput.email);
     body.append('request', customerInput.request);
@@ -311,6 +323,12 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   <div>
                     <dt>ふりがな</dt>
                     <dd>{customerInput.kana}</dd>
+                  </div>
+                  <div>
+                    <dt>国籍</dt>
+                    <dd>
+                      {getNationalityLabel(customerInput.nationality, 'ja')}
+                    </dd>
                   </div>
                   <div>
                     <dt>電話番号</dt>
@@ -486,6 +504,32 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     placeholder="くろかわ たろう"
                     onChange={(value) => updateCustomerInput('kana', value)}
                   />
+                  <label className={styles.itemSelect}>
+                    <span>
+                      国籍
+                      <i>必須</i>
+                    </span>
+                    <div className={styles.selectWrapper}>
+                      <select
+                        name="nationality"
+                        value={customerInput.nationality}
+                        autoComplete="country"
+                        onChange={(e) =>
+                          updateCustomerInput('nationality', e.target.value)
+                        }
+                      >
+                        {NATIONALITY_OPTION_GROUPS.map((group) => (
+                          <optgroup key={group.label} label={group.label}>
+                            {group.options.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+                  </label>
                   <FormInput
                     label="電話番号"
                     required
