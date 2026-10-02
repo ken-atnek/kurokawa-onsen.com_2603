@@ -3,6 +3,7 @@ import type { ShopStatusView } from '@/lib/status';
 export type ShopWithStatus = ShopIndexItem & {
   status: ShopStatusView;
   mealPeriods?: ShopMealPeriod[];
+  listInfoRows?: ShopHourRow[];
 };
 
 export type ShopIndexItem = {

@@ -10,6 +10,12 @@
     grid-row: span 4;
     grid-template-rows: subgrid;
     gap: 0;
+    &.has-list-info {
+        grid-row: span 5;
+        .innerContents {
+            grid-row: span 4;
+        }
+    }
     a {
         position: relative;
         font-size: inherit;
@@ -44,94 +50,138 @@
             }
         }
     }
-    .wrapName {
-        position: relative;
-        display: flex;
-        align-items: center;
+    .innerContents {
         font-size: inherit;
-        margin-top: 2.4rem;
-        gap: 0 1.6rem;
-        .itemCategory {
+        grid-row: span 3;
+        display: grid;
+        grid-template-rows: subgrid;
+        background-color: #fff;
+        padding: 0 1rem 1rem;
+        border-radius: 0 0 1rem 1rem;
+        .wrapName {
             position: relative;
-            width: 4.8rem;
-            aspect-ratio: 1;
-            background-color: $main-black;
-            border-radius: 50%;
-            align-self: flex-start;
-            &::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                margin: auto;
-            }
-            &.category-food {
-                background-color: #ae6a6a;
+            display: flex;
+            align-items: center;
+            font-size: inherit;
+            margin-top: 2.4rem;
+            gap: 0 1.6rem;
+            .itemCategory {
+                position: relative;
+                width: 4.8rem;
+                aspect-ratio: 1;
+                background-color: $main-black;
+                border-radius: 50%;
+                align-self: flex-start;
                 &::before {
-                    width: 17px;
-                    @include svg-iconCategoryFood("fff");
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    margin: auto;
+                }
+                &.category-food {
+                    background-color: #ae6a6a;
+                    &::before {
+                        width: 17px;
+                        @include svg-iconCategoryFood("fff");
+                    }
+                }
+                &.category-souvenir {
+                    background-color: #6880a2;
+                    &::before {
+                        width: 18px;
+                        @include svg-iconCategorySouvenir("fff");
+                    }
+                }
+                &.category-other {
+                    background-color: #789f66;
+                    &::before {
+                        width: 22px;
+                        @include svg-iconCategoryOther("fff");
+                    }
                 }
             }
-            &.category-souvenir {
-                background-color: #6880a2;
-                &::before {
-                    width: 18px;
-                    @include svg-iconCategorySouvenir("fff");
-                }
-            }
-            &.category-other {
-                background-color: #789f66;
-                &::before {
-                    width: 22px;
-                    @include svg-iconCategoryOther("fff");
+            h3 {
+                display: flex;
+                flex-direction: column;
+                font-size: fz(20);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                span {
+                    font-size: inherit;
                 }
             }
         }
-        h3 {
+        .boxDetails {
+            font-size: inherit;
             display: flex;
             flex-direction: column;
-            font-size: fz(20);
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            span {
+            justify-content: space-between;
+            p {
+                margin-top: 0.4rem;
+                font-size: fz(13);
+                font-weight: 500;
+                line-height: 1.4em;
+                letter-spacing: 0.04em;
+                text-align: justify;
+                display: -webkit-box; /* 必須 */
+                -webkit-box-orient: vertical; /* 必須 */
+                -webkit-line-clamp: 2;
+                line-clamp: 2; /* 行数を制限 */
+                overflow: hidden;
+            }
+            .itemMealPeriods {
+                margin-top: 0.8rem;
                 font-size: inherit;
+                margin-bottom: 1rem;
             }
         }
-    }
-    p {
-        margin-top: 0.8rem;
-        font-size: fz(14);
-        font-weight: 500;
-        line-height: 1.6em;
-        letter-spacing: 0.04em;
-        text-align: justify;
-        display: -webkit-box; /* 必須 */
-        -webkit-box-orient: vertical; /* 必須 */
-        -webkit-line-clamp: 2;
-        line-clamp: 2; /* 行数を制限 */
-        overflow: hidden;
-    }
-    .boxDetails {
-        font-size: inherit;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        .itemMealPeriods {
-            margin-top: 0.8rem;
+        .list-shop-info {
+            padding-top: 1rem;
+            border-top: 1px solid;
+            gap: 0.5rem;
             font-size: inherit;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            > div {
+                grid-column: span 2;
+                display: grid;
+                grid-template-columns: subgrid;
+                gap: 0 1rem;
+                font-size: inherit;
+            }
+            dt,
+            dd {
+                font-size: fz(13);
+                line-height: 1.6em;
+                letter-spacing: 0.04em;
+            }
+            dt {
+                font-weight: 600;
+            }
+            dd {
+                min-width: 0;
+                > span {
+                    display: block;
+                }
+                small {
+                    display: block;
+                    font-size: inherit;
+                }
+            }
         }
-    }
-
-    .itemTel {
-        margin-top: 1rem;
-        border-top: 1px solid;
-        padding-top: 1rem;
-        font-size: inherit;
-        span {
-            font-size: fz(16);
-            letter-spacing: 0.04em;
-            &::before {
-                content: "TEL";
-                margin-right: 0.3em;
+        .itemTel {
+            margin-top: 1rem;
+            border-top: 1px solid;
+            padding-top: 0.5rem;
+            font-size: inherit;
+            span {
+                font-size: fz(16);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                &::before {
+                    content: "TEL";
+                    margin-right: 0.3em;
+                }
             }
         }
     }

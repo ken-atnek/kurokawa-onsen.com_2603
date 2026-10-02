@@ -2,7 +2,7 @@
  * 黒川温泉観光協会 加盟店一覧ページ(クライアント)
  * URL:src/components/Shops/ShopsList.client.tsx
  * Created: 2026-02-14
- * Last updated: 2026-10-01
+ * Last updated: 2026-10-02
  * ======================================= */
 
 'use client';
@@ -15,6 +15,8 @@ import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 import type { ShopDetail, ShopIndexItem, ShopWithStatus } from '@/types/shop';
 import type { ShopStatusView } from '@/lib/status';
+
+const listInfoLabels = ['営業時間', '店休日', '平均予算'];
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, { cache: 'no-store' });
@@ -63,6 +65,13 @@ export default function ShopsListClient() {
                 ...shop,
                 status,
                 mealPeriods: detail.mealPeriods ?? [],
+                listInfoRows: listInfoLabels.flatMap((label) => {
+                  const row = detail.info.hours.find(
+                    (infoRow) => infoRow.label === label
+                  );
+
+                  return row ? [row] : [];
+                }),
               } as ShopWithStatus;
             } catch {
               // details無い場合も落とさない（従来の挙動維持）
@@ -70,6 +79,7 @@ export default function ShopsListClient() {
                 ...shop,
                 status: defaultStatus,
                 mealPeriods: [],
+                listInfoRows: [],
               } as ShopWithStatus;
             }
           })
