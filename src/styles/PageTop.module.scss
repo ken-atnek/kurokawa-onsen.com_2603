@@ -174,7 +174,7 @@
         margin-top: 5rem;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: auto auto auto auto;
+        grid-template-rows: auto auto auto auto auto;
         font-size: inherit;
         gap: 3em;
         @include sp {

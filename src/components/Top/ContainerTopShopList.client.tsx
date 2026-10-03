@@ -1,7 +1,7 @@
 /* =======================================
  * 黒川温泉観光協会 加盟店一覧（TOP用ピックアップ / Client）
  * URL:src/components/Top/ContainerTopShopList.client.tsx
- * Last updated: 2026-10-01
+ * Last updated: 2026-10-02
  * ======================================= */
 
 'use client';
@@ -16,6 +16,8 @@ import { getShopStatusView } from '@/lib/status';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 import type { ShopDetail, ShopWithStatus } from '@/types/shop';
+
+const listInfoLabels = ['営業時間', '店休日', '平均予算'];
 
 type ShopIndexBase = {
   id: string;
@@ -103,6 +105,13 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
               ...idx,
               status,
               mealPeriods: detail.mealPeriods ?? [],
+              listInfoRows: listInfoLabels.flatMap((label) => {
+                const row = detail.info.hours.find(
+                  (infoRow) => infoRow.label === label
+                );
+
+                return row ? [row] : [];
+              }),
             } as ShopWithStatus;
           })
         );
