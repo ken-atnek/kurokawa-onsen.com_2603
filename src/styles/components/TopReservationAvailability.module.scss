@@ -34,6 +34,8 @@
         flex-direction: column;
         align-items: center;
         gap: 2rem 0;
+        @include sp {
+        }
         h2 {
             font-size: fz(24);
             width: 14em;
@@ -42,6 +44,9 @@
             font-size: fz(16);
             font-weight: 500;
             letter-spacing: 0.08em;
+            @include sp {
+                letter-spacing: 0.04em;
+            }
         }
     }
     .boxSearch {
@@ -51,16 +56,28 @@
         margin-top: 3rem;
         gap: 0 3rem;
         font-size: inherit;
+        @include sp {
+            grid-template-columns: unset;
+            width: 100%;
+            gap: 2vw 0;
+        }
         .wrapDate,
         .itemGuests {
             display: flex;
             flex-direction: column;
             gap: 0.8rem 0;
             font-size: inherit;
+            @include sp {
+                display: grid;
+                grid-template-columns: 4em 1fr;
+            }
             h3 {
                 font-size: fz(14);
                 font-weight: 600;
                 letter-spacing: 0.04em;
+                @include sp {
+                    align-self: center;
+                }
             }
         }
         .wrapDate {
@@ -84,6 +101,9 @@
             font-size: fz(16);
             font-weight: 600;
             letter-spacing: 0.08em;
+            @include sp {
+                margin-top: 6vw;
+            }
         }
     }
     .boxAvailability {
@@ -94,6 +114,12 @@
         background-color: #fff;
         border: 1px solid $border-color;
         font-size: inherit;
+        @include sp {
+            width: calc(100% + 4vw);
+            align-self: flex-start;
+            overflow-x: auto;
+            padding: 2vw;
+        }
         .boxTableHead {
             display: grid;
             grid-template-columns: 16rem 1fr 16rem;
@@ -101,12 +127,21 @@
             margin-bottom: 2rem;
             gap: 0 2rem;
             font-size: inherit;
+            @include sp {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2vw 10vw;
+            }
             h3 {
                 text-align: center;
                 font-size: fz(24);
                 font-weight: 500;
                 letter-spacing: 0.08em;
                 @include Serif;
+                @include sp {
+                    order: -1;
+                    grid-column: span 2;
+                    font-size: fz(18);
+                }
                 span {
                     margin-left: 0.8em;
                     font-size: fz(16);
@@ -164,6 +199,12 @@
                 minmax(5.2rem, 1fr)
             );
         font-size: inherit;
+        @include sp {
+            grid-template-columns: 30vw repeat(
+                    var(--reservation-days),
+                    minmax(5.2rem, 1fr)
+                );
+        }
         .gridHeadCell,
         .gridShopCell,
         .gridCell {
@@ -208,12 +249,18 @@
                 text-align: left;
                 font-size: inherit;
                 border-left: 1px solid $border-color;
+                @include sp {
+                    padding: 2vw;
+                }
                 span {
                     display: block;
                     margin-bottom: 0.8rem;
                     font-size: fz(16);
                     font-weight: 500;
                     letter-spacing: 0.04em;
+                    @include sp {
+                        font-size: fz(14);
+                    }
                 }
                 a {
                     display: block;
@@ -254,6 +301,11 @@
         gap: 0 3rem;
         font-size: inherit;
         justify-content: center;
+        @include sp {
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 2vw 6vw;
+        }
         span {
             @include iconStatus;
             font-size: fz(16);
@@ -289,5 +341,10 @@
         font-size: fz(14);
         letter-spacing: 0.04em;
         line-height: 1.6em;
+        @include sp {
+            font-size: fz(12);
+            text-align: left;
+            letter-spacing: 0.01em;
+        }
     }
 }
