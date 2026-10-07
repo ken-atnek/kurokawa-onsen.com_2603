@@ -19,6 +19,9 @@
             h2 {
                 width: 43rem;
                 font-size: fz(24);
+                @include sp {
+                    width: 100%;
+                }
             }
         }
         .listSteps {
@@ -29,6 +32,9 @@
             justify-content: space-between;
             counter-reset: step;
             margin-top: 1rem;
+            @include sp {
+                width: 100%;
+            }
             li {
                 position: relative;
                 display: flex;
@@ -93,6 +99,9 @@
             background-color: $main-white;
             display: flex;
             flex-direction: column;
+            @include sp {
+                padding: 8vw 4vw;
+            }
             .boxH3 {
                 @include itemH2;
                 max-width: 32rem;
@@ -119,6 +128,9 @@
                         border-bottom: 1px solid #ddd;
                         font-size: inherit;
                         gap: 0 6rem;
+                        @include sp {
+                            gap: 0 6vw;
+                        }
                     }
                     dt {
                         font-size: fz(16);
@@ -132,6 +144,11 @@
                             display: flex;
                             align-items: center;
                             gap: 0 2rem;
+                            @include sp {
+                                flex-direction: column;
+                                align-items: flex-start;
+                                gap: 2vw 0;
+                            }
                             img {
                                 width: 14rem;
                                 aspect-ratio: 200/110;
@@ -176,6 +193,9 @@
                     font-size: fz(16);
                     font-weight: 500;
                     letter-spacing: 0.04em;
+                    @include sp {
+                        font-size: fz(14);
+                    }
                 }
                 .listMenus {
                     display: grid;
@@ -183,6 +203,10 @@
                     margin-top: 2rem;
                     gap: 3rem 2rem;
                     font-size: inherit;
+                    @include sp {
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 4vw 2vw;
+                    }
                     li {
                         font-size: inherit;
                         display: flex;
@@ -213,6 +237,11 @@
                     margin-top: 3rem;
                     gap: 2rem 3rem;
                     font-size: inherit;
+                    @include sp {
+                        grid-template-columns: unset;
+                        grid-auto-flow: row;
+                        gap: 4vw 0;
+                    }
                     & > div {
                         font-size: inherit;
                         h4 {
@@ -232,6 +261,9 @@
                     flex-direction: column;
                     gap: 1.2rem 0;
                     font-size: inherit;
+                    @include sp {
+                        gap: 6vw 0;
+                    }
                 }
             }
 
@@ -246,6 +278,9 @@
                     grid-template-columns: 20rem 1fr;
                     width: 100%;
                     font-size: inherit;
+                    @include sp {
+                        grid-template-columns: auto 1fr;
+                    }
                     div {
                         display: grid;
                         grid-column: span 2;
@@ -254,6 +289,15 @@
                         border-bottom: 1px solid #ddd;
                         gap: 0 4rem;
                         font-size: inherit;
+                        @include sp {
+                            &:last-of-type {
+                                gap: 2vw 0;
+                                dt,
+                                dd {
+                                    grid-column: span 2;
+                                }
+                            }
+                        }
                     }
                     dt,
                     dd {
@@ -275,6 +319,11 @@
                         align-items: center;
                         justify-content: flex-start;
                         gap: 0 2rem;
+                        @include sp {
+                            flex-direction: column;
+                            align-items: flex-start;
+                            gap: 2vw 0;
+                        }
                         img {
                             width: 14rem;
                             aspect-ratio: 200/110;
@@ -312,6 +361,10 @@
             width: 100%;
             gap: 0 1.6rem;
             font-size: inherit;
+            @include sp {
+                grid-template-columns: auto 1fr;
+                gap: 0 4vw;
+            }
         }
         .boxComplete {
             width: 100%;
@@ -361,7 +414,11 @@
         align-items: center;
         font-size: inherit;
         gap: 0 2rem;
-
+        @include sp {
+            grid-template-columns: unset;
+            grid-auto-flow: row;
+            gap: 2vw 0;
+        }
         // 入力タグ初期化
         input,
         select,
@@ -383,6 +440,10 @@
             font-size: fz(14);
             font-weight: 600;
             letter-spacing: 0.04em;
+            @include sp {
+                justify-content: flex-start;
+                gap: 0 4vw;
+            }
             i {
                 min-width: 4rem;
                 padding: 0.2em 0.5em;
@@ -459,6 +520,9 @@
         font-weight: 500;
         letter-spacing: 0.08em;
         @include flex-center;
+        @include sp {
+            width: 100%;
+        }
         &:disabled {
             cursor: wait;
             opacity: 0.55;
@@ -473,5 +537,8 @@
         font-weight: 500;
         letter-spacing: 0.08em;
         @include flex-center;
+        @include sp {
+            width: 25vw;
+        }
     }
 }

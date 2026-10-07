@@ -19,6 +19,10 @@
         background-color: #eaebec;
         font-size: inherit;
         border-radius: 1rem;
+        @include sp {
+            width: 100%;
+            padding: 16vw 2vw 12vw;
+        }
         .modalClose {
             position: absolute;
             top: 2rem;
@@ -68,6 +72,9 @@
             font-size: fz(20);
             font-weight: 500;
             letter-spacing: 0.16em;
+            @include sp {
+                font-size: fz(16);
+            }
             a {
                 text-decoration: underline;
                 text-underline-offset: 0.2em;
