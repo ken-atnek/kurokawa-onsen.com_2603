@@ -4,7 +4,7 @@
 
 予約フォームから送信された内容をPHPで受け取り、正式Web予約APIとしてDB登録・自動席割当・transaction orchestrationを行う。
 
-`send.php` のStep2-C3-BによるDB登録・自動席割当・transaction orchestration接続、2026-09-19改定の氏名2項目contract、正式4宛先メールまで実装済みとする。デモ環境でフロントからのWeb予約、DB登録・自動割当席保存、通知メール受信を確認済み。本番環境での疎通確認は未実施。
+2026-09-22までの正式API接続・デモ確認実績は履歴として保持する。2026-10-07に`send.php`の正式JSON解析・共通予約登録・No.12 responseを復旧し、`nationality`と姓名間空白不要の仕様を追加した。本番疎通は未確認。
 
 ## 設置場所
 
@@ -58,7 +58,7 @@ request
 
 No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載はfrontend連携用の同期要約であり、差分がある場合は確定仕様書を優先する。
 
-No.6 Web予約API正式payload contractは2026-09-19に改定した。`POST` + `Content-Type: application/json` のUTF-8 JSON objectを使用する。
+No.6 Web予約API正式payload contractは2026-10-07に国籍と姓名間空白不要を含めて改定した。`POST` + `Content-Type: application/json` のUTF-8 JSON objectを使用する。
 
 ```json
 {
@@ -66,8 +66,9 @@ No.6 Web予約API正式payload contractは2026-09-19に改定した。`POST` + `
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
-  "name": "黒川 太郎",
-  "kana": "くろかわ たろう",
+  "name": "黒川太郎",
+  "kana": "くろかわたろう",
+  "nationality": "JP",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
   "note": "アレルギーはありません",
@@ -75,13 +76,14 @@ No.6 Web予約API正式payload contractは2026-09-19に改定した。`POST` + `
 }
 ```
 
-- 許可キーは `shop_id` / `date` / `guests` / `menu_selections` / `name` / `kana` / `tel` / `email` / `note` / `privacy_agreed` のみ。旧氏名4fieldは受け付けない。
+- 許可キーは `shop_id` / `date` / `guests` / `menu_selections` / `name` / `kana` / `nationality` / `tel` / `email` / `note` / `privacy_agreed` のみ。旧氏名4field、旧FormDataの`nationalityCode`、国名文字列用fieldは受け付けない。
 - 未知フィールドは400でrejectする。
 - `reservation_id` / `reservation_route` / `status` / `cancelled_at` / `seat_id` / `assigned_seat_ids` / `relocations` / `shop_memo` / `accommodation_name` / `created_at` / `updated_at` はサーバー制御フィールドとして受け付けない。
 - Web routeではサーバー側で `reservation_route=1`、`status=1`、`cancelled_at=NULL` を固定する。
 - `shop_id` は文字列、`guests` はJSON numberの整数、`privacy_agreed` はboolean `true` のみ。
 - `menu_selections` は `guests` と同じ長さの配列とし、要素は `menu-\d{3,}` 形式または `null`。
-- `name` / `kana`は必須。cms-panel側DDL仕様書「氏名・ふりがなの保存仕様」を正とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから3文字以上101文字以下を判定する。姓名区切りを1つ以上必須とし、各要素は非空、3要素以上は許可する。server-sideでは共通関数`normalizeReservationCustomerIdentityValue()`を使用する。
+- `name` / `kana`は必須。cms-panel側DDL仕様書「氏名・ふりがなの保存仕様」を正とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから1文字以上101文字以下を判定する。姓名間の空白は必須とせず、空白なし・複数要素を許可する。server-sideでは共通関数`normalizeReservationCustomerIdentityValue()`を使用する。
+- `nationality`は必須string。英大文字2文字かつcms-panel側国籍マスタに存在するコードだけを許可し、`reservations.customer_nationality_code`へ保存する。小文字、空文字、未知コードは補正せずrejectする。
 - `note` は任意・nullable。未送信、`null`、空文字、Unicode空白のみは `customer_note = null` として扱う。
 
 ## Step2-C3-B実装前の暫定必須項目（履歴）
@@ -100,20 +102,20 @@ tel
 email
 ```
 
-## 国籍項目
+## Step2-C3-B実装前の国籍項目（履歴）
 
 ```txt
 nationality：表示用の国・地域名（例：日本、Japan）
 nationalityCode：ISO 3166-1 alpha-2の国コード（例：JP）
 ```
 
-- 管理者向けメールには、国・地域名と国コードを表示する
-- お客様向けメールには、国・地域名のみ表示する
-- `nationalityCode` は英大文字2文字か確認する
+- 上記`nationality` / `nationalityCode`の2field方式は旧FormData専用であり、正式APIでは使用しない。
+- 正式APIは`nationality`の1fieldだけに英大文字2文字のコードを送り、国名はbackendマスタから解決する。
+- 国籍は店舗・協会の内部通知メールだけに国名を表示し、予約者・サーバー管理者向けには表示しない。
 
 ## Step2-C3-B実装前の暫定response（履歴）
 
-以下はStep2-C3-B実装前の暫定 `send.php` のresponseであり、現在の正式Web予約API response contractとは異なる。現在の `send.php` はNo.12でCLOSED / FROZENとなった正式schemaを返す。
+以下はStep2-C3-B実装前の暫定responseであり、正式Web予約API response contractとは異なる。現在の`send.php`は正式schemaを返す。
 
 成功時：
 
@@ -168,7 +170,7 @@ nationalityCode：ISO 3166-1 alpha-2の国コード（例：JP）
 - DB COMMIT成功を予約成立の境界とする。COMMIT失敗は`500 INTERNAL_ERROR`。COMMIT後のavailability JSON更新、queue登録、メール送信、メールログ記録が失敗しても予約成立を覆さず、成功responseを維持する。
 - SQL、例外詳細、internal reason、seat ID、file path、DB接続情報等はpublic responseへ出さない。
 
-## 正式メール送信先（実装済み・デモで通知メール受信確認済み）
+## 正式メール送信先（確定仕様・再接続対象）
 
 - 予約者：予約者向けテンプレート
 - 該当店舗：内部通知テンプレート。店舗メール未登録はスキップログ
@@ -177,12 +179,14 @@ nationalityCode：ISO 3166-1 alpha-2の国コード（例：JP）
 
 COMMIT後・成功response前に既存`sendMail_Common()`で最大4通を同期送信し、宛先ごとに`reservation_mail_logs`へ記録する。送信・ログ失敗は予約成功を覆さない。本文・件名・表示条件の正本はcms-panel側の確定仕様書12.3とする。
 
-## Step2-C3-Bで実装済みの処理
+国籍はcms-panel側マスタの日本語国名へ変換し、該当店舗・黒川温泉観光協会の内部通知だけへ表示する。予約者・サーバー管理者向けには表示しない。
 
-Step2-C3-Bの正式Web予約APIでは、以下を実装済み。
+## 実装済みの予約登録フロー（本番疎通未確認）
+
+正式Web予約APIとして、以下を接続した。
 
 ```txt
-1. 入力値バリデーション
+1. No.6 JSON解析と入力値バリデーション（`nationality`必須を含む）
 2. BEGIN
 3. shops mutex取得
 4. lock後fresh Web eligibility・受付期間・予約人数確認
@@ -194,7 +198,7 @@ Step2-C3-Bの正式Web予約APIでは、以下を実装済み。
 10. No.12 response返却
 ```
 
-COMMIT後のavailability JSON更新とjson regeneration queue、氏名2項目化、正式メール、frontend JSON送信・response判定は接続済み。デモでWeb予約・DB保存・通知メール受信を確認したが、4宛先別の受信・メールログ内容とavailability JSON更新結果・失敗時queueは未確認。rate limit・冪等性はLATER、本番反映・本番疎通は未実施とする。
+過去のデモでWeb予約・DB保存・通知メール受信を確認した実績はあるが、現在の実ファイルに対する完了根拠には使用しない。4宛先別の文面・メールログ、availability JSON更新、失敗時queueは実環境で再確認する。rate limit・冪等性はLATER、本番反映・本番疎通は未実施とする。
 
 本番反映前に、cms-panel側`set_db.php`の一時的な認証情報直書き（WR-C-1）が処置済みであることを確認する。
 

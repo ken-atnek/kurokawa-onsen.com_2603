@@ -93,6 +93,8 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 
 選択値にはISO 3166-1 alpha-2の国コードを使用し、表示名は日本語・英語に対応する。
 
+選択肢の実データは`src/data/nationalities.ts`を正とする。2026-10-07時点で249件・コード重複なし。ISO公式一覧は利用規約への同意が必要で直接取得できなかったため、ユーザー判断により国連公開一覧248件＋TWとの一致を根拠に採用した。ISO公式一覧と直接照合済みとは扱わず、将来差異が判明した場合も自動補正せず人間判断を行う。
+
 選択肢は「主な国・地域」を上部に表示し、それ以外は表示言語に合わせて並べる。
 
 - 日本語：あいうえお順
@@ -116,7 +118,7 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 
 No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載は画面実装用の同期要約であり、差分がある場合は確定仕様書を優先する。
 
-現行frontendは、正式Web予約APIへ `POST` + `Content-Type: application/json` のUTF-8 JSON objectを送信する。
+正式実装では、Web予約APIへ `POST` + `Content-Type: application/json` のUTF-8 JSON objectを送信する。
 
 ```json
 {
@@ -124,8 +126,9 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
-  "name": "黒川 太郎",
-  "kana": "くろかわ たろう",
+  "name": "黒川太郎",
+  "kana": "くろかわたろう",
+  "nationality": "JP",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
   "note": "アレルギーはありません",
@@ -136,11 +139,12 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
 - `shop_id` は文字列で送信する。数値型では送信しない。
 - `guests` はJSON numberの整数で送信する。文字列や小数では送信しない。
 - `menu_selections` は必ず `guests` と同じ長さの配列で送信する。各要素は `menu-001` 形式または `null`。
-- `name` / `kana`は必須。送信前validationはserver-side contractと同じ順序とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから3文字以上101文字以下を判定する。姓名区切りを1つ以上必須とし、各要素は非空、3要素以上は許可する。最終判定はserver-sideの共通関数`normalizeReservationCustomerIdentityValue()`を正とする。
+- `name` / `kana`は必須。送信前validationはserver-side contractと同じ順序とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから1文字以上101文字以下を判定する。姓名間の空白は必須とせず、空白なし・複数要素を許可する。最終判定はserver-sideの共通関数`normalizeReservationCustomerIdentityValue()`を正とする。
+- `nationality`は必須。選択中のISO 3166-1 alpha-2コードを英大文字2文字で送信する。国名文字列や旧`nationalityCode`は正式payloadへ送信しない。server-sideは形式に加えて国籍マスタ存在確認を行う。
 - `privacy_agreed` はbooleanの `true` のみ送信可。文字列や数値では送信しない。
 - `shopName`、`reservationDate`、`selectedMenus`、`customerName`、`customerKana`、`request` は旧FormData fieldであり、正式API payloadでは使用しない。旧APIの`last_name` / `first_name` / `last_kana` / `first_kana`も送信しない。
 
-現行frontendは正式response JSONをparseし、`success`を判別キーとして処理する。`success=true`では必須の`reservationId`（JSON number）を取得・保持して完了画面へ進み、`success=false`では必須の`errorCode` / `message`を取得してエラー処理を行う。完了画面への予約番号表示は任意とする。fetch失敗、壊れたresponse、HTTP statusと`success`の不整合、正式schema外のresponseはnetwork / unexpected server responseとして扱う。
+正式実装ではresponse JSONをparseし、`success`を判別キーとして処理する。`success=true`では必須の`reservationId`（JSON number）を取得・保持して完了画面へ進み、`success=false`では必須の`errorCode` / `message`を取得してエラー処理を行う。完了画面への予約番号表示は任意とする。fetch失敗、壊れたresponse、HTTP statusと`success`の不整合、正式schema外のresponseはnetwork / unexpected server responseとして扱う。
 
 ### 送信完了画面
 
@@ -164,30 +168,8 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
 
 ## 現時点の範囲
 
-表側フォームから正式JSON予約APIへの送信・正式response判定まで実装済み。デモ環境でWeb予約、DB登録・自動割当席保存、通知メール受信を確認した。本番反映・本番疎通は未実施。
-
-確認画面から正式JSON requestを送信し、No.12 responseを処理するfrontend対応は実装済み。
-
-backendの正式Web予約APIは、以下の既存PHPへStep2-C3-Bとして接続済みであり、氏名2項目化後の`name` / `kana` contractも実装済みとする。
-
-```txt
-/api/reservation/send.php
-```
-
-設置ファイル：
-
-```txt
-/public/api/reservation/send.php
-```
-
-Step2-C3-B実装前の暫定メール送信先（履歴）：
-
-```txt
-ken.atnek@gmail.com
-```
-
-現在の `send.php` は、DB登録・自動席割当・transaction orchestrationへ接続済み。正式request方式は `POST` + `Content-Type: application/json` のUTF-8 JSON object、氏名fieldは`name` / `kana`で実装済み。
-
-現行frontendは正式JSON payloadへ対応済み。本番反映時はfrontend / backendを同時に反映する。本番反映前に、cms-panel側`set_db.php`の一時的な認証情報直書き（WR-C-1）が処置済みであることを確認する。
-
-availability JSON更新とjson regeneration queue、正式4宛先メールの同期送信は接続済み。デモで通知メール受信を確認したが、4宛先別の受信・メールログ内容、availability JSON更新結果・失敗時queueは未確認。rate limit・冪等性はLATER、本番反映・本番疎通は未実施とする。
+- 国籍select、初期値`JP`、日本語確認表示、249件の選択肢データはfrontend側に存在する。
+- 2026-10-07に旧FormData送信を正式No.6 JSON payloadへ置換し、`nationality`必須送信と姓名間空白必須validationの撤去を実装した。
+- backendの`/public/api/reservation/send.php`も正式No.6 / No.12 contractへ復旧し、共通予約登録処理へ接続した。国籍は`reservations.customer_nationality_code`へ保存する。
+- `php -l`、TypeScript型チェック、差分確認は完了。本番環境でのWeb予約・DB保存・通知メール受信の疎通は未確認である。
+- 本番反映・本番疎通は未実施。rate limit・冪等性はLATERとする。

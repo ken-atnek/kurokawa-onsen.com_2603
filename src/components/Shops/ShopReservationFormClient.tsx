@@ -3,6 +3,7 @@
  * URL: src/components/Shops/ShopReservationFormClient.tsx
  * Referenced in: src/app/shops/reserve/page.tsx
  * Created: 2026-09-04
+ * Last updated: 2026-10-07
  * ======================================= */
 'use client';
 
@@ -14,6 +15,7 @@ import clsx from 'clsx';
 import ShopHeader from '@/components/Shops/ShopHeader';
 import SelectBox from '@/components/common/SelectBox';
 import {
+  NATIONALITIES,
   getNationalityLabel,
   getNationalityOptionGroups,
 } from '@/data/nationalities';
@@ -51,6 +53,80 @@ type ReservationApiErrorCode =
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 const NATIONALITY_OPTION_GROUPS = getNationalityOptionGroups('ja');
+const RESERVATION_API_ERROR_CODES = new Set<ReservationApiErrorCode>([
+  'INVALID_REQUEST',
+  'VALIDATION_ERROR',
+  'RESERVATION_UNAVAILABLE',
+  'MENU_INVALID',
+  'FULL',
+  'METHOD_NOT_ALLOWED',
+  'UNSUPPORTED_MEDIA_TYPE',
+  'RATE_LIMITED',
+  'INTERNAL_ERROR',
+]);
+
+function hasExactObjectKeys(
+  value: unknown,
+  expectedKeys: string[]
+): value is Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  const actualKeys = Object.keys(value).sort();
+  const sortedExpectedKeys = [...expectedKeys].sort();
+  return (
+    actualKeys.length === sortedExpectedKeys.length &&
+    actualKeys.every((key, index) => key === sortedExpectedKeys[index])
+  );
+}
+
+function isReservationApiSuccessResponse(
+  value: unknown
+): value is { success: true; reservationId: number } {
+  return (
+    hasExactObjectKeys(value, ['success', 'reservationId']) &&
+    value.success === true &&
+    typeof value.reservationId === 'number' &&
+    Number.isSafeInteger(value.reservationId) &&
+    value.reservationId > 0
+  );
+}
+
+function isReservationApiErrorResponse(value: unknown): value is {
+  success: false;
+  errorCode: ReservationApiErrorCode;
+  message: string;
+} {
+  return (
+    hasExactObjectKeys(value, ['success', 'errorCode', 'message']) &&
+    value.success === false &&
+    typeof value.errorCode === 'string' &&
+    RESERVATION_API_ERROR_CODES.has(
+      value.errorCode as ReservationApiErrorCode
+    ) &&
+    typeof value.message === 'string' &&
+    value.message !== ''
+  );
+}
+
+function normalizeCustomerIdentityInput(value: string) {
+  if (/[\u0000-\u001f\u007f-\u009f]/.test(value)) return null;
+
+  const normalized = value
+    .replace(
+      /[\s\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+/g,
+      ' '
+    )
+    .trim();
+  const length = Array.from(normalized).length;
+
+  if (length < 1 || length > 101) {
+    return null;
+  }
+
+  return normalized;
+}
 
 export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const { shopDetail, reservationBasic, menuItems, status } =
@@ -138,6 +214,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
     if (
       !customerInput.name ||
       !customerInput.kana ||
+      !customerInput.nationality ||
       !customerInput.tel ||
       !customerInput.email ||
       !customerInput.emailConfirm
@@ -149,9 +226,15 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
     const normalizedName = normalizeCustomerIdentityInput(customerInput.name);
     const normalizedKana = normalizeCustomerIdentityInput(customerInput.kana);
     if (normalizedName === null || normalizedKana === null) {
-      setErrorMessage(
-        'お名前・ふりがなは、姓と名の間に空白を入れてください。'
-      );
+      setErrorMessage('お名前・ふりがなは1〜101文字で入力してください。');
+      return;
+    }
+
+    if (
+      !/^[A-Z]{2}$/.test(customerInput.nationality) ||
+      !NATIONALITIES.some((item) => item.value === customerInput.nationality)
+    ) {
+      setErrorMessage('国籍を選択してください。');
       return;
     }
 
@@ -189,26 +272,21 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const submitReservation = async () => {
     if (isSending) return;
 
-    const body = new FormData();
-
-    body.append('shopId', id);
-    body.append('shopName', shopDetail.name.join(''));
-    body.append('reservationDate', formatReservationDate(date));
-    body.append('guests', `${guests}名`);
-    body.append(
-      'selectedMenus',
-      selectedCourseRows.map((row) => `${row.label}：${row.value}`).join('\n')
-    );
-    body.append('customerName', customerInput.name);
-    body.append('customerKana', customerInput.kana);
-    body.append('nationalityCode', customerInput.nationality);
-    body.append(
-      'nationality',
-      getNationalityLabel(customerInput.nationality, 'ja')
-    );
-    body.append('tel', customerInput.tel);
-    body.append('email', customerInput.email);
-    body.append('request', customerInput.request);
+    const body = {
+      shop_id: id,
+      date,
+      guests,
+      menu_selections: courseByGuest.map((menuId) =>
+        seatOnly || menuId === '' ? null : menuId
+      ),
+      name: customerInput.name,
+      kana: customerInput.kana,
+      nationality: customerInput.nationality,
+      tel: customerInput.tel,
+      email: customerInput.email,
+      note: customerInput.request,
+      privacy_agreed: agreed,
+    };
 
     setIsSending(true);
     setErrorMessage('');
