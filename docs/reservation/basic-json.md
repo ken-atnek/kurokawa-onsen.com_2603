@@ -152,7 +152,9 @@ menuSelectionType === 2 → メニュー選択を必須にする
 
 表側の人数選択に使用する。
 
-月別予約JSONの `guests` も、この範囲に合わせる。
+月別空席JSONの `guests` は、`guestRange` の値に関わらず常に `1`〜`4` の4キーを出力する。
+
+表側では `guestRange` を見て、人数選択UIや表示対象の人数を絞り込む。
 
 ### `regularHolidays`
 

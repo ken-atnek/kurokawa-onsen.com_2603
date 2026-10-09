@@ -80,7 +80,7 @@ export default function ShopInfo({
       </article>
       {isFoodShop ? (
         <ExternalLink
-          href="https://www.kurokawaonsen.or.jp/"
+          href="https://kurokawaonsen.or.jp/availability/room.php?ref=kyokai"
           className={styles.linkStayPlan}
         >
           <Image
