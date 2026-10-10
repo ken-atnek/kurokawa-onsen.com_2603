@@ -27,7 +27,7 @@ export default function ShopCard({ shop }: Props) {
     >
       <Link href={`/shops/detail?id=${shop.id}`}>
         <Image
-          src={shop.thumb}
+          src={shop.thumb || '/images/common/no-image.webp'}
           alt={shop.name.join(' ')}
           width={330}
           height={223}

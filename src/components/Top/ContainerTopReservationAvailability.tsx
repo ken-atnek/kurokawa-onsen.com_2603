@@ -203,7 +203,7 @@ export default function ContainerTopReservationAvailability() {
                 <span>{shop.name.join('')}</span>
                 <Link href={`/shops/detail?id=${shop.id}`}>
                   <Image
-                    src={shop.thumb}
+                    src={shop.thumb || '/images/common/no-image.webp'}
                     alt={shop.name.join(' ')}
                     width={180}
                     height={70}
