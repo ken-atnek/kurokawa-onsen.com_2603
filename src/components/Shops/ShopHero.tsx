@@ -17,9 +17,13 @@ type Props = {
   alt: string;
 };
 
+const NO_IMAGE_SRC = '/images/common/no-image.webp';
+
 export default function ShopHero({ src, alt }: Props) {
   const ref = useRef<HTMLElement | null>(null);
   const [offsetY, setOffsetY] = useState(0);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const imageSrc = !src || failedSrc === src ? NO_IMAGE_SRC : src;
 
   useLayoutEffect(() => {
     const el = ref.current;
@@ -69,12 +73,13 @@ export default function ShopHero({ src, alt }: Props) {
   return (
     <section ref={ref} className={styles.containerHero}>
       <Image
-        src={src}
+        src={imageSrc}
         alt={alt}
         fill
         sizes="100vw"
         className={styles.heroImage}
         style={{ transform: `translateY(${offsetY}px) scale(1.12)` }}
+        onError={() => setFailedSrc(src)}
       />
     </section>
   );
