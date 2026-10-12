@@ -98,13 +98,22 @@ src/components/Top/ContainerTopReservationAvailability.tsx
 src/styles/components/TopReservationAvailability.module.scss
 ```
 
-TOPページでは `shopsIndex.json` から `category: "food"` の店舗を取得し、各店舗の `basic.json` が存在して `reservationEnabled === true` の店舗だけ表示する。
+TOPページでは `foodShopsSort.json` の店舗ID順に `shopsIndex.json` から `category: "food"` の店舗情報を取得し、各店舗の `basic.json` が存在して `reservationEnabled === true` の店舗だけ表示する。
 
 空席ステータス、受付期間外判定、日付キー生成などは店舗詳細カレンダーと共通化する。
 
 ```txt
 src/lib/shops/reservation.ts
 ```
+
+## TOPページの店舗表示順
+
+- 「お食事処予約の空席状況」の店舗順は、`/db/shops/foodShopsSort.json`の店舗ID配列順を使用する。
+- IDは`shopsIndex.json`の`id`と同じゼロ埋め文字列で、対応する店舗データを逆引きする。該当データがなければ表示しない。
+- フロント側では`sortOrder`等の項目による追加sortを行わない。
+- `reservationEnabled === true`の既存フィルターは維持し、表示対象外店舗を除いた後も専用JSONの配列順を保持する。
+- `shopsIndex.json`の配列順は変更しないため、店舗一覧ページの順序には影響しない。
+- 並び順のために`basic.json`、`menus.json`、月別空席JSONのcontractを変更しない。
 
 ## 宿泊予約サイトへの導線
 

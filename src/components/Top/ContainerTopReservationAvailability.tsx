@@ -308,12 +308,19 @@ function StatusIcon({ status }: { status: ReservationDisplayStatus }) {
 }
 
 async function fetchReservationShops(dateKeys: string[]) {
-  const indexList = await fetchJson<ShopIndexBase[]>(
-    '/db/shops/shopsIndex.json'
-  );
-  if (!indexList) return [];
+  const [indexList, foodShopIds] = await Promise.all([
+    fetchJson<ShopIndexBase[]>('/db/shops/shopsIndex.json'),
+    fetchJson<string[]>('/db/shops/foodShopsSort.json'),
+  ]);
+  if (!Array.isArray(indexList) || !Array.isArray(foodShopIds)) return [];
 
-  const foodShops = indexList.filter((shop) => shop.category === 'food');
+  const shopsById = new Map(indexList.map((shop) => [shop.id, shop]));
+  const foodShops = foodShopIds
+    .map((id) => shopsById.get(id))
+    .filter(
+      (shop): shop is ShopIndexBase =>
+        Boolean(shop && shop.category === 'food')
+    );
   const monthKeys = Array.from(
     new Set(dateKeys.map((date) => date.slice(0, 7)))
   );
