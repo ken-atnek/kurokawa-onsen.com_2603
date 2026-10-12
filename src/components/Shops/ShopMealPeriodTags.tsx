@@ -12,17 +12,28 @@ import styles from './ShopMealPeriodTags.module.scss';
 
 type Props = {
   mealPeriods?: ShopMealPeriod[];
+  locale?: 'ja' | 'en';
 };
 
-const mealPeriodLabels: Record<ShopMealPeriod, string> = {
-  morning: 'モーニング',
-  lunch: 'ランチ',
-  dinner: 'ディナー',
+const mealPeriodLabels: Record<'ja' | 'en', Record<ShopMealPeriod, string>> = {
+  ja: {
+    morning: 'モーニング',
+    lunch: 'ランチ',
+    dinner: 'ディナー',
+  },
+  en: {
+    morning: 'Breakfast',
+    lunch: 'Lunch',
+    dinner: 'Dinner',
+  },
 };
 
 const mealPeriodOrder: ShopMealPeriod[] = ['morning', 'lunch', 'dinner'];
 
-export default function ShopMealPeriodTags({ mealPeriods = [] }: Props) {
+export default function ShopMealPeriodTags({
+  mealPeriods = [],
+  locale = 'ja',
+}: Props) {
   const visiblePeriods = mealPeriodOrder.filter((period) =>
     mealPeriods.includes(period)
   );
@@ -30,13 +41,16 @@ export default function ShopMealPeriodTags({ mealPeriods = [] }: Props) {
   if (visiblePeriods.length === 0) return null;
 
   return (
-    <ul className={styles.list} aria-label="提供時間帯">
+    <ul
+      className={styles.list}
+      aria-label={locale === 'en' ? 'Meal service times' : '提供時間帯'}
+    >
       {visiblePeriods.map((period) => (
         <li
           key={period}
           className={clsx(styles.item, styles[`item-${period}`])}
         >
-          {mealPeriodLabels[period]}
+          {mealPeriodLabels[locale][period]}
         </li>
       ))}
     </ul>

@@ -1,6 +1,6 @@
 /* =======================================
  * 黒川温泉観光協会 TOPページ
- * URL: /src/app/page.tsx
+ * URL: /src/app/(ja)/page.tsx
  * Referenced in: /
  * Created: 2026-02-09
  * Last updated: 2026-09-05
@@ -22,6 +22,15 @@ export const generateMetadata = (): Metadata => {
     description: isRealProduction
       ? '熊本県阿蘇の黒川温泉観光協会公式情報。旅館一覧、日帰り温泉、入湯手形、観光・アクセス情報など、黒川温泉の魅力をわかりやすくご紹介します。'
       : undefined,
+    ...(isRealProduction && {
+      alternates: {
+        canonical: '/',
+        languages: {
+          ja: '/',
+          en: '/en/',
+        },
+      },
+    }),
   };
 };
 export default function Home() {

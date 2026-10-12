@@ -13,10 +13,39 @@ import styles from './ShopCard.module.scss';
 import ShopMealPeriodTags from '@/components/Shops/ShopMealPeriodTags';
 type Props = {
   shop: ShopWithStatus;
+  locale?: 'ja' | 'en';
 };
 
-export default function ShopCard({ shop }: Props) {
+export default function ShopCard({ shop, locale = 'ja' }: Props) {
   const hasListInfo = shop.listInfoRows !== undefined;
+  const detailHref = locale === 'en' ? null : `/shops/detail?id=${shop.id}`;
+  const imageContent = (
+    <>
+      <Image
+        src={shop.thumb || '/images/common/no-image.webp'}
+        alt={shop.name.join(' ')}
+        width={330}
+        height={223}
+      />
+      <svg className={styles.maskBorder} viewBox="0 0 330 223">
+        <path
+          d="M165 0L0 23.008V223.883H1V23.8276L165 1.02946L329 23.8176V223.883H330V23.008L165 0Z"
+          fill="none"
+          stroke="#000"
+          strokeWidth="1"
+        />
+      </svg>
+      <div
+        data-status={shop.status.variant}
+        className={clsx(
+          styles.itemStatus,
+          styles[`status-${shop.status.variant}`]
+        )}
+      >
+        {shop.status.label}
+      </div>
+    </>
+  );
 
   return (
     <li
@@ -25,31 +54,13 @@ export default function ShopCard({ shop }: Props) {
         hasListInfo && styles['has-list-info']
       )}
     >
-      <Link href={`/shops/detail?id=${shop.id}`}>
-        <Image
-          src={shop.thumb || '/images/common/no-image.webp'}
-          alt={shop.name.join(' ')}
-          width={330}
-          height={223}
-        />
-        <svg className={styles.maskBorder} viewBox="0 0 330 223">
-          <path
-            d="M165 0L0 23.008V223.883H1V23.8276L165 1.02946L329 23.8176V223.883H330V23.008L165 0Z"
-            fill="none"
-            stroke="#000"
-            strokeWidth="1"
-          />
-        </svg>
-        <div
-          data-status={shop.status.variant}
-          className={clsx(
-            styles.itemStatus,
-            styles[`status-${shop.status.variant}`]
-          )}
-        >
-          {shop.status.label}
-        </div>
-      </Link>
+      {detailHref ? (
+        <Link href={detailHref} className={styles.linkImage}>
+          {imageContent}
+        </Link>
+      ) : (
+        <div className={styles.linkImage}>{imageContent}</div>
+      )}
       <div className={styles.innerContents}>
         <div className={styles.wrapName}>
           <div
@@ -71,14 +82,17 @@ export default function ShopCard({ shop }: Props) {
           {shop.leadCopy?.[0] && <p>{shop.leadCopy[0]}</p>}
           {shop.category === 'food' && shop.mealPeriods?.length ? (
             <div className={styles.itemMealPeriods}>
-              <ShopMealPeriodTags mealPeriods={shop.mealPeriods} />
+              <ShopMealPeriodTags
+                mealPeriods={shop.mealPeriods}
+                locale={locale}
+              />
             </div>
           ) : null}
         </div>
         {hasListInfo ? (
           <dl className={styles['list-shop-info']}>
             {shop.listInfoRows?.map((row) => (
-              <ShopInfoRow key={row.label} row={row} />
+              <ShopInfoRow key={row.label} row={row} locale={locale} />
             ))}
           </dl>
         ) : null}
@@ -90,7 +104,13 @@ export default function ShopCard({ shop }: Props) {
   );
 }
 
-function ShopInfoRow({ row }: { row: ShopHourRow }) {
+function ShopInfoRow({
+  row,
+  locale,
+}: {
+  row: ShopHourRow;
+  locale: 'ja' | 'en';
+}) {
   if ('timeRanges' in row) {
     const timeRanges = row.timeRanges.filter(
       (timeRange) => timeRange.open || timeRange.close || timeRange.note
@@ -106,7 +126,9 @@ function ShopInfoRow({ row }: { row: ShopHourRow }) {
             <span key={index}>
               {timeRange.open || timeRange.close ? (
                 <span>
-                  {timeRange.open}～{timeRange.close}
+                  {timeRange.open}
+                  {locale === 'en' ? '–' : '～'}
+                  {timeRange.close}
                 </span>
               ) : null}
               {timeRange.note ? <small>{timeRange.note}</small> : null}

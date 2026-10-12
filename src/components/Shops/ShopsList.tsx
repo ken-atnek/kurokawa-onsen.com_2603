@@ -15,24 +15,53 @@ import ShopCard from '@/components/Shops/ShopCard';
 
 type Props = {
   grouped: Record<string, ShopWithStatus[]>;
+  locale?: 'ja' | 'en';
 };
 
-const mealPeriodOptions: { value: ShopMealPeriod; label: string }[] = [
-  { value: 'morning', label: 'モーニング' },
-  { value: 'lunch', label: 'ランチ' },
-  { value: 'dinner', label: 'ディナー' },
-];
+const mealPeriodLabels: Record<'ja' | 'en', Record<ShopMealPeriod, string>> = {
+  ja: {
+    morning: 'モーニング',
+    lunch: 'ランチ',
+    dinner: 'ディナー',
+  },
+  en: {
+    morning: 'Breakfast',
+    lunch: 'Lunch',
+    dinner: 'Dinner',
+  },
+};
 
-export default function ShopsList({ grouped }: Props) {
+export default function ShopsList({ grouped, locale = 'ja' }: Props) {
   const [selectedMealPeriods, setSelectedMealPeriods] = useState<
     ShopMealPeriod[]
   >([]);
 
-  const categoryLabels: Record<string, string> = {
-    food: 'お食事処一覧',
-    souvenir: 'おみやげ処一覧',
-    other: '他業種店一覧',
+  const labels = {
+    ja: {
+      categories: {
+        food: 'お食事処一覧',
+        souvenir: 'おみやげ処一覧',
+        other: '他業種店一覧',
+      },
+      filterAria: '提供時間帯で絞り込み',
+      filterTitle: '絞り込み',
+      reset: 'リセット',
+    },
+    en: {
+      categories: {
+        food: 'Restaurants & Cafés',
+        souvenir: 'Souvenir Shops',
+        other: 'Other Shops & Services',
+      },
+      filterAria: 'Filter by meal time',
+      filterTitle: 'Filter',
+      reset: 'Reset',
+    },
   };
+  const copy = labels[locale];
+  const mealPeriodOptions = (
+    ['morning', 'lunch', 'dinner'] as ShopMealPeriod[]
+  ).map((value) => ({ value, label: mealPeriodLabels[locale][value] }));
   const handleAnchorClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     id: string
@@ -69,13 +98,13 @@ export default function ShopsList({ grouped }: Props) {
     <section className={styles.containerShops}>
       <nav>
         <a href="#food" onClick={(e) => handleAnchorClick(e, 'food')}>
-          お食事処一覧
+          {copy.categories.food}
         </a>
         <a href="#souvenir" onClick={(e) => handleAnchorClick(e, 'souvenir')}>
-          おみやげ処一覧
+          {copy.categories.souvenir}
         </a>
         <a href="#other" onClick={(e) => handleAnchorClick(e, 'other')}>
-          他業種店一覧
+          {copy.categories.other}
         </a>
       </nav>
       {Object.entries(grouped).map(([category, shops]) => {
@@ -92,7 +121,10 @@ export default function ShopsList({ grouped }: Props) {
           <article key={category} id={category}>
             <div className={styles.boxH2}>
               <i className={styles.itemLeft}></i>
-              <h2>{categoryLabels[category] ?? category}</h2>
+              <h2>
+                {copy.categories[category as keyof typeof copy.categories] ??
+                  category}
+              </h2>
               <i className={styles.itemRight}></i>
             </div>
             {/* <p className={styles.notice}>※50音順で掲載しております</p> */}
@@ -100,7 +132,7 @@ export default function ShopsList({ grouped }: Props) {
               <div
                 className={styles.boxMealFilter}
                 role="group"
-                aria-label="提供時間帯で絞り込み"
+                aria-label={copy.filterAria}
               >
                 <div className={styles.filterTitle}>
                   <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -109,7 +141,7 @@ export default function ShopsList({ grouped }: Props) {
                     <circle cx="16" cy="12" r="2" />
                     <circle cx="10" cy="18" r="2" />
                   </svg>
-                  <span>絞り込み</span>
+                  <span>{copy.filterTitle}</span>
                 </div>
                 <div className={styles.filterOptions}>
                   {mealPeriodOptions.map((option) => (
@@ -145,13 +177,13 @@ export default function ShopsList({ grouped }: Props) {
                   onClick={() => setSelectedMealPeriods([])}
                   disabled={selectedMealPeriods.length === 0}
                 >
-                  リセット
+                  {copy.reset}
                 </button>
               </div>
             ) : null}
             <ul>
               {visibleShops.map((shop) => (
-                <ShopCard key={shop.id} shop={shop} />
+                <ShopCard key={shop.id} shop={shop} locale={locale} />
               ))}
             </ul>
           </article>

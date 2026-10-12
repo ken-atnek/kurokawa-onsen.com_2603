@@ -11,10 +11,12 @@ export type ShopIndexItem = {
   slug: string;
   category: string;
   name: string[];
+  name_en?: string[];
   thumb: string;
   tel: string;
   statusFallbackKey: ShopStatusKey;
   leadCopy: string[];
+  leadCopy_en?: string[];
 };
 
 /* =======================================
@@ -31,18 +33,23 @@ export type ShopTimeRange = {
   note?: string;
 };
 
+export type ShopInfoRowKey = 'businessHours' | 'closedDays' | 'averageBudget';
+
 export type ShopHourRow =
   | {
+      key?: ShopInfoRowKey;
       label: string;
       timeRanges: ShopTimeRange[];
     }
   | {
+      key?: ShopInfoRowKey;
       label: string;
       value: string;
     };
 
 export type ShopInfo = {
   hours: ShopHourRow[];
+  hours_en?: ShopHourRow[];
   tel: string;
   fax?: string;
   web?: string;
@@ -103,13 +110,12 @@ export type ShopReservationBasic = {
   updatedAt?: string;
 };
 
-export type ShopReservationStatus =
-  | 'open'
-  | 'limited'
-  | 'full'
-  | 'holiday';
+export type ShopReservationStatus = 'open' | 'limited' | 'full' | 'holiday';
 
-export type ShopReservationGuestStatuses = Record<string, ShopReservationStatus>;
+export type ShopReservationGuestStatuses = Record<
+  string,
+  ShopReservationStatus
+>;
 
 export type ShopReservationDay = {
   date: string;

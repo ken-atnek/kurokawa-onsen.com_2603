@@ -1,36 +1,31 @@
 /* =======================================
- * 黒川温泉観光協会 Layout
- * URL:src/app/layout.tsx
- * Created: 2026-02-09
- * Last updated: 2026-02-09
+ * Kurokawa Onsen Tourism Association English Layout
+ * URL: src/app/(en)/en/layout.tsx
+ * Created: 2026-10-12
  * ======================================= */
 
 import type { Metadata } from 'next';
 import '@/styles/globals.scss';
-import { Noto_Sans_JP, Roboto, Marcellus } from 'next/font/google';
+import { Roboto, Marcellus } from 'next/font/google';
 import SvgDefs from '@/components/SvgDefs';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { isRealProduction } from '@/lib/env';
 
-const notoSans = Noto_Sans_JP({
-  subsets: ['latin'],
-  weight: ['100', '300', '400', '500', '700', '900'],
-  display: 'swap',
-});
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['100', '300', '400', '500', '700', '900'],
   display: 'swap',
   variable: '--font-roboto',
 });
+
 const marcellus = Marcellus({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-marcellus',
   display: 'swap',
 });
-// 本番のみ metadataBase を設定
+
 const metadataBase = isRealProduction
   ? new URL(
       process.env.NEXT_PUBLIC_METADATA_BASE || 'https://kurokawa-onsen.com/'
@@ -41,14 +36,14 @@ export const metadata: Metadata = {
   ...(isRealProduction && {
     metadataBase,
     openGraph: {
-      url: metadataBase?.toString(),
+      url: new URL('/en/', metadataBase).toString(),
       type: 'website',
       images: [
         {
           url: '/ogp.jpg',
           width: 1200,
           height: 630,
-          alt: '黒川温泉観光協会のOGP画像',
+          alt: 'Kurokawa Onsen Tourism Association',
         },
       ],
     },
@@ -72,31 +67,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function EnglishRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html
-      lang="ja"
-      className={`${notoSans.className} ${roboto.variable} ${marcellus.variable}`}
+      lang="en"
+      className={`${roboto.className} ${roboto.variable} ${marcellus.variable}`}
     >
       <head>
         <meta
           name="format-detection"
           content="telephone=no, address=no, email=no"
         />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <SvgDefs />
-        <Header />
+        <Header locale="en" />
         <main>{children}</main>
-        <Footer />
+        <Footer locale="en" />
       </body>
     </html>
   );

@@ -354,6 +354,28 @@
         }
     }
 }
+.containerTopAbout.is-english {
+    .boxHead {
+        h2 {
+            max-width: 38rem;
+            line-height: 1.35em;
+        }
+        p {
+            max-width: 38em;
+            line-height: 2em;
+        }
+    }
+    article {
+        h3 {
+            text-orientation: mixed;
+        }
+        .boxContents {
+            p {
+                max-width: 42em;
+            }
+        }
+    }
+}
 
 /* =================================
  * お知らせ
