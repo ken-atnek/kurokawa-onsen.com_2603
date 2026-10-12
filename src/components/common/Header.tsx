@@ -11,7 +11,13 @@ import { useEffect, useState, useRef } from 'react';
 import ExternalLink from '@/components/common/ExternalLink';
 import ScrollLink from '@/components/common/ScrollLink';
 import clsx from 'clsx';
-const Header = () => {
+
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+const Header = ({ locale = 'ja' }: Props) => {
+  const isEnglish = locale === 'en';
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -19,7 +25,7 @@ const Header = () => {
   const closeMenu = () => setIsOpen(false);
 
   const pathname = usePathname();
-  const isTop = pathname === '/';
+  const isTop = pathname === (isEnglish ? '/en' : '/');
 
   // トップだけスクロールで可視化するので、scrollY だけ state で持つ
   const [scrollY, setScrollY] = useState(0);
@@ -79,48 +85,84 @@ const Header = () => {
             ref={navRef}
           >
             <nav className={styles.mainMenu}>
-              <ScrollLink href="/" className={styles.linkTop}>
-                トップページ<span>top</span>
+              <ScrollLink
+                href={isEnglish ? '/en/' : '/'}
+                className={styles.linkTop}
+              >
+                {isEnglish ? 'Home' : 'トップページ'}
+                <span>top</span>
               </ScrollLink>
-              <ScrollLink href="/about/">
-                黒川温泉とは<span>about us</span>
-              </ScrollLink>
-              <ScrollLink href="/shops/">
-                加盟店一覧<span>Member Shops</span>
-              </ScrollLink>
-              <ScrollLink href="/schedule/">
-                年間スケジュール<span>SEASONAL EVENTS</span>
-              </ScrollLink>
-              <ScrollLink href="/access/">
-                交通アクセス<span>Access</span>
-              </ScrollLink>
+              {isEnglish ? (
+                <ScrollLink href="/en/shops/">
+                  Shops & Restaurants<span>Member Shops</span>
+                </ScrollLink>
+              ) : (
+                <>
+                  <ScrollLink href="/about/">
+                    黒川温泉とは<span>about us</span>
+                  </ScrollLink>
+                  <ScrollLink href="/shops/">
+                    加盟店一覧<span>Member Shops</span>
+                  </ScrollLink>
+                  <ScrollLink href="/schedule/">
+                    年間スケジュール<span>SEASONAL EVENTS</span>
+                  </ScrollLink>
+                  <ScrollLink href="/access/">
+                    交通アクセス<span>Access</span>
+                  </ScrollLink>
+                </>
+              )}
               <ExternalLink
-                href="https://www.kurokawaonsen.or.jp/oyado/"
+                href={
+                  isEnglish
+                    ? 'https://www.kurokawaonsen.or.jp/en/oyado/'
+                    : 'https://www.kurokawaonsen.or.jp/oyado/'
+                }
                 className={styles.pcLink}
               >
-                黒川温泉のお宿一覧
+                {isEnglish ? 'Accommodation' : '黒川温泉のお宿一覧'}
               </ExternalLink>
               <ExternalLink
-                href="https://www.kurokawaonsen.or.jp/availability/"
+                href={
+                  isEnglish
+                    ? 'https://www.kurokawaonsen.or.jp/en/availability/'
+                    : 'https://www.kurokawaonsen.or.jp/availability/'
+                }
                 className={styles.pcLink}
               >
-                宿泊予約の空室状況
+                {isEnglish ? 'Room Availability' : '宿泊予約の空室状況'}
               </ExternalLink>
+              <ScrollLink href={isEnglish ? '/' : '/en/'}>
+                {isEnglish ? '日本語' : 'English'}
+                <span>{isEnglish ? 'Japanese' : 'Language'}</span>
+              </ScrollLink>
             </nav>
             <div className={styles.boxMobileBan}>
               <ExternalLink
-                href="https://www.kurokawaonsen.or.jp/oyado/"
+                href={
+                  isEnglish
+                    ? 'https://www.kurokawaonsen.or.jp/en/oyado/'
+                    : 'https://www.kurokawaonsen.or.jp/oyado/'
+                }
                 className={styles.itemList}
                 onClick={closeMenu}
               >
-                <span>黒川温泉のお宿一覧</span>
+                <span>
+                  {isEnglish ? 'Accommodation' : '黒川温泉のお宿一覧'}
+                </span>
               </ExternalLink>
               <ExternalLink
-                href="https://www.kurokawaonsen.or.jp/availability/"
+                href={
+                  isEnglish
+                    ? 'https://www.kurokawaonsen.or.jp/en/availability/'
+                    : 'https://www.kurokawaonsen.or.jp/availability/'
+                }
                 className={styles.itemReserve}
                 onClick={closeMenu}
               >
-                <span>宿泊予約の空室状況</span>
+                <span>
+                  {isEnglish ? 'Room Availability' : '宿泊予約の空室状況'}
+                </span>
               </ExternalLink>
             </div>
             <ExternalLink
@@ -129,14 +171,18 @@ const Header = () => {
               onClick={closeMenu}
             >
               <i></i>
-              <span>駐車場ライブカメラ</span>
+              <span>
+                {isEnglish ? 'Parking Live Camera' : '駐車場ライブカメラ'}
+              </span>
             </ExternalLink>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-            <nav className={styles.subMenu} onClick={closeMenu}>
-              <ScrollLink href="/terms/">ご利用規約</ScrollLink>
-              <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
-              <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>
-            </nav>
+            {!isEnglish ? (
+              <nav className={styles.subMenu} onClick={closeMenu}>
+                <ScrollLink href="/terms/">ご利用規約</ScrollLink>
+                <ScrollLink href="/law/">特定商法取引法に基づく表記</ScrollLink>
+                <ScrollLink href="/privacy/">プライバシーポリシー</ScrollLink>
+              </nav>
+            ) : null}
             {/* <ExternalLink
               className={styles.linkContact}
               href="mailto:info@kurokawa-onsen.com"
@@ -146,9 +192,13 @@ const Header = () => {
             </ExternalLink> */}
           </div>
           <h1 className={isVisible ? styles.isVisible : styles.isHidden}>
-            <ScrollLink href="/">
+            <ScrollLink href={isEnglish ? '/en/' : '/'}>
               <svg role="img" aria-labelledby="heroLogoTitle">
-                <title id="heroLogoTitle">黒川温泉観光協会</title>
+                <title id="heroLogoTitle">
+                  {isEnglish
+                    ? 'Kurokawa Onsen Tourism Association'
+                    : '黒川温泉観光協会'}
+                </title>
                 <use href="#svg_logo" />
               </svg>
             </ScrollLink>
@@ -157,9 +207,9 @@ const Header = () => {
             <ExternalLink href="https://www.youmore-minamioguni.com/livecamera/">
               <i></i>
               <span>
-                駐車場
+                {isEnglish ? 'Parking' : '駐車場'}
                 <br />
-                ライブカメラ
+                {isEnglish ? 'Live Camera' : 'ライブカメラ'}
               </span>
             </ExternalLink>
           </div>
@@ -173,7 +223,7 @@ const Header = () => {
         }`}
         onClick={toggleMenu}
         aria-expanded={isOpen}
-        aria-label="メニューを開閉"
+        aria-label={isEnglish ? 'Toggle menu' : 'メニューを開閉'}
       >
         <span></span>
         <span></span>

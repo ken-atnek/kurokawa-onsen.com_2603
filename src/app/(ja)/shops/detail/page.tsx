@@ -1,6 +1,6 @@
 /* =======================================
  * 黒川温泉観光協会 店舗詳細ページ（クエリID方式）
- * URL: src/app/shops/detail/page.tsx
+ * URL: src/app/(ja)/shops/detail/page.tsx
  * Created: 2026-02-19
  * Last updated: 2026-02-19
  * ======================================= */

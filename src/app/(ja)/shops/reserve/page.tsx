@@ -1,6 +1,6 @@
 /* =======================================
  * 黒川温泉観光協会 飲食店予約フォーム
- * URL: src/app/shops/reserve/page.tsx
+ * URL: src/app/(ja)/shops/reserve/page.tsx
  * Created: 2026-09-04
  * ======================================= */
 'use client';

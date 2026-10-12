@@ -20,7 +20,12 @@ type WeatherResponse = {
 const WEATHER_API_URL =
   'https://api.open-meteo.com/v1/jma?latitude=33.0778&longitude=131.1438&current=temperature_2m&timezone=Asia%2FTokyo';
 
-export default function ContainerTopHero() {
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+export default function ContainerTopHero({ locale = 'ja' }: Props) {
+  const isEnglish = locale === 'en';
   const [temperature, setTemperature] = useState<string>('--');
 
   useEffect(() => {
@@ -51,17 +56,28 @@ export default function ContainerTopHero() {
       <div className={styles.boxImage}>
         <picture>
           <source src="/images/top/hero01.webp" />
-          <img src="/images/top/hero01.webp" alt="黒川温泉の湯あかり画像" />
+          <img
+            src="/images/top/hero01.webp"
+            alt={
+              isEnglish
+                ? 'Yu-akari illumination in Kurokawa Onsen'
+                : '黒川温泉の湯あかり画像'
+            }
+          />
         </picture>
       </div>
       <div className={styles.itemLogo}>
         <svg role="img" aria-labelledby="heroLogoTitle">
-          <title id="heroLogoTitle">黒川温泉観光協会</title>
+          <title id="heroLogoTitle">
+            {isEnglish
+              ? 'Kurokawa Onsen Tourism Association'
+              : '黒川温泉観光協会'}
+          </title>
           <use href="#svg_logo" />
         </svg>
       </div>
       <div className={styles.boxWeather}>
-        <p>今日の黒川</p>
+        <p>{isEnglish ? 'Kurokawa Today' : '今日の黒川'}</p>
         <span>{temperature}</span>
       </div>
     </section>

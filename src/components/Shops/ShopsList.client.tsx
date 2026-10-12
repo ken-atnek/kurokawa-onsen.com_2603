@@ -13,10 +13,41 @@ import ShopsList from '@/components/Shops/ShopsList';
 import { getShopStatusView } from '@/lib/status';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 
-import type { ShopDetail, ShopIndexItem, ShopWithStatus } from '@/types/shop';
+import type {
+  ShopDetail,
+  ShopHourRow,
+  ShopIndexItem,
+  ShopWithStatus,
+} from '@/types/shop';
 import type { ShopStatusView } from '@/lib/status';
 
 const listInfoLabels = ['営業時間', '店休日', '平均予算'];
+const englishStatusLabels: Record<ShopStatusView['key'], string> = {
+  open: 'Open now',
+  closed: 'Closed',
+  other: 'Check status',
+};
+
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+const hasJapaneseText = (lines: string[]) =>
+  lines.some((line) => /[ぁ-んァ-ヶ一-龯]/.test(line));
+
+const getEnglishHoursRows = (hoursRow?: ShopHourRow): ShopHourRow[] => {
+  if (!hoursRow || !('timeRanges' in hoursRow)) return [];
+
+  return [
+    {
+      label: 'Opening Hours',
+      timeRanges: hoursRow.timeRanges.map(({ open, close }) => ({
+        open,
+        close,
+      })),
+    },
+  ];
+};
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, { cache: 'no-store' });
@@ -24,19 +55,20 @@ async function fetchJson<T>(url: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-export default function ShopsListClient() {
+export default function ShopsListClient({ locale = 'ja' }: Props) {
+  const isEnglish = locale === 'en';
   const [grouped, setGrouped] = useState<Record<
     string,
     ShopWithStatus[]
   > | null>(null);
 
-  const defaultStatus: ShopStatusView = {
-    key: 'other',
-    label: '確認中',
-    variant: 'other',
-  };
   useEffect(() => {
     let cancelled = false;
+    const defaultStatus: ShopStatusView = {
+      key: 'other',
+      label: isEnglish ? englishStatusLabels.other : '確認中',
+      variant: 'other',
+    };
 
     const load = async () => {
       try {
@@ -60,23 +92,46 @@ export default function ShopsListClient() {
                 closedWeekdays: detail.info.closedWeekdays,
                 timeRanges,
               });
+              const englishLeadCopy = shop.leadCopy_en ?? [];
 
               return {
                 ...shop,
-                status,
+                name: isEnglish
+                  ? shop.name_en?.length
+                    ? shop.name_en
+                    : shop.name
+                  : shop.name,
+                leadCopy: isEnglish
+                  ? hasJapaneseText(englishLeadCopy)
+                    ? []
+                    : englishLeadCopy
+                  : shop.leadCopy,
+                status: isEnglish
+                  ? { ...status, label: englishStatusLabels[status.key] }
+                  : status,
                 mealPeriods: detail.mealPeriods ?? [],
-                listInfoRows: listInfoLabels.flatMap((label) => {
-                  const row = detail.info.hours.find(
-                    (infoRow) => infoRow.label === label
-                  );
+                listInfoRows: isEnglish
+                  ? detail.info.hours_en?.length
+                    ? detail.info.hours_en
+                    : getEnglishHoursRows(hoursRow)
+                  : listInfoLabels.flatMap((label) => {
+                      const row = detail.info.hours.find(
+                        (infoRow) => infoRow.label === label
+                      );
 
-                  return row ? [row] : [];
-                }),
+                      return row ? [row] : [];
+                    }),
               } as ShopWithStatus;
             } catch {
               // details無い場合も落とさない（従来の挙動維持）
               return {
                 ...shop,
+                name: isEnglish
+                  ? shop.name_en?.length
+                    ? shop.name_en
+                    : shop.name
+                  : shop.name,
+                leadCopy: isEnglish ? [] : shop.leadCopy,
                 status: defaultStatus,
                 mealPeriods: [],
                 listInfoRows: [],
@@ -126,9 +181,10 @@ export default function ShopsListClient() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isEnglish]);
 
-  if (grouped === null) return <p>読み込み中...</p>;
+  if (grouped === null)
+    return <p>{isEnglish ? 'Loading...' : '読み込み中...'}</p>;
 
-  return <ShopsList grouped={grouped} />;
+  return <ShopsList grouped={grouped} locale={locale} />;
 }

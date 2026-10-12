@@ -16,8 +16,9 @@
             grid-row: span 4;
         }
     }
-    a {
+    .linkImage {
         position: relative;
+        display: block;
         font-size: inherit;
         img {
             width: 100%;

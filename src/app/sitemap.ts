@@ -9,6 +9,8 @@ const siteUrl = new URL(
 
 const routes = [
   '/',
+  '/en/',
+  '/en/shops/',
   '/about/',
   '/shops/',
   '/shops/products/',
@@ -27,7 +29,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((route) => ({
     url: new URL(route, siteUrl).toString(),
     lastModified: new Date(),
-    changeFrequency: route === '/' ? 'weekly' : 'monthly',
-    priority: route === '/' ? 1 : 0.7,
+    changeFrequency: route === '/' || route === '/en/' ? 'weekly' : 'monthly',
+    priority: route === '/' || route === '/en/' ? 1 : 0.7,
+    ...((route === '/' || route === '/en/') && {
+      alternates: {
+        languages: {
+          ja: new URL('/', siteUrl).toString(),
+          en: new URL('/en/', siteUrl).toString(),
+        },
+      },
+    }),
+    ...((route === '/shops/' || route === '/en/shops/') && {
+      alternates: {
+        languages: {
+          ja: new URL('/shops/', siteUrl).toString(),
+          en: new URL('/en/shops/', siteUrl).toString(),
+        },
+      },
+    }),
   }));
 }
