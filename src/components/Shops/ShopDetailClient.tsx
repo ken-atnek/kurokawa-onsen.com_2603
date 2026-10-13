@@ -19,27 +19,42 @@ import { useShopDetailData } from '@/hooks/shops/useShopDetailData';
 
 type Props = {
   id: string;
+  locale?: 'ja' | 'en';
 };
 
-export default function ShopDetailClient({ id }: Props) {
+export default function ShopDetailClient({ id, locale = 'ja' }: Props) {
   const { detail, onlineItems, menuItems, reservationBasic } =
     useShopDetailData(id);
 
   if (!detail) return null;
 
-  const hoursRow = getHoursRow(detail.info.hours);
+  const isEnglish = locale === 'en';
+  const name = isEnglish ? (detail.name_en ?? []) : detail.name;
+  const leadCopy = isEnglish ? (detail.leadCopy_en ?? []) : detail.leadCopy;
+  const pickupItems = isEnglish
+    ? (detail.pickupItems_en ?? [])
+    : detail.pickupItems;
+  const recommendedProducts = isEnglish
+    ? (detail.recommendedProducts_en ?? [])
+    : detail.recommendedProducts;
+  const hours = isEnglish ? (detail.info.hours_en ?? []) : detail.info.hours;
+
+  const hoursRow = getHoursRow(hours);
   const timeRanges = hoursRow?.timeRanges ?? [];
   const onlineProductsCount = detail.onlineProductsCount ?? 0;
-  const hasOnlineProducts = onlineProductsCount > 0;
-  const hasRecommendedProducts = detail.recommendedProducts.length > 0;
-  const hasRecommendedMenus = menuItems.some((item) => item.enabled);
-  const hasReservation = reservationBasic?.reservationEnabled === true;
+  const hasOnlineProducts = !isEnglish && onlineProductsCount > 0;
+  const hasRecommendedProducts = recommendedProducts.length > 0;
+  const hasRecommendedMenus =
+    !isEnglish && menuItems.some((item) => item.enabled);
+  const hasReservation =
+    !isEnglish && reservationBasic?.reservationEnabled === true;
 
   return (
     <>
       <ShopHeader
-        name={detail.name}
-        leadCopy={detail.leadCopy}
+        locale={locale}
+        name={name}
+        leadCopy={leadCopy}
         tel={detail.info.tel}
         web={detail.info.web}
         mail={detail.info.mail}
@@ -53,9 +68,10 @@ export default function ShopDetailClient({ id }: Props) {
         mealPeriods={detail.mealPeriods}
       />
 
-      <ShopHero src={detail.heroImage} alt={detail.name.join(' ')} />
-      <ShopPickup items={detail.pickupItems} />
+      <ShopHero src={detail.heroImage} alt={name.join(' ')} />
+      <ShopPickup items={pickupItems} />
       <ShopInfo
+        locale={locale}
         shopId={id}
         info={detail.info}
         category={detail.category}
@@ -63,14 +79,17 @@ export default function ShopDetailClient({ id }: Props) {
         reservationBasic={reservationBasic}
       />
 
-      <ShopRecommendedMenus
-        items={menuItems}
-        isLastSection={!hasRecommendedProducts && !hasOnlineProducts}
-      />
+      {!isEnglish ? (
+        <ShopRecommendedMenus
+          items={menuItems}
+          isLastSection={!hasRecommendedProducts && !hasOnlineProducts}
+        />
+      ) : null}
 
       <ShopRecommendedProducts
-        items={detail.recommendedProducts}
+        items={recommendedProducts}
         isLastSection={!hasRecommendedMenus && !hasOnlineProducts}
+        locale={locale}
       />
 
       {hasOnlineProducts ? (
@@ -80,7 +99,7 @@ export default function ShopDetailClient({ id }: Props) {
           onlineProductsCount={onlineProductsCount}
         />
       ) : null}
-      <ShopLinkList />
+      <ShopLinkList locale={locale} />
     </>
   );
 }

@@ -18,7 +18,11 @@ type Props = {
 
 export default function ShopCard({ shop, locale = 'ja' }: Props) {
   const hasListInfo = shop.listInfoRows !== undefined;
-  const detailHref = locale === 'en' ? null : `/shops/detail?id=${shop.id}`;
+  const detailHref =
+    locale === 'en'
+      ? `/en/shops/detail?id=${shop.id}`
+      : `/shops/detail?id=${shop.id}`;
+  const hasEnglishCardLink = locale === 'en';
   const imageContent = (
     <>
       <Image
@@ -54,7 +58,7 @@ export default function ShopCard({ shop, locale = 'ja' }: Props) {
         hasListInfo && styles['has-list-info']
       )}
     >
-      {detailHref ? (
+      {detailHref && !hasEnglishCardLink ? (
         <Link href={detailHref} className={styles.linkImage}>
           {imageContent}
         </Link>
@@ -78,7 +82,12 @@ export default function ShopCard({ shop, locale = 'ja' }: Props) {
             ))}
           </h3>
         </div>
-        <div className={styles.boxDetails}>
+        <div
+          className={clsx(
+            styles.boxDetails,
+            locale === 'en' && styles['is-english']
+          )}
+        >
           {shop.leadCopy?.[0] && <p>{shop.leadCopy[0]}</p>}
           {shop.category === 'food' && shop.mealPeriods?.length ? (
             <div className={styles.itemMealPeriods}>
@@ -100,6 +109,13 @@ export default function ShopCard({ shop, locale = 'ja' }: Props) {
           {shop.tel && <span>{shop.tel}</span>}
         </div>
       </div>
+      {hasEnglishCardLink && detailHref ? (
+        <Link
+          href={detailHref}
+          className={styles.linkCard}
+          aria-label={`View details for ${shop.name.join(' ')}`}
+        />
+      ) : null}
     </li>
   );
 }

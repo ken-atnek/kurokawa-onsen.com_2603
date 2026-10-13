@@ -14,11 +14,13 @@ import clsx from 'clsx';
 type Props = {
   items: ShopRecommendedProduct[];
   isLastSection?: boolean;
+  locale?: 'ja' | 'en';
 };
 
 export default function ShopRecommendedProducts({
   items,
   isLastSection,
+  locale = 'ja',
 }: Props) {
   if (!items || items.length === 0) return null;
 
@@ -32,7 +34,7 @@ export default function ShopRecommendedProducts({
       <article>
         <div className={styles.boxH2}>
           <i className={styles.itemLeft}></i>
-          <h2>おすすめ商品</h2>
+          <h2>{locale === 'en' ? 'Recommended Dishes' : 'おすすめ商品'}</h2>
           <i className={styles.itemRight}></i>
         </div>
         <ul className={styles.listRecommended}>
@@ -50,7 +52,9 @@ export default function ShopRecommendedProducts({
               {item.price && (
                 <div className={styles.itemPrice}>
                   {item.price}
-                  <span>（税込）</span>
+                  <span>
+                    {locale === 'en' ? ' (tax included)' : '（税込）'}
+                  </span>
                 </div>
               )}
 

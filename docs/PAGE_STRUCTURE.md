@@ -12,6 +12,7 @@ Next export と `public/db` のクライアント取得を前提に、ページ�
 | トップページ         | `/`                                                  | 主要導線と加盟店ピックアップ                           |
 | 英語トップページ     | `/en/`                                               | 英語サイトの初期導線。英語下層ページは段階的に追加する |
 | 英語加盟店一覧       | `/en/shops/`                                         | 英語の店舗名・紹介文を使うDB連動の一覧導線             |
+| 英語加盟店詳細       | `/en/shops/detail?id=<id>`                           | 英語項目が揃った店舗のみ一覧から誘導する               |
 | 黒川温泉について     | `/about/`                                            | 温泉地・協会の紹介                                     |
 | 加盟店一覧           | `/shops/`                                            | DB連動の一覧導線                                       |
 | 加盟店詳細           | `/shops/detail?id=<id>`                              | ID増減に強い正規導線                                   |
@@ -71,11 +72,19 @@ Next export と `public/db` のクライアント取得を前提に、ページ�
 - データ: 日本語版と共通の`public/db/shops/shopsIndex.json`、`public/db/shops/details/<id>.json`
 - 一覧JSONの`name_en`、`leadCopy_en`を表示する
 - `leadCopy_en`が未翻訳または日本語のままの場合は、紹介文を表示しない
-- 詳細JSONに`hours_en`がある場合は、英語の営業時間・店休日・平均予算を表示する
-- `hours_en`がない場合は、日本語を混在させず営業時間の時刻だけを表示する
+- 英語版の営業時間・店休日・平均予算は、詳細JSONの`hours_en`だけを参照する
+- `hours_en`がない場合は、日本語の`hours`へフォールバックせず項目を表示しない
 - `hours`と`hours_en`の各行は、`businessHours`、`closedDays`、`averageBudget`の`key`で項目を識別する
-- 英語詳細を追加するまではカードリンクを無効にし、404への遷移を防ぐ
-- 英語詳細追加後の導線: `/en/shops/detail?id=<id>`
+- `name_en`、`leadCopy_en`、`hours_en`が揃った店舗だけ詳細リンクを有効にする
+- 英語詳細導線: `/en/shops/detail?id=<id>`
+
+### `/en/shops/detail?id=<id>`
+
+- 目的: 英語の加盟店詳細情報を表示する
+- データ: `public/db/shops/details/<id>.json`
+- 英語項目は`name_en`、`leadCopy_en`、`pickupItems_en`、`hours_en`、`address_en`、`mapUrl_en`、`recommendedProducts_en`を使用する
+- 英語項目がないセクションでは日本語へフォールバックしない
+- `id`がない場合は描画しない
 
 ### `/shops/detail?id=<id>`
 
