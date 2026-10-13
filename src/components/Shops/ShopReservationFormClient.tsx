@@ -194,7 +194,8 @@ export default function ShopReservationFormClient({
   const canShowMenuSelection =
     reservationBasic?.menuSelectionType !== 0 && menuItems.length > 0;
   const isMenuSelectionRequired = reservationBasic?.menuSelectionType === 2;
-  const canReserve = status === 'open' || status === 'limited';
+  const canReserve =
+    reservationBasic !== null && (status === 'open' || status === 'limited');
   const selectedCourseRows = courseByGuest.map((value, index) => {
     const menuName =
       menuItems.find((item) => item.id === value)?.name ??
@@ -330,12 +331,14 @@ export default function ShopReservationFormClient({
   const submitReservation = async () => {
     if (isSending) return;
 
+    const childrenNote = customerInput.childrenNote.trim();
+    const requestNote = customerInput.request.trim();
     const note = [
-      customerInput.childrenNote.trim()
-        ? `${isEnglish ? '[Children of Elementary School Age or Younger]' : '[小学生以下のお子様]'}\n${customerInput.childrenNote.trim()}`
+      childrenNote
+        ? `${isEnglish ? '[Children of Elementary School Age or Younger]' : '[小学生以下のお子様]'}\n${childrenNote}`
         : '',
-      customerInput.request.trim()
-        ? `${isEnglish ? '[Requests / Allergies]' : '[ご要望・アレルギー等]'}\n${customerInput.request.trim()}`
+      requestNote
+        ? `${isEnglish ? '[Requests / Allergies]' : '[ご要望・アレルギー等]'}\n${requestNote}`
         : '',
     ]
       .filter(Boolean)
@@ -343,6 +346,7 @@ export default function ShopReservationFormClient({
 
     const body = {
       shop_id: id,
+      site_language: locale,
       date,
       guests,
       menu_selections: courseByGuest.map((menuId) =>
@@ -353,6 +357,8 @@ export default function ShopReservationFormClient({
       nationality: customerInput.nationality,
       tel: customerInput.tel,
       email: customerInput.email,
+      children_note: childrenNote || null,
+      request_note: requestNote || null,
       note,
       privacy_agreed: agreed,
     };

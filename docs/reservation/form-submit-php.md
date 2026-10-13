@@ -58,11 +58,14 @@ request
 
 No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載はfrontend連携用の同期要約であり、差分がある場合は確定仕様書を優先する。
 
-No.6 Web予約API正式payload contractは2026-10-07に国籍と姓名間空白不要を含めて改定した。`POST` + `Content-Type: application/json` のUTF-8 JSON objectを使用する。
+No.6 Web予約API正式payload contractは2026-10-07に国籍と姓名間空白不要を含めて改定し、2026-10-13に英語Web予約用の `site_language` を追補した。`POST` + `Content-Type: application/json` のUTF-8 JSON objectを使用する。
+
+以下は子供情報・ご要望の分離保存を含む現行APIのpayload例。
 
 ```json
 {
   "shop_id": "029",
+  "site_language": "ja",
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
@@ -71,12 +74,14 @@ No.6 Web予約API正式payload contractは2026-10-07に国籍と姓名間空白�
   "nationality": "JP",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
-  "note": "アレルギーはありません",
+  "children_note": "3歳の子供が1名います",
+  "request_note": "卵アレルギーがあります",
+  "note": "[小学生以下のお子様]\n3歳の子供が1名います\n\n[ご要望・アレルギー等]\n卵アレルギーがあります",
   "privacy_agreed": true
 }
 ```
 
-- 許可キーは `shop_id` / `date` / `guests` / `menu_selections` / `name` / `kana` / `nationality` / `tel` / `email` / `note` / `privacy_agreed` のみ。旧氏名4field、旧FormDataの`nationalityCode`、国名文字列用fieldは受け付けない。
+- 許可キーは `shop_id` / `site_language` / `date` / `guests` / `menu_selections` / `name` / `kana` / `nationality` / `tel` / `email` / `children_note` / `request_note` / `note` / `privacy_agreed` のみ。`site_language` は `ja` / `en` の文字列。旧日本語送信との互換のため省略時だけ `ja` とし、`null` や他の値は拒否する。旧氏名4field、旧FormDataの`nationalityCode`、国名文字列用fieldは受け付けない。
 - 未知フィールドは400でrejectする。
 - `reservation_id` / `reservation_route` / `status` / `cancelled_at` / `seat_id` / `assigned_seat_ids` / `relocations` / `shop_memo` / `accommodation_name` / `created_at` / `updated_at` はサーバー制御フィールドとして受け付けない。
 - Web routeではサーバー側で `reservation_route=1`、`status=1`、`cancelled_at=NULL` を固定する。
@@ -84,7 +89,9 @@ No.6 Web予約API正式payload contractは2026-10-07に国籍と姓名間空白�
 - `menu_selections` は `guests` と同じ長さの配列とし、要素は `menu-\d{3,}` 形式または `null`。
 - `name` / `kana`は必須。cms-panel側DDL仕様書「氏名・ふりがなの保存仕様」を正とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから1文字以上101文字以下を判定する。姓名間の空白は必須とせず、空白なし・複数要素を許可する。server-sideでは共通関数`normalizeReservationCustomerIdentityValue()`を使用する。
 - `nationality`は必須string。英大文字2文字かつcms-panel側国籍マスタに存在するコードだけを許可し、`reservations.customer_nationality_code`へ保存する。小文字、空文字、未知コードは補正せずrejectする。
-- `note` は任意・nullable。未送信、`null`、空文字、Unicode空白のみは `customer_note = null` として扱う。
+- `children_note` / `request_note` / `note` の3キーは必須。独立した入力2項目の値はstringまたは`null`、空欄・Unicode空白のみはDBで`NULL`とする。両専用keyの省略・片方だけの送信・他型は保存前に拒否する。保存先はそれぞれ`reservations.customer_children_note` / `reservations.customer_request_note`。
+- `note`は必須string。検証済みの専用2値と`site_language`からbackend共通生成処理で作る見出し付き結合値との完全一致を検証し、検証済み値を従来の`customer_note`へ保存する。両専用値が空の場合は`note`を空文字で送り、DBの3カラムは`NULL`とする。各TEXT値・結合後の値は65,535 bytes以内。`note`単独送信は初版公開前のため受け付けない。見出しと結合順はcms-panel側確定仕様書12.1.1を正とする。日英Webフォームの登録・管理画面readはローカル確認済み。英語予約#14では独立2欄の単独編集・再読込後の相互保持も確認済み。
+- 2026-10-13の変更前の確認履歴：ローカルWeb APIへ直接POSTし、`request_note`欠落・`children_note`配列を`INVALID_REQUEST`、`note`不一致・`children_note`の65,536 bytesを`VALIDATION_ERROR`（すべてHTTP 400）で保存前に拒否。旧形式の`note`だけを送った#16は当時のAPIで登録でき、管理画面で明示編集時の切替を確認した。#16は確定のまま残す。変更後は3キーを含む正常系JSONをローカルPHP APIへ直接POSTし、HTTP 200・予約ID 17、管理画面詳細で独立2欄の保存表示を確認。#17は利用者の指定で確定のまま残す。変更後の`note`単独送信拒否、結合`customer_note`のDB直接照合と実メール送達は未確認。
 
 ## Step2-C3-B実装前の暫定必須項目（履歴）
 
@@ -180,6 +187,8 @@ nationalityCode：ISO 3166-1 alpha-2の国コード（例：JP）
 COMMIT後・成功response前に既存`sendMail_Common()`で最大4通を同期送信し、宛先ごとに`reservation_mail_logs`へ記録する。送信・ログ失敗は予約成功を覆さない。本文・件名・表示条件の正本はcms-panel側の確定仕様書12.3とする。
 
 国籍はcms-panel側マスタの日本語国名へ変換し、該当店舗・黒川温泉観光協会の内部通知だけへ表示する。予約者・サーバー管理者向けには表示しない。
+
+英語Web予約（`site_language: "en"`）では予約者・サーバー管理者向けの同一メールを英語にする。店舗・協会向けの同一内部通知は日本語のままにする。メールの言語は保存済みの `reservation_site_language` で判定し、送達結果は従来どおり予約の成立可否を変えない。ローカルの実送信は未確認。
 
 ## 実装済みの予約登録フロー（本番疎通未確認）
 

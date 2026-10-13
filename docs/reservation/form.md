@@ -86,6 +86,7 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 - 電話番号
 - メールアドレス
 - メールアドレス確認（フロント側確認用。APIへは送信しない）
+- 小学生以下のお子様（人数・年齢など。任意）
 - ご要望・アレルギー等
 - プライバシーポリシー同意
 
@@ -118,11 +119,12 @@ OFFに戻した場合は、人数別コース選択欄を再表示する。各�
 
 No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確定仕様書12.1.1 / 12.1.2とする。本書の記載は画面実装用の同期要約であり、差分がある場合は確定仕様書を優先する。
 
-正式実装では、Web予約APIへ `POST` + `Content-Type: application/json` のUTF-8 JSON objectを送信する。
+Web予約APIへ `POST` + `Content-Type: application/json` のUTF-8 JSON objectを送信する。以下は子供情報・ご要望の分離保存を含む現行payload例。
 
 ```json
 {
   "shop_id": "029",
+  "site_language": "ja",
   "date": "2026-09-20",
   "guests": 4,
   "menu_selections": ["menu-001", null, "menu-003", null],
@@ -131,16 +133,21 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
   "nationality": "JP",
   "tel": "090-1234-5678",
   "email": "example@mail.com",
-  "note": "アレルギーはありません",
+  "children_note": "3歳の子供が1名います",
+  "request_note": "卵アレルギーがあります",
+  "note": "[小学生以下のお子様]\n3歳の子供が1名います\n\n[ご要望・アレルギー等]\n卵アレルギーがあります",
   "privacy_agreed": true
 }
 ```
 
 - `shop_id` は文字列で送信する。数値型では送信しない。
+- `site_language` は日本語画面から `ja`、英語画面から `en` を送る。旧日本語送信は省略時に `ja` として受け付ける。
 - `guests` はJSON numberの整数で送信する。文字列や小数では送信しない。
 - `menu_selections` は必ず `guests` と同じ長さの配列で送信する。各要素は `menu-001` 形式または `null`。
 - `name` / `kana`は必須。送信前validationはserver-side contractと同じ順序とし、不正UTF-8と制御文字を空白正規化より前にrejectする。その後、残る`\s` / `\p{Z}` / `U+FEFF`の連続を半角スペース1文字へ正規化し、前後空白を除去してから1文字以上101文字以下を判定する。姓名間の空白は必須とせず、空白なし・複数要素を許可する。最終判定はserver-sideの共通関数`normalizeReservationCustomerIdentityValue()`を正とする。
+- 英語画面は「ふりがな」入力欄を出さず、正規化した氏名を `kana` にも送る現行処理を維持する。
 - `nationality`は必須。選択中のISO 3166-1 alpha-2コードを英大文字2文字で送信する。国名文字列や旧`nationalityCode`は正式payloadへ送信しない。server-sideは形式に加えて国籍マスタ存在確認を行う。
+- 子供情報とご要望は画面上の独立した任意入力欄とする。trim済みの値を`children_note` / `request_note`としてそれぞれ送信し、空欄は`null`とする。同じ値から見出し付き`note`も作成して送信し、既存メール・備考との互換を維持する。3キーは値が空でも必ず送信し、APIでも必須とする。日本語／英語の見出しと結合順はcms-panel側確定仕様書12.1.1を正とする。コード反映・静的検証済み。日英両フォームの追加2項目はローカルで送信・管理画面readまで確認済み。実メール送達は未確認。
 - `privacy_agreed` はbooleanの `true` のみ送信可。文字列や数値では送信しない。
 - `shopName`、`reservationDate`、`selectedMenus`、`customerName`、`customerKana`、`request` は旧FormData fieldであり、正式API payloadでは使用しない。旧APIの`last_name` / `first_name` / `last_kana` / `first_kana`も送信しない。
 
@@ -173,3 +180,8 @@ No.6 payload contractとNo.12 response contractの正本は、cms-panel側の確
 - backendの`/public/api/reservation/send.php`も正式No.6 / No.12 contractへ復旧し、共通予約登録処理へ接続した。国籍は`reservations.customer_nationality_code`へ保存する。
 - `php -l`、TypeScript型チェック、差分確認は完了。本番環境でのWeb予約・DB保存・通知メール受信の疎通は未確認である。
 - 本番反映・本番疎通は未実施。rate limit・冪等性はLATERとする。
+- 2026-10-13：子供情報・ご要望の独立保存は仕様確定、frontend送信とbackend保存をコード反映・静的検証済み。既存の`note`結合送信は維持する。店舗29・2026-10-20・1名の日本語Webフォームから一時プロキシ経由で予約ID 13を登録し、管理画面詳細の独立2欄と、ご要望だけを編集した後の値保持を確認。確認後に#13はキャンセル済み。
+- 2026-10-13：同じ店舗・日付・人数の英語フォームで、子供情報とご要望を別々に入力して予約ID 14を登録。完了画面、管理画面の予約サイト「英語」・独立2欄表示、各欄を単独編集・保存・再読込した後の相互保持を確認。#14はキャンセル済みで当日の有効予約0件・0名、一時プロキシは停止済み。結合`customer_note`のDB直接照合と実メール送達は未確認。
+- 2026-10-13：その後、管理画面の「その他」経路で#15を登録し、独立2欄の表示を確認。旧形式の`note`だけを送るWeb API直接POSTで#16を登録し、詳細の旧備考表示、店舗メモだけの保存後の旧備考保持、子供情報を明示編集した後の新形式への切替を確認した。#15・#16は利用者の指定により確定のまま残し、同日の有効予約は2件・2名。新形式の異常値POSTは4ケースとも保存前にHTTP 400で拒否。結合`customer_note`のDB直接照合と実メール送達は未確認。
+- 2026-10-13：運用開始前のため旧形式とのAPI互換は不要と判断し、上記#16の登録に使った`note`単独送信の受け付けを撤去。以後は`children_note`・`request_note`・`note`の3キーすべてを必須とする。#16の結果は変更前の確認履歴。変更後、ローカルPHP APIへ3キーを含む正常系JSONを直接POSTし、予約#17（店舗29・10月21日・1名）のHTTP 200と管理画面詳細の独立2欄表示を確認。#17は利用者の指定で確定のまま残す。変更後の`note`単独送信拒否、結合`customer_note`のDB直接照合、実メール送達、フロント画面経由の再送信は未確認。
+- 2026-10-13：ローカル一時プロキシで `/api/reservation/send.php` をApacheのPHPへ中継し、店舗29・2026-10-16・2名の英語フォーム予約ID 10と日本語フォーム予約ID 11を完了画面まで確認した。DBでは `reservation_site_language` がそれぞれ `en` / `ja`、予約経路がWeb、各2品の名称・料金スナップショットが画面選択と一致した。現行の日英料金は同額のため、異なる英語料金の採用はこのテストでは判別できない。メールログは両予約の各4宛先が送信失敗で、完了画面の送信済みと読める文言は実結果と一致しない。予約ID 10・11は検証DBに残した。一時プロキシは停止済みで、通常の開発サーバー `:3000` からPHPへの恒久的な接続設定、メール送達・実本文、公開環境の疎通は未確認。

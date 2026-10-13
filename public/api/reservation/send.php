@@ -187,6 +187,7 @@ function reservationApiValidatePayload(array $payload): array
     global $reservationNationalityList;
     $allowedKeys = [
         'shop_id',
+        'site_language',
         'date',
         'guests',
         'menu_selections',
@@ -195,6 +196,8 @@ function reservationApiValidatePayload(array $payload): array
         'nationality',
         'tel',
         'email',
+        'children_note',
+        'request_note',
         'note',
         'privacy_agreed',
     ];
@@ -208,6 +211,9 @@ function reservationApiValidatePayload(array $payload): array
         'nationality',
         'tel',
         'email',
+        'children_note',
+        'request_note',
+        'note',
         'privacy_agreed',
     ];
 
@@ -229,6 +235,14 @@ function reservationApiValidatePayload(array $payload): array
     $shopId = reservationApiNormalizePositiveDecimal($payload['shop_id']);
     if ($shopId === null) {
         return reservationApiFailure('VALIDATION_ERROR', 'shop_id_value');
+    }
+
+    $siteLanguage = array_key_exists('site_language', $payload) ? $payload['site_language'] : 'ja';
+    if (is_string($siteLanguage) === false) {
+        return reservationApiFailure('INVALID_REQUEST', 'site_language_type');
+    }
+    if (in_array($siteLanguage, ['ja', 'en'], true) === false) {
+        return reservationApiFailure('VALIDATION_ERROR', 'site_language_value');
     }
 
     if (is_string($payload['date']) === false) {
@@ -316,21 +330,18 @@ function reservationApiValidatePayload(array $payload): array
         return reservationApiFailure('VALIDATION_ERROR', 'email_format');
     }
 
-    $customerNote = null;
-    if (array_key_exists('note', $payload) === true) {
-        if ($payload['note'] !== null && is_string($payload['note']) === false) {
-            return reservationApiFailure('INVALID_REQUEST', 'note_type');
-        }
-        if (
-            is_string($payload['note']) === true &&
-            reservationApiIsUnicodeBlank($payload['note']) === false
-        ) {
-            if (strlen($payload['note']) > 65535) {
-                return reservationApiFailure('VALIDATION_ERROR', 'note_length');
-            }
-            $customerNote = $payload['note'];
-        }
+    if (
+        is_string($payload['note']) === false ||
+        ($payload['children_note'] !== null && is_string($payload['children_note']) === false) ||
+        ($payload['request_note'] !== null && is_string($payload['request_note']) === false)
+    ) {
+        return reservationApiFailure('INVALID_REQUEST', 'split_note_type');
     }
+    $splitNotes = buildReservationCustomerNotes($payload['children_note'], $payload['request_note'], $siteLanguage);
+    if ($splitNotes === false || $payload['note'] !== ($splitNotes['customer_note'] ?? '')) {
+        return reservationApiFailure('VALIDATION_ERROR', 'split_note_value');
+    }
+    $customerNote = $splitNotes['customer_note'];
 
     if (is_bool($payload['privacy_agreed']) === false) {
         return reservationApiFailure('INVALID_REQUEST', 'privacy_agreed_type');
@@ -339,20 +350,24 @@ function reservationApiValidatePayload(array $payload): array
         return reservationApiFailure('VALIDATION_ERROR', 'privacy_agreed_value');
     }
 
+    $data = [
+        'shop_id' => $shopId,
+        'site_language' => $siteLanguage,
+        'date' => $payload['date'],
+        'guests' => $payload['guests'],
+        'menu_selections' => $menuSelections,
+        'name' => $customerName,
+        'kana' => $customerKana,
+        'nationality' => $payload['nationality'],
+        'tel' => $payload['tel'],
+        'email' => $payload['email'],
+        'note' => $customerNote,
+        'children_note' => $splitNotes['customer_children_note'],
+        'request_note' => $splitNotes['customer_request_note'],
+    ];
     return [
         'success' => true,
-        'data' => [
-            'shop_id' => $shopId,
-            'date' => $payload['date'],
-            'guests' => $payload['guests'],
-            'menu_selections' => $menuSelections,
-            'name' => $customerName,
-            'kana' => $customerKana,
-            'nationality' => $payload['nationality'],
-            'tel' => $payload['tel'],
-            'email' => $payload['email'],
-            'note' => $customerNote,
-        ],
+        'data' => $data,
     ];
 }
 
@@ -458,7 +473,7 @@ function reservationApiCheckAcceptancePeriod(array $settings, string $targetDate
 /**
  * shops mutex取得後の最新DB stateでWeb routeの受付条件を確認する。
  */
-function reservationApiCheckFreshEligibility(int $shopId, string $targetDate, int $guests, array $menuSelections): array
+function reservationApiCheckFreshEligibility(int $shopId, string $targetDate, int $guests, array $menuSelections, string $siteLanguage): array
 {
     $shop = getReservationShopForOccupancy($shopId);
     if ($shop === false) {
@@ -488,7 +503,8 @@ function reservationApiCheckFreshEligibility(int $shopId, string $targetDate, in
     if (is_array($settings) === false) {
         return reservationApiFailure('INTERNAL_ERROR', 'settings_read_invalid');
     }
-    if ((int)($settings['reservation_enabled'] ?? 0) !== 1) {
+    $enabledField = $siteLanguage === 'en' ? 'reservation_enabled_en' : 'reservation_enabled';
+    if ((int)($settings[$enabledField] ?? 0) !== 1) {
         return reservationApiFailure('RESERVATION_UNAVAILABLE', 'reservation_disabled');
     }
 
@@ -516,7 +532,9 @@ function reservationApiCheckFreshEligibility(int $shopId, string $targetDate, in
     }
 
     if ($menuSelectionType === 2) {
-        $activeMenuCount = getActiveFoodMenuCountForReservation($shopId);
+        $activeMenuCount = $siteLanguage === 'en'
+            ? getActiveEnglishFoodMenuCountForReservation($shopId)
+            : getActiveFoodMenuCountForReservation($shopId);
         if ($activeMenuCount === false) {
             return reservationApiFailure('INTERNAL_ERROR', 'active_menu_count_read_failed');
         }
@@ -546,7 +564,7 @@ function reservationApiCheckFreshEligibility(int $shopId, string $targetDate, in
         return reservationApiFailure('RESERVATION_UNAVAILABLE', 'active_seat_not_found');
     }
 
-    if (isReservationEnabledForShop($shopId) !== true) {
+    if (isReservationEnabledForShop($shopId, $siteLanguage) !== true) {
         return reservationApiFailure('INTERNAL_ERROR', 'common_eligibility_inconsistent');
     }
 
@@ -665,7 +683,8 @@ function reservationApiExecuteRegistration(array $requestData): array
             $requestData['shop_id'],
             $requestData['date'],
             $requestData['guests'],
-            $requestData['menu_selections']
+            $requestData['menu_selections'],
+            $requestData['site_language']
         );
         if (($eligibilityResult['success'] ?? false) !== true) {
             if (($eligibilityResult['error_code'] ?? '') === 'INTERNAL_ERROR') {
@@ -678,12 +697,15 @@ function reservationApiExecuteRegistration(array $requestData): array
             'reservation_date' => $requestData['date'],
             'party_size' => $requestData['guests'],
             'reservation_route' => 1,
+            'reservation_site_language' => $requestData['site_language'],
             'customer_name' => $requestData['name'],
             'customer_kana' => $requestData['kana'],
             'customer_nationality_code' => $requestData['nationality'],
             'customer_tel' => $requestData['tel'],
             'customer_email' => $requestData['email'],
             'customer_note' => $requestData['note'],
+            'customer_children_note' => $requestData['children_note'],
+            'customer_request_note' => $requestData['request_note'],
         ];
         $registrationResult = executeReservationRegistration(
             $requestData['shop_id'],
@@ -807,6 +829,7 @@ $requiredFunctions = [
     'getShopReservationSettings',
     'getFoodMenuRowsForReservation',
     'getActiveFoodMenuCountForReservation',
+    'getActiveEnglishFoodMenuCountForReservation',
     'countActiveFoodMenusForReservation',
     'getSeatsForReservationOccupancy',
     'countActiveNormalSeatsForReservation',
