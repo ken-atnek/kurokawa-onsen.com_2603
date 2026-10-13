@@ -9,10 +9,16 @@
 import styles from '@/styles/PageShopDetails.module.scss';
 import Link from 'next/link';
 
-export default function ShopLinkList() {
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+export default function ShopLinkList({ locale = 'ja' }: Props) {
   return (
     <section className={styles.containerLinkList}>
-      <Link href={'/shops/'}>加盟店一覧に戻る</Link>
+      <Link href={locale === 'en' ? '/en/shops/' : '/shops/'}>
+        {locale === 'en' ? 'Back to Shops & Restaurants' : '加盟店一覧に戻る'}
+      </Link>
     </section>
   );
 }

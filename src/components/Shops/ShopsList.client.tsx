@@ -13,12 +13,7 @@ import ShopsList from '@/components/Shops/ShopsList';
 import { getShopStatusView } from '@/lib/status';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 
-import type {
-  ShopDetail,
-  ShopHourRow,
-  ShopIndexItem,
-  ShopWithStatus,
-} from '@/types/shop';
+import type { ShopDetail, ShopIndexItem, ShopWithStatus } from '@/types/shop';
 import type { ShopStatusView } from '@/lib/status';
 
 const listInfoLabels = ['営業時間', '店休日', '平均予算'];
@@ -34,20 +29,6 @@ type Props = {
 
 const hasJapaneseText = (lines: string[]) =>
   lines.some((line) => /[ぁ-んァ-ヶ一-龯]/.test(line));
-
-const getEnglishHoursRows = (hoursRow?: ShopHourRow): ShopHourRow[] => {
-  if (!hoursRow || !('timeRanges' in hoursRow)) return [];
-
-  return [
-    {
-      label: 'Opening Hours',
-      timeRanges: hoursRow.timeRanges.map(({ open, close }) => ({
-        open,
-        close,
-      })),
-    },
-  ];
-};
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, { cache: 'no-store' });
@@ -111,9 +92,7 @@ export default function ShopsListClient({ locale = 'ja' }: Props) {
                   : status,
                 mealPeriods: detail.mealPeriods ?? [],
                 listInfoRows: isEnglish
-                  ? detail.info.hours_en?.length
-                    ? detail.info.hours_en
-                    : getEnglishHoursRows(hoursRow)
+                  ? (detail.info.hours_en ?? [])
                   : listInfoLabels.flatMap((label) => {
                       const row = detail.info.hours.find(
                         (infoRow) => infoRow.label === label

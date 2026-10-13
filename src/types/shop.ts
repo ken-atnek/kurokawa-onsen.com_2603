@@ -55,8 +55,13 @@ export type ShopInfo = {
   web?: string;
   mail?: string;
   mapUrl: string;
+  mapUrl_en?: string;
   mapLinkUrl?: string;
   address: {
+    postalCode: string;
+    full: string;
+  };
+  address_en?: {
     postalCode: string;
     full: string;
   };
@@ -144,12 +149,16 @@ export type ShopDetail = {
   category: string;
   mealPeriods?: ShopMealPeriod[];
   name: string[];
+  name_en?: string[];
   statusFallbackKey: ShopStatusKey;
   heroImage: string;
   leadCopy: string[];
+  leadCopy_en?: string[];
   pickupItems: ShopPickupItem[];
+  pickupItems_en?: ShopPickupItem[];
   info: ShopInfo;
   recommendedProducts: ShopRecommendedProduct[];
+  recommendedProducts_en?: ShopRecommendedProduct[];
   onlineShopUrl?: string;
   onlineProductsCount?: number;
 };

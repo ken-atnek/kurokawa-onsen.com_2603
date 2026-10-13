@@ -5,6 +5,7 @@
 @use "../../styles/svg" as *;
 @use "../../styles/mixin" as *;
 .boxShopCard {
+    position: relative;
     font-size: inherit;
     display: grid;
     grid-row: span 4;
@@ -51,6 +52,16 @@
             }
         }
     }
+    .linkCard {
+        position: absolute;
+        z-index: 2;
+        inset: 0;
+        border-radius: 1rem;
+        &:focus-visible {
+            outline: 2px solid $main-black;
+            outline-offset: 3px;
+        }
+    }
     .innerContents {
         font-size: inherit;
         grid-row: span 3;
@@ -72,7 +83,6 @@
                 aspect-ratio: 1;
                 background-color: $main-black;
                 border-radius: 50%;
-                align-self: flex-start;
                 &::before {
                     content: "";
                     position: absolute;
@@ -107,6 +117,7 @@
                 font-size: fz(20);
                 font-weight: 500;
                 letter-spacing: 0.04em;
+                flex: 1;
                 span {
                     font-size: inherit;
                 }
@@ -117,6 +128,11 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            &.is-english {
+                p {
+                    text-align: left;
+                }
+            }
             p {
                 margin-top: 0.4rem;
                 font-size: fz(13);

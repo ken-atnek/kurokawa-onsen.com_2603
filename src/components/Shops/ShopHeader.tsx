@@ -14,6 +14,7 @@ import ExternalLink from '@/components/common/ExternalLink';
 import Link from 'next/link';
 import ShopMealPeriodTags from '@/components/Shops/ShopMealPeriodTags';
 type Props = {
+  locale?: 'ja' | 'en';
   name: ShopDetail['name'];
   leadCopy: ShopDetail['leadCopy'];
   tel: string;
@@ -31,6 +32,7 @@ type Props = {
 };
 
 export default function ShopHeader({
+  locale = 'ja',
   name,
   leadCopy,
   tel,
@@ -51,6 +53,14 @@ export default function ShopHeader({
     closedWeekdays,
     timeRanges,
   });
+  const statusLabel =
+    locale === 'en'
+      ? {
+          open: 'Open now',
+          closed: 'Closed',
+          other: 'Check status',
+        }[status.key]
+      : status.label;
   const hasMealPeriods = category === 'food' && Boolean(mealPeriods?.length);
 
   return (
@@ -66,7 +76,7 @@ export default function ShopHeader({
               styles[`status-${status.variant}`]
             )}
           >
-            {status.label}
+            {statusLabel}
           </div>
           <h2>
             {name.map((line, i) => (
@@ -138,14 +148,18 @@ export default function ShopHeader({
           {hasMealPeriods || hasOnlineList ? (
             <div className={styles.boxHeaderActions}>
               {hasMealPeriods ? (
-                <ShopMealPeriodTags mealPeriods={mealPeriods} />
+                <ShopMealPeriodTags mealPeriods={mealPeriods} locale={locale} />
               ) : null}
               {hasOnlineList ? (
                 <Link
-                  href={`/shops/products?id=${shopSlug}`}
+                  href={
+                    locale === 'en'
+                      ? `/en/shops/products?id=${shopSlug}`
+                      : `/shops/products?id=${shopSlug}`
+                  }
                   className={styles.btnOnlineList}
                 >
-                  オンライン商品一覧
+                  {locale === 'en' ? 'Online Products' : 'オンライン商品一覧'}
                 </Link>
               ) : null}
             </div>
