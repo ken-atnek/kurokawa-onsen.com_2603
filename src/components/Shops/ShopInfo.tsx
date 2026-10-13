@@ -80,8 +80,9 @@ export default function ShopInfo({
             <ExternalLink href={info.mapLinkUrl}>GoogleMap</ExternalLink>
           ) : null}
         </div>
-        {locale === 'ja' && hasReservation && reservationBasic ? (
+        {hasReservation && reservationBasic ? (
           <ShopReservationCalendar
+            locale={locale}
             shopId={shopId}
             tel={info.tel}
             reservationBasic={reservationBasic}

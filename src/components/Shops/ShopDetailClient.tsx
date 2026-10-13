@@ -46,8 +46,9 @@ export default function ShopDetailClient({ id, locale = 'ja' }: Props) {
   const hasRecommendedProducts = recommendedProducts.length > 0;
   const hasRecommendedMenus =
     !isEnglish && menuItems.some((item) => item.enabled);
-  const hasReservation =
-    !isEnglish && reservationBasic?.reservationEnabled === true;
+  const hasReservation = isEnglish
+    ? reservationBasic?.reservationEnabled_en === true
+    : reservationBasic?.reservationEnabled === true;
 
   return (
     <>

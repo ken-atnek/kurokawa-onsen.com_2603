@@ -587,6 +587,24 @@
                                 }
                             }
                         }
+                        &[data-status="holiday"] {
+                            .reservationStatusIcon {
+                                &::before {
+                                    html[lang="en"] & {
+                                        width: 1.6rem;
+                                    }
+                                }
+                            }
+                        }
+                        &[data-status="full"] {
+                            .reservationStatusIcon {
+                                &::before {
+                                    html[lang="en"] & {
+                                        width: 1.6rem;
+                                    }
+                                }
+                            }
+                        }
                         .reservationStatusIcon {
                             &::before {
                                 top: 50%;
@@ -786,6 +804,9 @@
                     line-height: 1.6em;
                     font-weight: 500;
                     letter-spacing: 0.04em;
+                    &.is-english {
+                        text-align: left;
+                    }
                 }
             }
         }

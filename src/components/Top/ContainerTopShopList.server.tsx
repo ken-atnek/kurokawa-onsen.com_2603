@@ -6,6 +6,10 @@
 
 import ContainerTopShopListClient from '@/components/Top/ContainerTopShopList.client';
 
-export default function ContainerTopShopListServer() {
-  return <ContainerTopShopListClient pickupCount={3} />;
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+export default function ContainerTopShopListServer({ locale = 'ja' }: Props) {
+  return <ContainerTopShopListClient pickupCount={3} locale={locale} />;
 }

@@ -168,6 +168,10 @@
                     font-size: fz(16);
                     font-weight: 500;
                     letter-spacing: 0.08em;
+                    html[lang="en"] & {
+                        width: max-content;
+                        padding-inline: 1em;
+                    }
                 }
             }
 
@@ -410,7 +414,7 @@
     .itemSelect,
     .itemTextarea {
         display: grid;
-        grid-template-columns: 20rem 1fr;
+        grid-template-columns: 24rem 1fr;
         align-items: center;
         font-size: inherit;
         gap: 0 2rem;

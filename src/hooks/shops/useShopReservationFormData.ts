@@ -26,7 +26,8 @@ type ReservationFormData = {
 export function useShopReservationFormData(
   id: string,
   date: string,
-  guests: number
+  guests: number,
+  locale: 'ja' | 'en' = 'ja'
 ) {
   const [data, setData] = useState<ReservationFormData>({
     shopDetail: null,
@@ -45,14 +46,14 @@ export function useShopReservationFormData(
       status: null,
     });
 
-    fetchReservationFormData(id, date, guests).then((nextData) => {
+    fetchReservationFormData(id, date, guests, locale).then((nextData) => {
       if (!isCancelled) setData(nextData);
     });
 
     return () => {
       isCancelled = true;
     };
-  }, [date, guests, id]);
+  }, [date, guests, id, locale]);
 
   return data;
 }
@@ -60,14 +61,19 @@ export function useShopReservationFormData(
 async function fetchReservationFormData(
   id: string,
   date: string,
-  guests: number
+  guests: number,
+  locale: 'ja' | 'en'
 ): Promise<ReservationFormData> {
   const monthKey = date.slice(0, 7);
   const [shopDetail, reservationBasic, menusData, monthData] =
     await Promise.all([
       fetchJson<ShopDetail>(`/db/shops/details/${id}.json`),
-      fetchJson<ShopReservationBasic>(`/db/shops/reservations/${id}/basic.json`),
-      fetchJson<ShopReservationMenus>(`/db/shops/reservations/${id}/menus.json`),
+      fetchJson<ShopReservationBasic>(
+        `/db/shops/reservations/${id}/basic.json`
+      ),
+      fetchJson<ShopReservationMenus>(
+        `/db/shops/reservations/${id}/menus.json`
+      ),
       fetchJson<ShopReservationMonth>(
         `/db/shops/reservations/${id}/${monthKey}.json`
       ),
@@ -79,9 +85,19 @@ async function fetchReservationFormData(
   return {
     shopDetail,
     reservationBasic:
-      reservationBasic?.reservationEnabled === true ? reservationBasic : null,
-    menuItems: Array.isArray(menusData?.menus)
-      ? menusData.menus.filter((item) => item.enabled)
+      locale === 'en'
+        ? reservationBasic?.reservationEnabled_en === true
+          ? reservationBasic
+          : null
+        : reservationBasic?.reservationEnabled === true
+          ? reservationBasic
+          : null,
+    menuItems: Array.isArray(
+      locale === 'en' ? menusData?.menus_en : menusData?.menus
+    )
+      ? ((locale === 'en' ? menusData?.menus_en : menusData?.menus)?.filter(
+          (item) => item.enabled
+        ) ?? [])
       : [],
     status,
   };

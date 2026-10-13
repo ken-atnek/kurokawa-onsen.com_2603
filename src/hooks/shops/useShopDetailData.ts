@@ -103,7 +103,10 @@ async function fetchReservationData(id: string, detail: ShopDetail) {
 
   return {
     menuItems: Array.isArray(menusData?.menus) ? menusData.menus : [],
-    reservationBasic: basicData?.reservationEnabled ? basicData : null,
+    reservationBasic:
+      basicData?.reservationEnabled || basicData?.reservationEnabled_en
+        ? basicData
+        : null,
   };
 }
 

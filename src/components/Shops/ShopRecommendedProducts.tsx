@@ -58,7 +58,12 @@ export default function ShopRecommendedProducts({
                 </div>
               )}
 
-              <p className={styles.itemRecommendedDescription}>
+              <p
+                className={clsx(
+                  styles.itemRecommendedDescription,
+                  locale === 'en' && styles['is-english']
+                )}
+              >
                 {renderMultiline(item.description)}
               </p>
             </li>

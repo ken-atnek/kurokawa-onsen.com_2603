@@ -133,6 +133,11 @@
                 font-size: fz(20);
                 font-weight: 600;
                 line-height: 1.2;
+                html[lang="en"] & {
+                    content: "";
+                    width: 2rem;
+                    @include svg-iconStatusCross(fc2727);
+                }
             }
         }
     }
@@ -155,6 +160,11 @@
                 font-size: fz(20);
                 font-weight: 600;
                 line-height: 1.2;
+                html[lang="en"] & {
+                    content: "";
+                    width: 2rem;
+                    @include svg-iconStatusCross(000);
+                }
             }
         }
     }

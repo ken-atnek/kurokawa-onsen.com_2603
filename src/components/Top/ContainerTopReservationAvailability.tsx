@@ -22,6 +22,7 @@ import {
   getWeekdayIndex,
   isReservableStatus,
   RESERVATION_WEEKDAYS,
+  RESERVATION_WEEKDAYS_EN,
   type ReservationDisplayStatus,
 } from '@/lib/shops/reservation';
 import type { ShopReservationBasic, ShopReservationMonth } from '@/types/shop';
@@ -31,6 +32,7 @@ type ShopIndexBase = {
   id: string;
   category: string;
   name: string[];
+  name_en?: string[];
   thumb: string;
   tel: string;
 };
@@ -45,7 +47,14 @@ const MOBILE_DISPLAY_DAYS = 7;
 const MOBILE_MEDIA_QUERY = '(max-width: 767px)';
 const GUEST_OPTIONS = [1, 2, 3, 4];
 
-export default function ContainerTopReservationAvailability() {
+type Props = {
+  locale?: 'ja' | 'en';
+};
+
+export default function ContainerTopReservationAvailability({
+  locale = 'ja',
+}: Props) {
+  const isEnglish = locale === 'en';
   const today = useMemo(() => new Date(), []);
   const initialDate = useMemo(() => formatDateKey(today), [today]);
   const [inputDate, setInputDate] = useState(initialDate);
@@ -54,7 +63,14 @@ export default function ContainerTopReservationAvailability() {
   const [shops, setShops] = useState<ReservationShop[] | null>(null);
   const [displayDays, setDisplayDays] = useState(DESKTOP_DISPLAY_DAYS);
   const isPrevDisabled = selectedDate <= initialDate;
-  const rangeLabel = displayDays === MOBILE_DISPLAY_DAYS ? '1週間' : '2週間';
+  const rangeLabel = isEnglish
+    ? displayDays === MOBILE_DISPLAY_DAYS
+      ? '1 Week'
+      : '2 Weeks'
+    : displayDays === MOBILE_DISPLAY_DAYS
+      ? '1週間'
+      : '2週間';
+  const weekdays = isEnglish ? RESERVATION_WEEKDAYS_EN : RESERVATION_WEEKDAYS;
 
   const dateKeys = useMemo(
     () => createDateKeys(selectedDate, displayDays),
@@ -67,14 +83,14 @@ export default function ContainerTopReservationAvailability() {
   useEffect(() => {
     let isCancelled = false;
 
-    fetchReservationShops(dateKeys).then((data) => {
+    fetchReservationShops(dateKeys, locale).then((data) => {
       if (!isCancelled) setShops(data);
     });
 
     return () => {
       isCancelled = true;
     };
-  }, [dateKeys]);
+  }, [dateKeys, locale]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(MOBILE_MEDIA_QUERY);
@@ -118,13 +134,17 @@ export default function ContainerTopReservationAvailability() {
   return (
     <section className={styles.containerTopReservationAvailability}>
       <div className={styles.boxHead}>
-        <h2>お食事処予約</h2>
-        <p>予約可能なお席の空席状況をまとめて確認できます。</p>
+        <h2>{isEnglish ? 'Restaurant Reservations' : 'お食事処予約'}</h2>
+        <p>
+          {isEnglish
+            ? 'Check table availability at participating restaurants.'
+            : '予約可能なお席の空席状況をまとめて確認できます。'}
+        </p>
       </div>
 
       <div className={styles.boxSearch}>
         <div className={styles.wrapDate}>
-          <h3>予約日</h3>
+          <h3>{isEnglish ? 'Reservation Date' : '予約日'}</h3>
           <label className={styles.itemDate}>
             <input
               type="date"
@@ -135,13 +155,15 @@ export default function ContainerTopReservationAvailability() {
           </label>
         </div>
         <div className={styles.itemGuests}>
-          <h3>人数</h3>
+          <h3>{isEnglish ? 'Guests' : '人数'}</h3>
           <SelectBox
             name="topReservationGuests"
             value={String(selectedGuests)}
             options={GUEST_OPTIONS.map((guests) => ({
               value: String(guests),
-              label: `${guests}名`,
+              label: isEnglish
+                ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+                : `${guests}名`,
             }))}
             onChange={(value) => setSelectedGuests(Number(value))}
             position="left"
@@ -156,7 +178,7 @@ export default function ContainerTopReservationAvailability() {
           className={styles.btnSearch}
           onClick={searchAvailability}
         >
-          空席を確認する
+          {isEnglish ? 'Check Availability' : '空席を確認する'}
         </button>
       </div>
 
@@ -168,18 +190,22 @@ export default function ContainerTopReservationAvailability() {
             className={styles.btnPrev}
             disabled={isPrevDisabled}
           >
-            前の{rangeLabel}
+            {isEnglish ? `Previous ${rangeLabel}` : `前の${rangeLabel}`}
           </button>
           <h3>
-            予約の空席状況
-            <span>({selectedGuests}名様)</span>
+            {isEnglish ? 'Availability' : '予約の空席状況'}
+            <span>
+              {isEnglish
+                ? `(${selectedGuests} ${selectedGuests === 1 ? 'guest' : 'guests'})`
+                : `(${selectedGuests}名様)`}
+            </span>
           </h3>
           <button
             type="button"
             onClick={() => moveDateRange(displayDays)}
             className={styles.btnNext}
           >
-            次の{rangeLabel}
+            {isEnglish ? `Next ${rangeLabel}` : `次の${rangeLabel}`}
           </button>
         </div>
 
@@ -193,7 +219,7 @@ export default function ContainerTopReservationAvailability() {
                 data-weekend={getWeekendType(getWeekdayIndex(date))}
               >
                 <span>{formatTableDate(date)}</span>
-                <small>({RESERVATION_WEEKDAYS[getWeekdayIndex(date)]})</small>
+                <small>({weekdays[getWeekdayIndex(date)]})</small>
               </div>
             ))}
           </div>
@@ -201,7 +227,13 @@ export default function ContainerTopReservationAvailability() {
             <div className={styles.boxShop} key={shop.id}>
               <div className={styles.gridShopCell}>
                 <span>{shop.name.join('')}</span>
-                <Link href={`/shops/detail?id=${shop.id}`}>
+                <Link
+                  href={
+                    isEnglish
+                      ? `/en/shops/detail?id=${shop.id}`
+                      : `/shops/detail?id=${shop.id}`
+                  }
+                >
                   <Image
                     src={shop.thumb || '/images/common/no-image.webp'}
                     alt={shop.name.join(' ')}
@@ -217,6 +249,7 @@ export default function ContainerTopReservationAvailability() {
                     date={date}
                     guests={selectedGuests}
                     today={today}
+                    locale={locale}
                   />
                 </div>
               ))}
@@ -227,26 +260,30 @@ export default function ContainerTopReservationAvailability() {
         <div className={styles.listLegend}>
           <span data-status="open">
             <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
-            ご予約可
+            {isEnglish ? 'Available' : 'ご予約可'}
           </span>
           <span data-status="limited">
             <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
-            一部満席
+            {isEnglish ? 'Limited availability' : '一部満席'}
           </span>
           <span data-status="full">
             <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
-            満席
+            {isEnglish ? 'Fully booked' : '満席'}
           </span>
           <span data-status="holiday">
             <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
-            休業日
+            {isEnglish ? 'Closed' : '休業日'}
           </span>
         </div>
         <p className={styles.itemNote}>
-          ※ 5名様以上のご予約は直接お電話でお問い合わせください。
+          {isEnglish
+            ? 'For reservations of 5 or more guests, please contact the restaurant directly by phone.'
+            : '※ 5名様以上のご予約は直接お電話でお問い合わせください。'}
         </p>
         <p className={styles.itemNote}>
-          ※ △の日は、ご利用人数によって予約できない場合があります。
+          {isEnglish
+            ? 'Availability marked △ may vary depending on the number of guests.'
+            : '※ △の日は、ご利用人数によって予約できない場合があります。'}
         </p>
       </div>
     </section>
@@ -258,11 +295,13 @@ function AvailabilityCell({
   date,
   guests,
   today,
+  locale,
 }: {
   shop: ReservationShop;
   date: string;
   guests: number;
   today: Date;
+  locale: 'ja' | 'en';
 }) {
   const month = shop.months[date.slice(0, 7)];
   const day = month?.days.find((item) => item.date === date);
@@ -272,16 +311,25 @@ function AvailabilityCell({
     today,
     shop.reservationBasic.acceptancePeriod
   );
-  const label = getReservationStatusLabel(status);
+  const label = getReservationStatusLabel(status, locale);
+  const guestLabel =
+    locale === 'en'
+      ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+      : `${guests}名`;
 
   if (isReservableStatus(status)) {
     return (
       <ShopReservationNoticeLink
-        href={`/shops/reserve?id=${shop.id}&date=${date}&guests=${guests}`}
+        locale={locale}
+        href={`${locale === 'en' ? '/en' : ''}/shops/reserve?id=${shop.id}&date=${date}&guests=${guests}`}
         tel={shop.tel}
         className={styles.btnStatus}
         status={status}
-        ariaLabel={`${shop.name.join('')} ${date} ${guests}名 ${label} 予約する`}
+        ariaLabel={
+          locale === 'en'
+            ? `${shop.name.join(' ')}, ${date}, ${guestLabel}, ${label}, make a reservation`
+            : `${shop.name.join('')} ${date} ${guestLabel} ${label} 予約する`
+        }
       >
         <StatusIcon status={status} />
       </ShopReservationNoticeLink>
@@ -292,7 +340,7 @@ function AvailabilityCell({
     <span
       className={styles.btnStatus}
       data-status={status}
-      aria-label={`${shop.name.join('')} ${date} ${guests}名 ${label}`}
+      aria-label={`${shop.name.join(' ')} ${date} ${guestLabel} ${label}`}
     >
       <StatusIcon status={status} />
     </span>
@@ -307,7 +355,8 @@ function StatusIcon({ status }: { status: ReservationDisplayStatus }) {
   );
 }
 
-async function fetchReservationShops(dateKeys: string[]) {
+async function fetchReservationShops(dateKeys: string[], locale: 'ja' | 'en') {
+  const isEnglish = locale === 'en';
   const [indexList, foodShopIds] = await Promise.all([
     fetchJson<ShopIndexBase[]>('/db/shops/shopsIndex.json'),
     fetchJson<string[]>('/db/shops/foodShopsSort.json'),
@@ -317,9 +366,8 @@ async function fetchReservationShops(dateKeys: string[]) {
   const shopsById = new Map(indexList.map((shop) => [shop.id, shop]));
   const foodShops = foodShopIds
     .map((id) => shopsById.get(id))
-    .filter(
-      (shop): shop is ShopIndexBase =>
-        Boolean(shop && shop.category === 'food')
+    .filter((shop): shop is ShopIndexBase =>
+      Boolean(shop && shop.category === 'food')
     );
   const monthKeys = Array.from(
     new Set(dateKeys.map((date) => date.slice(0, 7)))
@@ -330,7 +378,11 @@ async function fetchReservationShops(dateKeys: string[]) {
         `/db/shops/reservations/${shop.id}/basic.json`
       );
 
-      if (reservationBasic?.reservationEnabled !== true) return null;
+      const reservationEnabled = isEnglish
+        ? reservationBasic?.reservationEnabled_en === true
+        : reservationBasic?.reservationEnabled === true;
+
+      if (!reservationEnabled) return null;
 
       const months = await Promise.all(
         monthKeys.map(async (monthKey) => {
@@ -344,6 +396,11 @@ async function fetchReservationShops(dateKeys: string[]) {
 
       return {
         ...shop,
+        name: isEnglish
+          ? shop.name_en?.length
+            ? shop.name_en
+            : shop.name
+          : shop.name,
         reservationBasic,
         months: Object.fromEntries(
           months.filter((entry): entry is [string, ShopReservationMonth] =>
