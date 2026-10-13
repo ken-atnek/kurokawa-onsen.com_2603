@@ -97,11 +97,13 @@ export type ShopReservationMenus = {
   updatedAt?: string;
   allowSeatOnly?: boolean;
   menus: ShopReservationMenu[];
+  menus_en?: ShopReservationMenu[];
 };
 
 export type ShopReservationBasic = {
   shopId: string;
   reservationEnabled: boolean;
+  reservationEnabled_en?: boolean;
   menuSelectionType: 0 | 1 | 2;
   acceptancePeriod: {
     startDaysBefore: number | null;

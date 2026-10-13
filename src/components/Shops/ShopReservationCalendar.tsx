@@ -24,6 +24,7 @@ import {
   getWeekdayIndex,
   isReservableStatus,
   RESERVATION_WEEKDAYS,
+  RESERVATION_WEEKDAYS_EN,
   type ReservationDisplayStatus,
 } from '@/lib/shops/reservation';
 import styles from '@/styles/PageShopDetails.module.scss';
@@ -31,16 +32,19 @@ import SelectBox from '@/components/common/SelectBox';
 import ShopReservationNoticeLink from '@/components/Shops/ShopReservationNoticeLink';
 
 type Props = {
+  locale?: 'ja' | 'en';
   shopId: string;
   tel: string;
   reservationBasic: ShopReservationBasic;
 };
 
 export default function ShopReservationCalendar({
+  locale = 'ja',
   shopId,
   tel,
   reservationBasic,
 }: Props) {
+  const isEnglish = locale === 'en';
   const today = useMemo(() => new Date(), []);
   const [displayMonth, setDisplayMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1)
@@ -63,6 +67,7 @@ export default function ShopReservationCalendar({
     () => createGuestOptions(reservationBasic.guestRange),
     [reservationBasic.guestRange]
   );
+  const weekdays = isEnglish ? RESERVATION_WEEKDAYS_EN : RESERVATION_WEEKDAYS;
 
   useEffect(() => {
     const firstGuestOption = guestOptions[0];
@@ -118,18 +123,20 @@ export default function ShopReservationCalendar({
     <div className={styles.boxReservationCalendar}>
       <div className={styles.boxH2}>
         <i className={styles.itemLeft}></i>
-        <h2>ご予約</h2>
+        <h2>{isEnglish ? 'Reservations' : 'ご予約'}</h2>
         <i className={styles.itemRight}></i>
       </div>
 
       <div className={styles.reservationGuestSelect}>
-        <h3>ご利用人数</h3>
+        <h3>{isEnglish ? 'Number of Guests' : 'ご利用人数'}</h3>
         <GuestSelectBox
           name="reservationGuests"
           value={selectedGuests}
           options={guestOptions.map((guests) => ({
             value: guests,
-            label: `${guests}名`,
+            label: isEnglish
+              ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+              : `${guests}名`,
           }))}
           onChange={setSelectedGuests}
         />
@@ -142,12 +149,17 @@ export default function ShopReservationCalendar({
             styles.btnPrevMonth,
             isPrevMonthDisabled && styles.isDisabledMonthButton
           )}
-          aria-label="前の月へ"
+          aria-label={isEnglish ? 'Previous month' : '前の月へ'}
           disabled={isPrevMonthDisabled}
           onClick={() => setDisplayMonth((current) => addMonths(current, -1))}
         />
         <span>
-          {monthData.year}年{monthData.month}月
+          {isEnglish
+            ? new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+              }).format(new Date(monthData.year, monthData.month - 1, 1))
+            : `${monthData.year}年${monthData.month}月`}
         </span>
         <button
           type="button"
@@ -155,14 +167,14 @@ export default function ShopReservationCalendar({
             styles.btnNextMonth,
             isNextMonthDisabled && styles.isDisabledMonthButton
           )}
-          aria-label="次の月へ"
+          aria-label={isEnglish ? 'Next month' : '次の月へ'}
           disabled={isNextMonthDisabled}
           onClick={() => setDisplayMonth((current) => addMonths(current, 1))}
         />
       </div>
 
       <div className={styles.reservationWeekdays}>
-        {RESERVATION_WEEKDAYS.map((weekday, i) => (
+        {weekdays.map((weekday, i) => (
           <span key={weekday} data-weekend={getWeekendType(i)}>
             {weekday}
           </span>
@@ -187,7 +199,8 @@ export default function ShopReservationCalendar({
               shopId,
               tel,
               today,
-              reservationBasic.acceptancePeriod
+              reservationBasic.acceptancePeriod,
+              locale
             )}
           </li>
         ))}
@@ -195,39 +208,31 @@ export default function ShopReservationCalendar({
 
       <div className={styles.reservationLegend}>
         <span data-status="open">
-          <i
-            className={styles.reservationStatusIcon}
-            aria-hidden="true"
-          ></i>
-          ご予約可
+          <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
+          {isEnglish ? 'Available' : 'ご予約可'}
         </span>
         <span data-status="limited">
-          <i
-            className={styles.reservationStatusIcon}
-            aria-hidden="true"
-          ></i>
-          一部満席
+          <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
+          {isEnglish ? 'Limited availability' : '一部満席'}
         </span>
         <span data-status="full">
-          <i
-            className={styles.reservationStatusIcon}
-            aria-hidden="true"
-          ></i>
-          満席
+          <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
+          {isEnglish ? 'Fully booked' : '満席'}
         </span>
         <span data-status="holiday">
-          <i
-            className={styles.reservationStatusIcon}
-            aria-hidden="true"
-          ></i>
-          休業日
+          <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
+          {isEnglish ? 'Closed' : '休業日'}
         </span>
       </div>
       <p className={styles.reservationNote}>
-        ※ 5名様以上のご予約は直接お電話でお問い合わせください。
+        {isEnglish
+          ? 'For reservations of 5 or more guests, please contact the restaurant directly by phone.'
+          : '※ 5名様以上のご予約は直接お電話でお問い合わせください。'}
       </p>
       <p className={styles.reservationNote}>
-        ※ △の日は、ご利用人数によって予約できない場合があります。
+        {isEnglish
+          ? 'Availability marked △ may vary depending on the number of guests.'
+          : '※ △の日は、ご利用人数によって予約できない場合があります。'}
       </p>
     </div>
   );
@@ -273,19 +278,29 @@ function renderStatus(
   shopId: string,
   tel: string,
   today: Date,
-  acceptancePeriod: ShopReservationBasic['acceptancePeriod']
+  acceptancePeriod: ShopReservationBasic['acceptancePeriod'],
+  locale: 'ja' | 'en'
 ) {
   const status = getReservationStatus(day, guests, today, acceptancePeriod);
-  const label = getReservationStatusLabel(status);
+  const label = getReservationStatusLabel(status, locale);
+  const guestLabel =
+    locale === 'en'
+      ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+      : `${guests}名`;
 
   if (isReservableStatus(status)) {
     return (
       <ShopReservationNoticeLink
-        href={`/shops/reserve?id=${shopId}&date=${day.date}&guests=${guests}`}
+        locale={locale}
+        href={`${locale === 'en' ? '/en' : ''}/shops/reserve?id=${shopId}&date=${day.date}&guests=${guests}`}
         tel={tel}
         className={styles.reservationStatus}
         status={status}
-        ariaLabel={`${day.date} ${guests}名 ${label} 予約する`}
+        ariaLabel={
+          locale === 'en'
+            ? `${day.date}, ${guestLabel}, ${label}, make a reservation`
+            : `${day.date} ${guestLabel} ${label} 予約する`
+        }
       >
         <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
       </ShopReservationNoticeLink>
@@ -296,7 +311,7 @@ function renderStatus(
     <span
       className={styles.reservationStatus}
       data-status={status}
-      aria-label={`${day.date} ${guests}名 ${label}`}
+      aria-label={`${day.date} ${guestLabel} ${label}`}
     >
       <i className={styles.reservationStatusIcon} aria-hidden="true"></i>
     </span>

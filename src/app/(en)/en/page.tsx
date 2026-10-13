@@ -9,6 +9,8 @@ import type { Metadata } from 'next';
 import { isRealProduction } from '@/lib/env';
 import ContainerTopHero from '@/components/Top/ContainerTopHero';
 import ContainerTopAboutEn from '@/components/Top/ContainerTopAboutEn';
+import ContainerTopShopListServer from '@/components/Top/ContainerTopShopList.server';
+import ContainerTopReservationAvailability from '@/components/Top/ContainerTopReservationAvailability';
 
 export const generateMetadata = (): Metadata => {
   return {
@@ -32,6 +34,8 @@ export default function EnglishHome() {
   return (
     <>
       <ContainerTopHero locale="en" />
+      <ContainerTopShopListServer locale="en" />
+      <ContainerTopReservationAvailability locale="en" />
       <ContainerTopAboutEn />
     </>
   );

@@ -27,6 +27,7 @@ type Props = {
   id: string;
   date: string;
   guests: number;
+  locale?: 'ja' | 'en';
 };
 
 type CustomerInputKey =
@@ -36,6 +37,7 @@ type CustomerInputKey =
   | 'tel'
   | 'email'
   | 'emailConfirm'
+  | 'childrenNote'
   | 'request';
 
 type FormStep = 'input' | 'confirm' | 'complete';
@@ -52,7 +54,6 @@ type ReservationApiErrorCode =
   | 'INTERNAL_ERROR';
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-const NATIONALITY_OPTION_GROUPS = getNationalityOptionGroups('ja');
 const RESERVATION_API_ERROR_CODES = new Set<ReservationApiErrorCode>([
   'INVALID_REQUEST',
   'VALIDATION_ERROR',
@@ -128,9 +129,15 @@ function normalizeCustomerIdentityInput(value: string) {
   return normalized;
 }
 
-export default function ShopReservationFormClient({ id, date, guests }: Props) {
+export default function ShopReservationFormClient({
+  id,
+  date,
+  guests,
+  locale = 'ja',
+}: Props) {
+  const isEnglish = locale === 'en';
   const { shopDetail, reservationBasic, menuItems, status } =
-    useShopReservationFormData(id, date, guests);
+    useShopReservationFormData(id, date, guests, locale);
   const [seatOnly, setSeatOnly] = useState(false);
   const [courseByGuest, setCourseByGuest] = useState(() =>
     Array.from({ length: guests }, () => '')
@@ -140,10 +147,11 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   >({
     name: '',
     kana: '',
-    nationality: 'JP',
+    nationality: isEnglish ? '' : 'JP',
     tel: '',
     email: '',
     emailConfirm: '',
+    childrenNote: '',
     request: '',
   });
   const [agreed, setAgreed] = useState(false);
@@ -152,21 +160,36 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const [isSending, setIsSending] = useState(false);
   const [, setReservationId] = useState<number | null>(null);
 
-  const timeRanges =
-    getHoursRow(shopDetail?.info.hours ?? [])?.timeRanges ?? [];
+  const displayName = isEnglish
+    ? (shopDetail?.name_en ?? [])
+    : (shopDetail?.name ?? []);
+  const displayLeadCopy = isEnglish
+    ? (shopDetail?.leadCopy_en ?? [])
+    : (shopDetail?.leadCopy ?? []);
+  const displayHours = isEnglish
+    ? (shopDetail?.info.hours_en ?? [])
+    : (shopDetail?.info.hours ?? []);
+  const timeRanges = getHoursRow(displayHours)?.timeRanges ?? [];
+  const nationalityOptionGroups = useMemo(
+    () => getNationalityOptionGroups(locale),
+    [locale]
+  );
   const reserveImage =
     shopDetail?.heroImage ??
     shopDetail?.pickupItems.find((item) => item.image)?.image ??
     '/images/no-image.webp';
   const menuOptions = useMemo(
     () => [
-      { value: '', label: 'コースを選択してください' },
+      {
+        value: '',
+        label: isEnglish ? 'Select a course' : 'コースを選択してください',
+      },
       ...menuItems.map((item) => ({
         value: item.id,
         label: item.name,
       })),
     ],
-    [menuItems]
+    [isEnglish, menuItems]
   );
   const canShowMenuSelection =
     reservationBasic?.menuSelectionType !== 0 && menuItems.length > 0;
@@ -174,11 +197,16 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const canReserve = status === 'open' || status === 'limited';
   const selectedCourseRows = courseByGuest.map((value, index) => {
     const menuName =
-      menuItems.find((item) => item.id === value)?.name ?? 'ご来店時に選ぶ';
+      menuItems.find((item) => item.id === value)?.name ??
+      (isEnglish ? 'Select at the restaurant' : 'ご来店時に選ぶ');
 
     return {
-      label: `${index + 1}人目`,
-      value: seatOnly ? 'お席のみ予約' : menuName,
+      label: isEnglish ? `Guest ${index + 1}` : `${index + 1}人目`,
+      value: seatOnly
+        ? isEnglish
+          ? 'Table reservation only'
+          : 'お席のみ予約'
+        : menuName,
     };
   });
 
@@ -207,26 +235,40 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
 
   const moveToConfirm = () => {
     if (!canReserve) {
-      setErrorMessage('選択された日程は現在ご予約いただけません。');
+      setErrorMessage(
+        isEnglish
+          ? 'The selected date is not currently available for booking.'
+          : '選択された日程は現在ご予約いただけません。'
+      );
       return;
     }
 
     if (
       !customerInput.name ||
-      !customerInput.kana ||
+      (!isEnglish && !customerInput.kana) ||
       !customerInput.nationality ||
       !customerInput.tel ||
       !customerInput.email ||
       !customerInput.emailConfirm
     ) {
-      setErrorMessage('必須項目を入力してください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Please complete all required fields.'
+          : '必須項目を入力してください。'
+      );
       return;
     }
 
     const normalizedName = normalizeCustomerIdentityInput(customerInput.name);
-    const normalizedKana = normalizeCustomerIdentityInput(customerInput.kana);
+    const normalizedKana = isEnglish
+      ? normalizedName
+      : normalizeCustomerIdentityInput(customerInput.kana);
     if (normalizedName === null || normalizedKana === null) {
-      setErrorMessage('お名前・ふりがなは1〜101文字で入力してください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Name must be between 1 and 101 characters.'
+          : 'お名前・ふりがなは1〜101文字で入力してください。'
+      );
       return;
     }
 
@@ -234,22 +276,38 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
       !/^[A-Z]{2}$/.test(customerInput.nationality) ||
       !NATIONALITIES.some((item) => item.value === customerInput.nationality)
     ) {
-      setErrorMessage('国籍を選択してください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Please select your nationality.'
+          : '国籍を選択してください。'
+      );
       return;
     }
 
     if (customerInput.email !== customerInput.emailConfirm) {
-      setErrorMessage('メールアドレスが一致していません。');
+      setErrorMessage(
+        isEnglish
+          ? 'The email addresses do not match.'
+          : 'メールアドレスが一致していません。'
+      );
       return;
     }
 
     if (isMenuSelectionRequired && courseByGuest.some((value) => !value)) {
-      setErrorMessage('お食事メニューを人数分選択してください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Please select a menu for each guest.'
+          : 'お食事メニューを人数分選択してください。'
+      );
       return;
     }
 
     if (!agreed) {
-      setErrorMessage('プライバシーポリシーに同意してください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Please agree to the Privacy Policy.'
+          : 'プライバシーポリシーに同意してください。'
+      );
       return;
     }
 
@@ -272,6 +330,17 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   const submitReservation = async () => {
     if (isSending) return;
 
+    const note = [
+      customerInput.childrenNote.trim()
+        ? `${isEnglish ? '[Children of Elementary School Age or Younger]' : '[小学生以下のお子様]'}\n${customerInput.childrenNote.trim()}`
+        : '',
+      customerInput.request.trim()
+        ? `${isEnglish ? '[Requests / Allergies]' : '[ご要望・アレルギー等]'}\n${customerInput.request.trim()}`
+        : '',
+    ]
+      .filter(Boolean)
+      .join('\n\n');
+
     const body = {
       shop_id: id,
       date,
@@ -284,7 +353,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
       nationality: customerInput.nationality,
       tel: customerInput.tel,
       email: customerInput.email,
-      note: customerInput.request,
+      note,
       privacy_agreed: agreed,
     };
 
@@ -309,13 +378,23 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
       }
 
       if (!res.ok && isReservationApiErrorResponse(responseBody)) {
-        setErrorMessage(responseBody.message);
+        setErrorMessage(
+          getReservationApiErrorMessage(
+            responseBody.errorCode,
+            locale,
+            responseBody.message
+          )
+        );
         return;
       }
 
       throw new Error('Unexpected reservation response.');
     } catch {
-      setErrorMessage('送信に失敗しました。時間をおいて再度お試しください。');
+      setErrorMessage(
+        isEnglish
+          ? 'Failed to submit your reservation. Please try again later.'
+          : '送信に失敗しました。時間をおいて再度お試しください。'
+      );
     } finally {
       setIsSending(false);
     }
@@ -324,8 +403,9 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
   return (
     <>
       <ShopHeader
-        name={shopDetail.name}
-        leadCopy={shopDetail.leadCopy}
+        locale={locale}
+        name={displayName}
+        leadCopy={displayLeadCopy}
         tel={shopDetail.info.tel}
         web={shopDetail.info.web}
         mail={shopDetail.info.mail}
@@ -335,49 +415,72 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
         statusFallbackKey={shopDetail.statusFallbackKey}
         closedWeekdays={shopDetail.info.closedWeekdays}
         timeRanges={timeRanges}
-        hasOnlineList={(shopDetail.onlineProductsCount ?? 0) > 0}
+        hasOnlineList={!isEnglish && (shopDetail.onlineProductsCount ?? 0) > 0}
       />
 
       <section className={styles.containerReservationForm}>
         <article>
           <div className={styles.boxH2}>
-            <h2>ご予約フォーム</h2>
+            <h2>{isEnglish ? 'Reservation Form' : 'ご予約フォーム'}</h2>
           </div>
 
           <ol className={styles.listSteps}>
             <li className={formStep === 'input' ? styles.isCurrent : undefined}>
-              ご予約/お客様情報
+              {isEnglish
+                ? 'Reservation / Guest Information'
+                : 'ご予約/お客様情報'}
             </li>
             <li
               className={formStep === 'confirm' ? styles.isCurrent : undefined}
             >
-              ご予約内容確認
+              {isEnglish ? 'Review' : 'ご予約内容確認'}
             </li>
             <li
               className={formStep === 'complete' ? styles.isCurrent : undefined}
             >
-              送信
+              {isEnglish ? 'Complete' : '送信'}
             </li>
           </ol>
 
           {formStep === 'complete' ? (
             <div className={styles.boxComplete}>
               <div className={styles.boxCompleteText}>
-                <p>ご予約ありがとうございます</p>
-                <span>
-                  ご予約を受け付けました。
-                  <br />
-                  ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信しております。
-                  <br />
-                  ご予約内容をご確認ください。
-                  <br />
-                  ご予約いただいた内容について確認が必要な場合
-                  <br />
-                  店舗よりご連絡させていただく場合がございます。
-                </span>
+                <p>
+                  {isEnglish
+                    ? 'Thank you for your reservation'
+                    : 'ご予約ありがとうございます'}
+                </p>
+                {isEnglish ? (
+                  <span>
+                    Your reservation has been received.
+                    <br />
+                    A confirmation email has been sent to the email address you
+                    provided.
+                    <br />
+                    Please review your reservation details.
+                    <br />
+                    The restaurant may contact you if any additional
+                    confirmation is required.
+                  </span>
+                ) : (
+                  <span>
+                    ご予約を受け付けました。
+                    <br />
+                    ご入力いただいたメールアドレス宛に、予約内容の確認メールを送信しております。
+                    <br />
+                    ご予約内容をご確認ください。
+                    <br />
+                    ご予約いただいた内容について確認が必要な場合
+                    <br />
+                    店舗よりご連絡させていただく場合がございます。
+                  </span>
+                )}
               </div>
-              <Link href="/" className={styles.btnSubmit}>
-                TOPページへ戻る
+              <Link
+                href={isEnglish ? '/en/' : '/'}
+                className={styles.btnSubmit}
+              >
+                {isEnglish ? 'Back to Home' : 'TOPページへ戻る'}
               </Link>
             </div>
           ) : null}
@@ -394,36 +497,42 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                 className={clsx(styles.boxPanel, styles.boxConfirmContent)}
               >
                 <div className={styles.boxH3}>
-                  <h3>ご予約内容</h3>
+                  <h3>{isEnglish ? 'Reservation Details' : 'ご予約内容'}</h3>
                 </div>
                 <dl className={styles.listConfirm}>
                   <div>
-                    <dt>店舗</dt>
+                    <dt>{isEnglish ? 'Restaurant' : '店舗'}</dt>
                     <dd className={styles.itemShop}>
                       <Image
                         src={reserveImage}
-                        alt={shopDetail.name.join(' ')}
+                        alt={displayName.join(' ')}
                         width={180}
                         height={110}
                       />
-                      <span>{shopDetail.name.join('')}</span>
+                      <span>{displayName.join(' ')}</span>
                     </dd>
                   </div>
                   <div>
-                    <dt>予約日</dt>
-                    <dd>{formatReservationDate(date)}</dd>
+                    <dt>{isEnglish ? 'Reservation Date' : '予約日'}</dt>
+                    <dd>{formatReservationDate(date, locale)}</dd>
                   </div>
                   <div>
-                    <dt>ご利用人数</dt>
-                    <dd>{guests}名</dd>
+                    <dt>{isEnglish ? 'Guests' : 'ご利用人数'}</dt>
+                    <dd>
+                      {isEnglish
+                        ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+                        : `${guests}名`}
+                    </dd>
                   </div>
                   {canShowMenuSelection ? (
                     <div>
-                      <dt>お食事メニュー</dt>
+                      <dt>{isEnglish ? 'Menu' : 'お食事メニュー'}</dt>
                       <dd>
                         {selectedCourseRows.map((row) => (
                           <span key={row.label}>
-                            {row.label}：{row.value}
+                            {row.label}
+                            {isEnglish ? ': ' : '：'}
+                            {row.value}
                           </span>
                         ))}
                       </dd>
@@ -432,34 +541,53 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                 </dl>
 
                 <div className={styles.boxH3}>
-                  <h3>お客様情報</h3>
+                  <h3>{isEnglish ? 'Guest Information' : 'お客様情報'}</h3>
                 </div>
                 <dl className={styles.listConfirm}>
                   <div>
-                    <dt>お名前</dt>
+                    <dt>{isEnglish ? 'Name' : 'お名前'}</dt>
                     <dd>{customerInput.name}</dd>
                   </div>
+                  {!isEnglish ? (
+                    <div>
+                      <dt>ふりがな</dt>
+                      <dd>{customerInput.kana}</dd>
+                    </div>
+                  ) : null}
                   <div>
-                    <dt>ふりがな</dt>
-                    <dd>{customerInput.kana}</dd>
-                  </div>
-                  <div>
-                    <dt>国籍</dt>
+                    <dt>{isEnglish ? 'Nationality' : '国籍'}</dt>
                     <dd>
-                      {getNationalityLabel(customerInput.nationality, 'ja')}
+                      {getNationalityLabel(customerInput.nationality, locale)}
                     </dd>
                   </div>
                   <div>
-                    <dt>電話番号</dt>
+                    <dt>{isEnglish ? 'Phone Number' : '電話番号'}</dt>
                     <dd>{customerInput.tel}</dd>
                   </div>
                   <div>
-                    <dt>メールアドレス</dt>
+                    <dt>{isEnglish ? 'Email Address' : 'メールアドレス'}</dt>
                     <dd>{customerInput.email}</dd>
                   </div>
                   <div>
-                    <dt>ご要望・アレルギー等</dt>
-                    <dd>{customerInput.request || 'なし'}</dd>
+                    <dt>
+                      {isEnglish
+                        ? 'Children of Elementary School Age or Younger'
+                        : '小学生以下のお子様'}
+                    </dt>
+                    <dd>
+                      {customerInput.childrenNote ||
+                        (isEnglish ? 'None' : 'なし')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>
+                      {isEnglish
+                        ? 'Requests / Allergies'
+                        : 'ご要望・アレルギー等'}
+                    </dt>
+                    <dd>
+                      {customerInput.request || (isEnglish ? 'None' : 'なし')}
+                    </dd>
                   </div>
                 </dl>
               </section>
@@ -470,7 +598,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   className={styles.btnBack}
                   onClick={moveToInput}
                 >
-                  修正する
+                  {isEnglish ? 'Edit' : '修正する'}
                 </button>
                 <button
                   type="button"
@@ -478,7 +606,13 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   onClick={submitReservation}
                   disabled={isSending}
                 >
-                  {isSending ? '送信中です' : 'この情報で予約する'}
+                  {isSending
+                    ? isEnglish
+                      ? 'Submitting...'
+                      : '送信中です'
+                    : isEnglish
+                      ? 'Confirm Reservation'
+                      : 'この情報で予約する'}
                 </button>
               </div>
             </>
@@ -486,21 +620,25 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
 
           {formStep === 'input' ? (
             <>
-              <ExternalLink
-                href={`https://kurokawaonsen.or.jp/availability/room.php?selYMD=${encodeURIComponent(date)}&ref=kyokai`}
-                className={styles.linkStayPlan}
-              >
-                <Image
-                  src="/images/common/link-stay-plan.webp"
-                  alt="素泊まりプラン"
-                  width={600}
-                  height={80}
-                />
-              </ExternalLink>
+              {!isEnglish ? (
+                <ExternalLink
+                  href={`https://kurokawaonsen.or.jp/availability/room.php?selYMD=${encodeURIComponent(date)}&ref=kyokai`}
+                  className={styles.linkStayPlan}
+                >
+                  <Image
+                    src="/images/common/link-stay-plan.webp"
+                    alt="素泊まりプラン"
+                    width={600}
+                    height={80}
+                  />
+                </ExternalLink>
+              ) : null}
 
               {!canReserve ? (
                 <p className={styles.itemAlert}>
-                  選択された日程は現在ご予約いただけません。
+                  {isEnglish
+                    ? 'The selected date is not currently available for booking.'
+                    : '選択された日程は現在ご予約いただけません。'}
                 </p>
               ) : null}
 
@@ -508,32 +646,41 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                 className={clsx(styles.boxPanel, styles.boxReservationSummary)}
               >
                 <div className={styles.boxH3}>
-                  <h3>ご予約内容</h3>
+                  <h3>{isEnglish ? 'Reservation Details' : 'ご予約内容'}</h3>
                 </div>
                 <dl className={styles.listReservationSummary}>
                   <div>
-                    <dt>店舗</dt>
+                    <dt>{isEnglish ? 'Restaurant' : '店舗'}</dt>
                     <dd className={styles.itemShop}>
                       <Image
                         src={reserveImage}
-                        alt={shopDetail.name.join(' ')}
+                        alt={displayName.join(' ')}
                         width={180}
                         height={110}
                       />
-                      <span>{shopDetail.name.join('')}</span>
+                      <span>{displayName.join(' ')}</span>
                     </dd>
                   </div>
                   <div>
-                    <dt>予約日</dt>
-                    <dd>{formatReservationDate(date)}</dd>
+                    <dt>{isEnglish ? 'Reservation Date' : '予約日'}</dt>
+                    <dd>{formatReservationDate(date, locale)}</dd>
                   </div>
                   <div>
-                    <dt>ご利用人数</dt>
-                    <dd>{guests}名</dd>
+                    <dt>{isEnglish ? 'Guests' : 'ご利用人数'}</dt>
+                    <dd>
+                      {isEnglish
+                        ? `${guests} ${guests === 1 ? 'guest' : 'guests'}`
+                        : `${guests}名`}
+                    </dd>
                   </div>
                 </dl>
-                <Link href={`/shops/detail?id=${id}`} className={styles.btnSub}>
-                  予約内容を変更する
+                <Link
+                  href={`${isEnglish ? '/en' : ''}/shops/detail?id=${id}`}
+                  className={styles.btnSub}
+                >
+                  {isEnglish
+                    ? 'Change Reservation Details'
+                    : '予約内容を変更する'}
                 </Link>
               </section>
 
@@ -542,7 +689,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   className={clsx(styles.boxPanel, styles.boxMenuSelection)}
                 >
                   <div className={styles.boxH3}>
-                    <h3>お食事メニュー</h3>
+                    <h3>{isEnglish ? 'Menu' : 'お食事メニュー'}</h3>
                   </div>
                   {isMenuSelectionRequired ? null : (
                     <label className={styles.itemSeatOnly}>
@@ -551,13 +698,19 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                         checked={seatOnly}
                         onChange={(e) => updateSeatOnly(e.target.checked)}
                       />
-                      <span>お席のみ予約する</span>
+                      <span>
+                        {isEnglish
+                          ? 'Reserve a table without selecting a course'
+                          : 'お席のみ予約する'}
+                      </span>
                     </label>
                   )}
                   {!seatOnly ? (
                     <>
                       <p className={styles.itemLead}>
-                        お一人様ずつお食事メニューを選択してください。
+                        {isEnglish
+                          ? 'Please select a menu for each guest.'
+                          : 'お一人様ずつお食事メニューを選択してください。'}
                       </p>
                       <ul className={styles.listMenus}>
                         {menuItems.map((item) => (
@@ -570,9 +723,13 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                             />
                             <h4>{item.name}</h4>
                             <p>
-                              {item.price.toLocaleString('ja-JP')}円
+                              {isEnglish
+                                ? `¥${item.price.toLocaleString('en-US')}`
+                                : `${item.price.toLocaleString('ja-JP')}円`}
                               {item.taxIncluded ? (
-                                <span>（税込）</span>
+                                <span>
+                                  {isEnglish ? ' (tax included)' : '（税込）'}
+                                </span>
                               ) : null}
                             </p>
                           </li>
@@ -581,7 +738,9 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                       <div className={styles.listCourseSelects}>
                         {courseByGuest.map((value, i) => (
                           <div key={i}>
-                            <h4>{i + 1}人目</h4>
+                            <h4>
+                              {isEnglish ? `Guest ${i + 1}` : `${i + 1}人目`}
+                            </h4>
                             <SelectBox
                               name={`reservationCourse${i + 1}`}
                               value={value}
@@ -603,32 +762,38 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                 </section>
               ) : null}
 
-              <section className={clsx(styles.boxPanel, styles.boxCustomerInfo)}>
+              <section
+                className={clsx(styles.boxPanel, styles.boxCustomerInfo)}
+              >
                 <div className={styles.boxH3}>
-                  <h3>お客様情報</h3>
+                  <h3>{isEnglish ? 'Guest Information' : 'お客様情報'}</h3>
                 </div>
                 <div className={styles.listInputs}>
                   <FormInput
-                    label="お名前"
+                    locale={locale}
+                    label={isEnglish ? 'Name' : 'お名前'}
                     required
                     value={customerInput.name}
-                    placeholder="黒川 太郎"
+                    placeholder={isEnglish ? 'Taro Kurokawa' : '黒川 太郎'}
                     autoComplete="name"
                     maxLength={101}
                     onChange={(value) => updateCustomerInput('name', value)}
                   />
-                  <FormInput
-                    label="ふりがな"
-                    required
-                    value={customerInput.kana}
-                    placeholder="くろかわ たろう"
-                    maxLength={101}
-                    onChange={(value) => updateCustomerInput('kana', value)}
-                  />
+                  {!isEnglish ? (
+                    <FormInput
+                      locale={locale}
+                      label="ふりがな"
+                      required
+                      value={customerInput.kana}
+                      placeholder="くろかわ たろう"
+                      maxLength={101}
+                      onChange={(value) => updateCustomerInput('kana', value)}
+                    />
+                  ) : null}
                   <label className={styles.itemSelect}>
                     <span>
-                      国籍
-                      <i>必須</i>
+                      {isEnglish ? 'Nationality' : '国籍'}
+                      <i>{isEnglish ? 'Required' : '必須'}</i>
                     </span>
                     <div className={styles.selectWrapper}>
                       <select
@@ -639,7 +804,12 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                           updateCustomerInput('nationality', e.target.value)
                         }
                       >
-                        {NATIONALITY_OPTION_GROUPS.map((group) => (
+                        {isEnglish ? (
+                          <option value="" disabled>
+                            Select your nationality
+                          </option>
+                        ) : null}
+                        {nationalityOptionGroups.map((group) => (
                           <optgroup key={group.label} label={group.label}>
                             {group.options.map((option) => (
                               <option key={option.value} value={option.value}>
@@ -652,7 +822,8 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     </div>
                   </label>
                   <FormInput
-                    label="電話番号"
+                    locale={locale}
+                    label={isEnglish ? 'Phone Number' : '電話番号'}
                     required
                     value={customerInput.tel}
                     placeholder="090-1234-5678"
@@ -660,7 +831,8 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     onChange={(value) => updateCustomerInput('tel', value)}
                   />
                   <FormInput
-                    label="メールアドレス"
+                    locale={locale}
+                    label={isEnglish ? 'Email Address' : 'メールアドレス'}
                     required
                     value={customerInput.email}
                     placeholder="example@mail.com"
@@ -668,7 +840,12 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                     onChange={(value) => updateCustomerInput('email', value)}
                   />
                   <FormInput
-                    label="メールアドレス（確認）"
+                    locale={locale}
+                    label={
+                      isEnglish
+                        ? 'Confirm Email Address'
+                        : 'メールアドレス（確認）'
+                    }
                     required
                     value={customerInput.emailConfirm}
                     placeholder="example@mail.com"
@@ -679,12 +856,37 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   />
                   <label className={styles.itemTextarea}>
                     <span>
-                      ご要望・アレルギー等
-                      <i>任意</i>
+                      {isEnglish
+                        ? 'Children of Elementary School Age or Younger'
+                        : '小学生以下のお子様'}
+                      <i>{isEnglish ? 'Optional' : '任意'}</i>
+                    </span>
+                    <textarea
+                      value={customerInput.childrenNote}
+                      placeholder={
+                        isEnglish
+                          ? 'If you are bringing children of elementary school age or younger, please enter the number of children and their ages. Child seats will be prepared.'
+                          : '小学生以下のお子様をお連れの場合は、人数・年齢をご記入ください。子ども用の椅子をご用意します。'
+                      }
+                      onChange={(e) =>
+                        updateCustomerInput('childrenNote', e.target.value)
+                      }
+                    />
+                  </label>
+                  <label className={styles.itemTextarea}>
+                    <span>
+                      {isEnglish
+                        ? 'Requests / Allergies'
+                        : 'ご要望・アレルギー等'}
+                      <i>{isEnglish ? 'Optional' : '任意'}</i>
                     </span>
                     <textarea
                       value={customerInput.request}
-                      placeholder="アレルギーやお店へのご要望がございましたらご記入ください。"
+                      placeholder={
+                        isEnglish
+                          ? 'Please enter any allergies or requests for the restaurant.'
+                          : 'アレルギーやお店へのご要望がございましたらご記入ください。'
+                      }
                       onChange={(e) =>
                         updateCustomerInput('request', e.target.value)
                       }
@@ -700,7 +902,17 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                   onChange={(e) => setAgreed(e.target.checked)}
                 />
                 <span>
-                  <Link href="/privacy/">プライバシーポリシー</Link>に同意する
+                  {isEnglish ? (
+                    <>
+                      I agree to the{' '}
+                      <Link href="/privacy/">Privacy Policy</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/privacy/">プライバシーポリシー</Link>
+                      に同意する
+                    </>
+                  )}
                 </span>
               </label>
 
@@ -715,10 +927,13 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
                 className={styles.btnSubmit}
                 onClick={moveToConfirm}
               >
-                入力内容を確認する
+                {isEnglish ? 'Review Reservation' : '入力内容を確認する'}
               </button>
-              <Link href={`/shops/detail?id=${id}`} className={styles.linkBack}>
-                空席状況に戻る
+              <Link
+                href={`${isEnglish ? '/en' : ''}/shops/detail?id=${id}`}
+                className={styles.linkBack}
+              >
+                {isEnglish ? 'Back to Availability' : '空席状況に戻る'}
               </Link>
             </>
           ) : null}
@@ -729,6 +944,7 @@ export default function ShopReservationFormClient({ id, date, guests }: Props) {
 }
 
 type FormInputProps = {
+  locale?: 'ja' | 'en';
   label: string;
   value: string;
   placeholder: string;
@@ -739,6 +955,7 @@ type FormInputProps = {
 };
 
 function FormInput({
+  locale = 'ja',
   label,
   value,
   placeholder,
@@ -751,7 +968,15 @@ function FormInput({
     <label className={styles.itemInput}>
       <span>
         {label}
-        <i>{required ? '必須' : '任意'}</i>
+        <i>
+          {locale === 'en'
+            ? required
+              ? 'Required'
+              : 'Optional'
+            : required
+              ? '必須'
+              : '任意'}
+        </i>
       </span>
       <input
         type="text"
@@ -765,9 +990,45 @@ function FormInput({
   );
 }
 
-function formatReservationDate(date: string) {
+function formatReservationDate(date: string, locale: 'ja' | 'en') {
   const value = new Date(`${date}T00:00:00`);
+
+  if (locale === 'en') {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short',
+    }).format(value);
+  }
+
   const weekday = WEEKDAYS[value.getDay()];
 
   return `${value.getFullYear()}年${value.getMonth() + 1}月${value.getDate()}日（${weekday}）`;
+}
+
+function getReservationApiErrorMessage(
+  errorCode: ReservationApiErrorCode,
+  locale: 'ja' | 'en',
+  fallbackMessage: string
+) {
+  if (locale === 'ja') return fallbackMessage;
+
+  if (errorCode === 'RESERVATION_UNAVAILABLE' || errorCode === 'FULL') {
+    return 'The selected reservation is no longer available. Please choose another date or number of guests.';
+  }
+
+  if (errorCode === 'MENU_INVALID') {
+    return 'The selected menu is not available. Please review your menu selection.';
+  }
+
+  if (errorCode === 'RATE_LIMITED') {
+    return 'Too many requests were submitted. Please wait a moment and try again.';
+  }
+
+  if (errorCode === 'INVALID_REQUEST' || errorCode === 'VALIDATION_ERROR') {
+    return 'Please review the information you entered.';
+  }
+
+  return 'Failed to submit your reservation. Please try again later.';
 }

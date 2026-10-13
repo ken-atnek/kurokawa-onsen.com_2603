@@ -16,22 +16,34 @@ import { getShopStatusView } from '@/lib/status';
 import { getHoursRow } from '@/lib/shops/getHoursRow';
 
 import type { ShopDetail, ShopWithStatus } from '@/types/shop';
+import type { ShopStatusView } from '@/lib/status';
 
 const listInfoLabels = ['営業時間', '店休日', '平均予算'];
+const englishStatusLabels: Record<ShopStatusView['key'], string> = {
+  open: 'Open now',
+  closed: 'Closed',
+  other: 'Check status',
+};
 
 type ShopIndexBase = {
   id: string;
   slug: string;
   category: string;
   name: string[];
+  name_en?: string[];
   thumb: string;
   tel: string;
   leadCopy: string[];
+  leadCopy_en?: string[];
 };
 
 type Props = {
   pickupCount?: number;
+  locale?: 'ja' | 'en';
 };
+
+const hasJapaneseText = (lines: string[]) =>
+  lines.some((line) => /[ぁ-んァ-ヶ一-龯]/.test(line));
 
 // 乱数生成（seed固定で毎回同じ順序を作る）
 function mulberry32(seed: number) {
@@ -59,7 +71,11 @@ async function fetchJson<T>(url: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
+export default function ContainerTopShopListClient({
+  pickupCount = 3,
+  locale = 'ja',
+}: Props) {
+  const isEnglish = locale === 'en';
   const [picked, setPicked] = useState<ShopWithStatus[] | null>(null);
 
   // TOPの表示対象カテゴリ（必要に応じて変更OK）
@@ -100,18 +116,33 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
               closedWeekdays: detail.info.closedWeekdays,
               timeRanges,
             });
+            const englishLeadCopy = idx.leadCopy_en ?? [];
 
             return {
               ...idx,
-              status,
+              name: isEnglish
+                ? idx.name_en?.length
+                  ? idx.name_en
+                  : idx.name
+                : idx.name,
+              leadCopy: isEnglish
+                ? hasJapaneseText(englishLeadCopy)
+                  ? []
+                  : englishLeadCopy
+                : idx.leadCopy,
+              status: isEnglish
+                ? { ...status, label: englishStatusLabels[status.key] }
+                : status,
               mealPeriods: detail.mealPeriods ?? [],
-              listInfoRows: listInfoLabels.flatMap((label) => {
-                const row = detail.info.hours.find(
-                  (infoRow) => infoRow.label === label
-                );
+              listInfoRows: isEnglish
+                ? (detail.info.hours_en ?? [])
+                : listInfoLabels.flatMap((label) => {
+                    const row = detail.info.hours.find(
+                      (infoRow) => infoRow.label === label
+                    );
 
-                return row ? [row] : [];
-              }),
+                    return row ? [row] : [];
+                  }),
             } as ShopWithStatus;
           })
         );
@@ -134,7 +165,7 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [pickupCount, allowedCategories]);
+  }, [pickupCount, allowedCategories, isEnglish]);
 
   if (picked === null) return null; // ローディング表示したければここで
 
@@ -145,16 +176,21 @@ export default function ContainerTopShopListClient({ pickupCount = 3 }: Props) {
       aria-labelledby="top-shop-list-title"
       className={styles.containerTopShopList}
     >
-      <h2 id="top-shop-list-title">加盟店</h2>
+      <h2 id="top-shop-list-title">
+        {isEnglish ? 'Shops & Restaurants' : '加盟店'}
+      </h2>
 
       <ul>
         {picked.map((shop) => (
-          <ShopCard key={shop.id} shop={shop} />
+          <ShopCard key={shop.id} shop={shop} locale={locale} />
         ))}
       </ul>
 
-      <Link href="/shops/" className={styles.linkList}>
-        加盟店一覧を見る
+      <Link
+        href={isEnglish ? '/en/shops/' : '/shops/'}
+        className={styles.linkList}
+      >
+        {isEnglish ? 'View All Shops & Restaurants' : '加盟店一覧を見る'}
       </Link>
     </section>
   );

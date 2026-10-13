@@ -7,6 +7,15 @@ import type {
 export type ReservationDisplayStatus = ShopReservationStatus | 'closed';
 
 export const RESERVATION_WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+export const RESERVATION_WEEKDAYS_EN = [
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+];
 
 export function addDays(date: Date, amount: number) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + amount);
@@ -53,7 +62,17 @@ export function getReservationStatus(
   return day.guests[String(guests)] ?? 'closed';
 }
 
-export function getReservationStatusLabel(status: ReservationDisplayStatus) {
+export function getReservationStatusLabel(
+  status: ReservationDisplayStatus,
+  locale: 'ja' | 'en' = 'ja'
+) {
+  if (locale === 'en') {
+    if (status === 'open') return 'Available';
+    if (status === 'limited') return 'Limited availability';
+    if (status === 'holiday') return 'Closed';
+    return 'Fully booked';
+  }
+
   if (status === 'open') return 'ご予約可';
   if (status === 'limited') return '一部満席';
   if (status === 'holiday') return '休業日';
